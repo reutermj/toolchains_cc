@@ -1,6 +1,12 @@
+load("@bazel_skylib//lib:dicts.bzl", "dicts")
 load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
 load("@rules_cc//cc/toolchains:tool.bzl", "cc_tool")
 load("@rules_cc//cc/toolchains:tool_map.bzl", "cc_tool_map")
+load("//toolchains:llvm/llvm.bzl", "LLVM")
+
+TOOLS_DICT = dicts.add(
+    LLVM,
+)
 
 cc_tool_map(
     name = "all_tools",

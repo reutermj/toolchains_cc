@@ -49,6 +49,25 @@ alias(
 )
 """.lstrip()
 
+label_lookup_tpl = """
+package(default_visibility = ["//:__subpackages__"])
+
+{var_name} = {{
+    {lookups}
+}}
+""".lstrip()
+
+toolchain_bzl_tpl = """
+load("@bazel_skylib//lib:dicts.bzl", "dicts")
+{loads}
+
+package(default_visibility = ["//:__subpackages__"])
+
+{toolchain} = dicts.add(
+    {dicts}
+)
+""".lstrip()
+
 # ==================
 # || MODULE.bazel ||
 # ==================
@@ -107,19 +126,9 @@ def generate_root_build():
     with open('toolchains/BUILD', 'w') as file:
         file.write(build)
 
-# ====================================
-# || //toolchains/<toolchain>/BUILD ||
-# ====================================
-def is_newer(version, latest):
-    version = version.split('.')
-    latest = latest.split('.')
-    for v, l in zip(version, latest):
-        if int(v) > int(l):
-            return True
-        elif int(v) < int(l):
-            return False
-    return False
-
+# ==============================================
+# || //toolchains/<toolchain>/<toolchain>.bzl ||
+# ==============================================
 def generate_tool_build():
     toolchains = get_toolchains()
 
@@ -130,39 +139,33 @@ def generate_tool_build():
         version = toolchain[1]
 
         if name not in versions_lookup:
-            versions_lookup[name] = {
-                "versions": set(),
-                "latest": "0.0.0"
-            }
+            versions_lookup[name] = set()
 
-        versions_lookup[name]["versions"].add(version)
-        if is_newer(version, versions_lookup[name]["latest"]):
-            versions_lookup[name]["latest"] = version
+        versions_lookup[name].add(version)
     
     # write out the aliases that picks out the version specified by the --@toolchains_cc//:version config
-    aliases = visibility
     for action in actions:
-        for name, versions_latest in versions_lookup.items():
-            versions = versions_latest["versions"]
-            latest = versions_latest["latest"]
+        for name, versions in versions_lookup.items():
             os.makedirs(f"toolchains/{name}", exist_ok=True)
-            conditions = f"        \"//toolchains:latest\": \"//toolchains/{name}/{latest}:{action}\",\n"
+
+            loads = ""
+            dicts = ""
             for version in versions:
-                conditions += f"        \"//toolchains:{version}\": \"//toolchains/{name}/{version}:{action}\",\n"
+                dict_const = f"{name.upper()}_{version.replace('.', '_')}"
+                loads += f"load(\":{version}.bzl\", \"{dict_const}\")\n"
+                dicts += f"    {dict_const},\n"
             
-            alias = alias_tpl.format(
-                action=action,
-                conditions=conditions.strip()
+            toolchain_bzl = toolchain_bzl_tpl.format(
+                loads=loads.strip(),
+                toolchain=name.upper(),
+                dicts=dicts.strip()
             )
+            with open(f"toolchains/{name}/{name}.bzl", 'w') as file:
+                file.write(toolchain_bzl)
 
-            aliases += alias
-
-    with open(f"toolchains/{name}/BUILD", 'w') as file:
-        file.write(aliases)
-
-# ==============================================
-# || //toolchains/<toolchain>/<version>/BUILD ||
-# ==============================================
+# ============================================
+# || //toolchains/<toolchain>/<version>.bzl ||
+# ============================================
 def generate_tool_version_build():
     toolchains = get_toolchains()
 
@@ -184,23 +187,21 @@ def generate_tool_version_build():
     
     for name, version_to_os_arch in toolchain_to_version_to_os_arch.items():
         for version, targets in version_to_os_arch.items():
-            os.makedirs(f"toolchains/{name}/{version}", exist_ok=True)
+            os.makedirs(f"toolchains/{name}", exist_ok=True)
 
-            aliases = visibility
+            lookups = ""
             for action in actions:
-                conditions = ""
                 for (target_os, arch) in targets:
-                    conditions += f"        \"//constraint:{target_os}_{arch}\": \"@{name}-{version}-{target_os}-{arch}//:{action}\",\n"
+                    lookups += f"    \"{name}-{version}-{target_os}-{arch}-{action}\": \"@{name}-{version}-{target_os}-{arch}//:{action}\",\n"
                 
-                alias = alias_tpl.format(
-                    action=action,
-                    conditions=conditions.strip()
-                )
+            version_name = version.replace('.', '_')
+            lookup = label_lookup_tpl.format(
+                var_name=f"{name.upper()}_{version_name}",
+                lookups=lookups.strip()
+            )
 
-                aliases += alias
-
-            with open(f"toolchains/{name}/{version}/BUILD", 'w') as file:
-                file.write(aliases)
+            with open(f"toolchains/{name}/{version}.bzl", 'w') as file:
+                file.write(lookup)
 
 
 if __name__ == "__main__":
