@@ -9,6 +9,8 @@ cc_args_list(
             ":musl": [
                 ":arg-include",
                 ":arg-lib",
+                ":link_actions",
+                ":link_executable_actions",
             ],
             "//conditions:default": [],
         }),
@@ -49,6 +51,52 @@ cc_args(
     },
 )
 
+cc_args(
+    name = "link_actions",
+    actions = [
+        "@rules_cc//cc/toolchains/actions:link_actions",
+    ],
+    args = select({
+        ":musl-shared": [
+            "-lc",
+        ],
+        ":musl-static": [
+            "{lib}/libc.a",
+        ],
+    }),
+    data = [
+        ":lib",
+    ],
+    format = {
+        "lib": ":lib",
+    },
+)
+
+cc_args(
+    name = "link_executable_actions",
+    actions = [
+        "@rules_cc//cc/toolchains/actions:link_executable_actions",
+    ],
+    args = select({
+        ":musl-shared": [
+            "{lib}/crt1.o",
+            "{lib}/crti.o",
+            "{lib}/crtn.o",
+        ],
+        ":musl-static": [
+            "{lib}/crt1.o",
+            "{lib}/crti.o",
+            "{lib}/crtn.o",
+        ],
+    }),
+    data = [
+        ":lib",
+    ],
+    format = {
+        "lib": ":lib",
+    },
+)
+
 alias(
     name = "include",
     actual = select({
@@ -79,12 +127,14 @@ config_setting(
         "//:use_runtimes": "musl",
     },
 )
+
 config_setting(
     name = "musl-static-latest",
     flag_values = {
         "//:use_runtimes": "musl-static",
     },
 )
+
 selects.config_setting_group(
     name = "musl-latest",
     match_any = [
@@ -92,18 +142,21 @@ selects.config_setting_group(
         ":musl-static-latest",
     ],
 )
+
 config_setting(
     name = "musl-shared-1.2.5",
     flag_values = {
         "//:use_runtimes": "musl-1.2.5",
     },
 )
+
 config_setting(
     name = "musl-static-1.2.5",
     flag_values = {
         "//:use_runtimes": "musl-static-1.2.5",
     },
 )
+
 selects.config_setting_group(
     name = "musl-1.2.5",
     match_any = [
