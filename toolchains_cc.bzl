@@ -1,3 +1,4 @@
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 load("//impl:alpine.bzl", "extract_alpine")
 load("//impl:host_detect.bzl", "detect_host")
 load("//impl:ubuntu.bzl", "extract_ubuntu")
@@ -219,4 +220,58 @@ cxx_toolchains = module_extension(
             },
         ),
     },
+)
+
+TRIPPLES = [
+    "x86_64-unknown-linux-gnu",
+    "aarch64-unknown-linux-gnu",
+    "x86_64-alpine-linux-musl",
+]
+
+TOOLS = [
+    "ar_actions",
+    "assembly_actions",
+    "c_compile",
+    "cpp_compile_actions",
+    "link_actions",
+    "objcopy_embed_data",
+    "strip",
+]
+
+def _arch_aliases(name):
+    used_arch = {}
+    for triple in TRIPPLES:
+        arch = triple.split("-")[0]
+        if arch not in used_arch:
+            used_arch[arch] = None
+
+    for tool in TOOLS:
+        select_map = {}
+        for arch in used_arch.keys():
+            platform_label = Label("@platforms//cpu:{arch}".format(arch = arch))
+            target_label = Label(":{name}.{tool}.{arch}".format(name = name, tool = tool, arch = arch))
+            select_map[platform_label] = target_label
+
+        native.alias(
+            name = "{name}.{tool}".format(name = name, tool = tool),
+            actual = select(select_map),
+        )
+
+# to see the output of this macro:
+# bazel query --output=build :all > BUILD.out
+def _layers_of_switches_impl(name, visibility):
+    _arch_aliases(name)
+    for triple in TRIPPLES:
+        native.alias(
+            name = name + "." + triple,
+            actual = name,
+        )
+    cc_binary(
+        name = name,
+        srcs = ["main.c"],
+        visibility = visibility,
+    )
+
+my_macro = macro(
+    implementation = _layers_of_switches_impl,
 )
