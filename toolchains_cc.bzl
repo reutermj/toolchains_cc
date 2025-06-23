@@ -1,16 +1,12 @@
 load("//impl:alpine.bzl", "extract_alpine")
+load("//impl:config.bzl", "get_config_from_env_vars")
 load("//impl:host_detect.bzl", "detect_host")
 load("//impl:ubuntu.bzl", "extract_ubuntu")
 
 def _lazy_download_bins_impl(rctx):
     """Lazily downloads only the toolchain binaries for the configured platform."""
-
-    if rctx.attr.cxx_std_lib == "default" or rctx.attr.cxx_std_lib == "libc++":
-        cxx_std_lib = "libc++"
-    elif rctx.attr.cxx_std_lib == "libstdc++":
-        cxx_std_lib = "libstdc++"
-    else:
-        fail("(toolchains_cc.bzl bug) Unknown C++ standard library: %s" % rctx.attr.cxx_std_lib)
+    config = get_config_from_env_vars(rctx)
+    cxx_std_lib = config["cxx_std_lib"]
 
     if rctx.attr.vendor == "detect":
         host_constants = detect_host(rctx)
@@ -34,9 +30,9 @@ cc_toolchains.declare(
         vendor = rctx.attr.vendor
 
     if vendor == "ubuntu":
-        extract_ubuntu(rctx)
+        extract_ubuntu(rctx, config)
     elif vendor == "alpine":
-        extract_alpine(rctx)
+        extract_alpine(rctx, config)
     else:
         fail("(toolchains_cc.bzl bug) Unknown vendor: %s" % vendor)
 
@@ -51,6 +47,8 @@ cc_toolchains.declare(
 
 def _eager_declare_toolchain_impl(rctx):
     """Eagerly declare the toolchain(...) to determine which registered toolchain is valid for the current platform."""
+    config = get_config_from_env_vars(rctx)
+
     if rctx.attr.vendor == "detect":
         host_constants = detect_host(rctx)
         target_triple = host_constants["target_triple"]
@@ -64,19 +62,12 @@ def _eager_declare_toolchain_impl(rctx):
     else:
         fail("(toolchains_cc.bzl bug) Unknown vendor: %s" % rctx.attr.vendor)
 
-    if rctx.attr.cxx_std_lib == "default" or rctx.attr.cxx_std_lib == "libc++":
-        cxx_std_lib = "libc++"
-    elif rctx.attr.cxx_std_lib == "libstdc++":
-        cxx_std_lib = "libstdc++"
-    else:
-        fail("(toolchains_cc.bzl bug) Unknown C++ standard library: %s" % rctx.attr.cxx_std_lib)
-
     rctx.template(
         "BUILD",
         rctx.attr._build_tpl,
         substitutions = {
             "%{toolchain_name}": rctx.original_name,
-            "%{cxx_std_lib}": cxx_std_lib,
+            "%{cxx_std_lib}": config["cxx_std_lib"],
             "%{target_triple}": target_triple,
             "%{bins_repo_name}": rctx.name + "_bins",
             "%{vendor}": vendor,
@@ -96,15 +87,9 @@ _lazy_download_bins = repository_rule(
             ],
             default = "detect",
         ),
-        "cxx_std_lib": attr.string(
-            mandatory = False,
-            doc = "The c++ standard library to use.",
-            values = [
-                "default",
-                "libc++",
-                "libstdc++",
-            ],
-            default = "default",
+        "toolchain_name": attr.string(
+            mandatory = True,
+            doc = "The name of the toolchain, used for registration.",
         ),
         "_build_tpl": attr.label(
             default = "@toolchains_cc//:bins.BUILD.tpl",
@@ -125,15 +110,9 @@ _eager_declare_toolchain = repository_rule(
             ],
             default = "detect",
         ),
-        "cxx_std_lib": attr.string(
-            mandatory = False,
-            doc = "The c++ standard library to use.",
-            values = [
-                "default",
-                "libc++",
-                "libstdc++",
-            ],
-            default = "default",
+        "toolchain_name": attr.string(
+            mandatory = True,
+            doc = "The name of the toolchain, used for registration.",
         ),
         "_build_tpl": attr.label(
             default = "@toolchains_cc//:toolchain.BUILD.tpl",
@@ -152,7 +131,6 @@ Accept the license by setting `accept_winsdk_license = True` in your toolchain d
 cc_toolchains.declare(
     name = "{}",
     vendor = "{}",
-    cxx_std_lib = "{}",
     accept_winsdk_license = True,
 )
 """.format(
@@ -176,12 +154,12 @@ cc_toolchains.declare(
             _eager_declare_toolchain(
                 name = declared_toolchain.name,
                 vendor = declared_toolchain.vendor,
-                cxx_std_lib = declared_toolchain.cxx_std_lib,
+                toolchain_name = declared_toolchain.name,
             )
             _lazy_download_bins(
                 name = declared_toolchain.name + "_bins",
                 vendor = declared_toolchain.vendor,
-                cxx_std_lib = declared_toolchain.cxx_std_lib,
+                toolchain_name = declared_toolchain.name,
             )
 
 cxx_toolchains = module_extension(
@@ -191,16 +169,6 @@ cxx_toolchains = module_extension(
             attrs = {
                 "accept_winsdk_license": attr.bool(
                     default = False,
-                ),
-                "cxx_std_lib": attr.string(
-                    mandatory = False,
-                    doc = "The c++ standard library to use.",
-                    values = [
-                        "default",
-                        "libc++",
-                        "libstdc++",
-                    ],
-                    default = "default",
                 ),
                 "name": attr.string(
                     mandatory = True,

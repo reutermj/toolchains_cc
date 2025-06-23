@@ -11,37 +11,21 @@ local_path_override(
 
 cxx_toolchains = use_extension("@toolchains_cc//:toolchains_cc.bzl", "cxx_toolchains")
 cxx_toolchains.declare(
-    name = "ubuntu_libcxx",
+    name = "ubuntu",
     vendor = "ubuntu",
-    cxx_std_lib = "libc++",
 )
 cxx_toolchains.declare(
-    name = "ubuntu_libstdcxx",
-    vendor = "ubuntu",
-    cxx_std_lib = "libstdc++",
-)
-cxx_toolchains.declare(
-    name = "alpine_libcxx",
+    name = "alpine",
     vendor = "alpine",
-    cxx_std_lib = "libc++",
-)
-cxx_toolchains.declare(
-    name = "alpine_libstdcxx",
-    vendor = "alpine",
-    cxx_std_lib = "libstdc++",
 )
 use_repo(
     cxx_toolchains,
-    "ubuntu_libcxx",
-    "ubuntu_libstdcxx",
-    "alpine_libcxx",
-    "alpine_libstdcxx",
+    "ubuntu",
+    "alpine",
 )
 
 register_toolchains(
-    "@alpine_libstdcxx",
-    "@alpine_libcxx",
-    "@ubuntu_libstdcxx",
-    "@ubuntu_libcxx",
+    "@ubuntu",
+    "@alpine",
     dev_dependency = True,
 )

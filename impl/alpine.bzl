@@ -62,14 +62,14 @@ def _extract_libcxx(rctx):
         output = "sysroot",
     )
 
-def extract_alpine(rctx):
+def extract_alpine(rctx, config):
     _extract_musl(rctx)
     _extract_libgcc(rctx)
     _extract_linux_sdk(rctx)
 
-    if rctx.attr.cxx_std_lib == "default" or rctx.attr.cxx_std_lib == "libc++":
+    if config["cxx_std_lib"] == "libc++":
         _extract_libcxx(rctx)
-    elif rctx.attr.cxx_std_lib == "libstdc++":
+    elif config["cxx_std_lib"] == "libstdc++":
         _extract_libstdcxx(rctx)
     else:
         fail("(toolchains_cc.bzl bug) Unknown C++ standard library: %s" % rctx.attr.cxx_std_lib)
