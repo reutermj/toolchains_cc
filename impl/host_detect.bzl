@@ -45,9 +45,11 @@ def _detect_host_platform_impl(rctx):
         "platform_constants.bzl",
         content = """VENDOR = "{}"
 LIBC_VERSION = "{}"
+TRIPLE = "{}"
 """.format(
             host_constants["vendor"],
             host_constants["libc_version"],
+            host_constants["target_triple"],
         ),
     )
 

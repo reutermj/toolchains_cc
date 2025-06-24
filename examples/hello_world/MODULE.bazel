@@ -12,20 +12,13 @@ local_path_override(
 cxx_toolchains = use_extension("@toolchains_cc//:toolchains_cc.bzl", "cxx_toolchains")
 cxx_toolchains.declare(
     name = "ubuntu",
-    vendor = "ubuntu",
-)
-cxx_toolchains.declare(
-    name = "alpine",
-    vendor = "alpine",
 )
 use_repo(
     cxx_toolchains,
     "ubuntu",
-    "alpine",
 )
 
 register_toolchains(
     "@ubuntu",
-    "@alpine",
     dev_dependency = True,
 )
