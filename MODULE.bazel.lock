@@ -137,6 +137,36 @@
   },
   "selectedYankedVersions": {},
   "moduleExtensions": {
+    "//:toolchains_cc.bzl%cxx_toolchains": {
+      "general": {
+        "bzlTransitiveDigest": "o5pWwuirPdJiVrtDbcH4yMJGg3CHP+/dUmPxNUb/8Qk=",
+        "usagesDigest": "O67lweSdHXshnQKbOC4YDgW1RPDGXFPtYm7nxV3q6ZA=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "toolchains_cc_default_toolchain": {
+            "repoRuleId": "@@//:toolchains_cc.bzl%eager_declare_toolchain",
+            "attributes": {
+              "toolchain_name": "toolchains_cc_default_toolchain"
+            }
+          },
+          "toolchains_cc_default_toolchain_bins": {
+            "repoRuleId": "@@//:toolchains_cc.bzl%lazy_download_bins",
+            "attributes": {
+              "toolchain_name": "toolchains_cc_default_toolchain"
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "",
+            "toolchains_cc_host_platform_constants",
+            "+_repo_rules+toolchains_cc_host_platform_constants"
+          ]
+        ]
+      }
+    },
     "@@rules_kotlin+//src/main/starlark/core/repositories:bzlmod_setup.bzl%rules_kotlin_extensions": {
       "general": {
         "bzlTransitiveDigest": "sFhcgPbDQehmbD1EOXzX4H1q/CD5df8zwG4kp4jbvr8=",

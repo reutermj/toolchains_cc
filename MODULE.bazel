@@ -9,3 +9,12 @@ detect_host_platform = use_repo_rule("@toolchains_cc//impl:host_detect.bzl", "de
 detect_host_platform(
     name = "toolchains_cc_host_platform_constants",
 )
+
+cxx_toolchains = use_extension("@toolchains_cc//:toolchains_cc.bzl", "cxx_toolchains")
+cxx_toolchains.declare(
+    name = "toolchains_cc_default_toolchain",
+)
+use_repo(
+    cxx_toolchains,
+    "toolchains_cc_default_toolchain",
+)

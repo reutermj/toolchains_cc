@@ -120,13 +120,21 @@ def _cxx_toolchains(module_ctx):
             # `_lazy_download_bins` only downloads the binaries when the toolchain
             # is actually used in a build.
             # more context: https://github.com/reutermj/toolchains_cc.bzl/issues/1
+
+            # TODO: not super happy with this special case
+            # it's needed to make the default toolchain env vars start with
+            # `toolchains_cc_` rather than `toolchains_cc_default_toolchain_`.
+            toolchain_name = declared_toolchain.name
+            if declared_toolchain.name == "toolchains_cc_default_toolchain":
+                toolchain_name = "toolchains_cc"
+
             _eager_declare_toolchain(
                 name = declared_toolchain.name,
-                toolchain_name = declared_toolchain.name,
+                toolchain_name = toolchain_name,
             )
             _lazy_download_bins(
                 name = declared_toolchain.name + "_bins",
-                toolchain_name = declared_toolchain.name,
+                toolchain_name = toolchain_name,
             )
 
 cxx_toolchains = module_extension(

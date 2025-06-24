@@ -9,16 +9,4 @@ local_path_override(
     path = "../..",
 )
 
-cxx_toolchains = use_extension("@toolchains_cc//:toolchains_cc.bzl", "cxx_toolchains")
-cxx_toolchains.declare(
-    name = "ubuntu",
-)
-use_repo(
-    cxx_toolchains,
-    "ubuntu",
-)
-
-register_toolchains(
-    "@ubuntu",
-    dev_dependency = True,
-)
+register_toolchains("@toolchains_cc", dev_dependency = True)
