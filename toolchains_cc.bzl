@@ -1,34 +1,11 @@
 load("//impl:alpine.bzl", "extract_alpine")
-load("//impl:config.bzl", "get_config_from_env_vars")
-load("//impl:host_detect.bzl", "detect_host")
+load("//impl:config.bzl", "get_config_from_env_vars", "repro_dump")
 load("//impl:ubuntu.bzl", "extract_ubuntu")
 
 def _lazy_download_bins_impl(rctx):
     """Lazily downloads only the toolchain binaries for the configured platform."""
     config = get_config_from_env_vars(rctx)
-
-    # TODO: revive the reproduce print
-    #     cxx_std_lib = config["cxx_std_lib"]
-    #     if rctx.attr.vendor == "detect":
-    #         host_constants = detect_host(rctx)
-    #         vendor = host_constants["vendor"]
-
-    #         # buildifier: disable=print
-    #         print("""
-    # Using detected toolchain. Reproduce with:
-
-    # cc_toolchains.declare(
-    #     name = "{}",
-    #     vendor = "{}",
-    #     cxx_std_lib = "{}",
-    # )
-    # """.format(
-    #             rctx.original_name[:-5],
-    #             vendor,
-    #             cxx_std_lib,
-    #         ))
-    #     else:
-    #         vendor = rctx.attr.vendor
+    repro_dump(rctx, config)
 
     # TODO: not a huge fan of vendor == "unknown" but it's how ubuntu distrubtions are packaged
     if config["vendor"] == "unknown":
