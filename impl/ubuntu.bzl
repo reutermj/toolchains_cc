@@ -1,3 +1,5 @@
+"""Utilities for extracting the Ubuntu Linux sysroot."""
+
 visibility(["//..."])
 
 def _extract_glibc(rctx):
@@ -63,6 +65,12 @@ def _extract_linux_sdk(rctx):
     )
 
 def extract_ubuntu(rctx, config):
+    """Extracts Ubuntu Linux sysroot components.
+
+    Args:
+        rctx: Repository context.
+        config: Toolchain configuration.
+    """
     _extract_glibc(rctx)
     _extract_libgcc(rctx)
     _extract_linux_sdk(rctx)

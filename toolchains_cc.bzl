@@ -1,3 +1,5 @@
+"""Defines the repo rules and module extension for managing C++ toolchains across different platforms."""
+
 load("//impl:alpine.bzl", "extract_alpine")
 load("//impl:config.bzl", "get_config_from_env_vars", "repro_dump")
 load("//impl:ubuntu.bzl", "extract_ubuntu")

@@ -1,3 +1,5 @@
+"""Utilities for extracting the Alpine Linux sysroot."""
+
 visibility(["//..."])
 
 def _extract_musl(rctx):
@@ -63,6 +65,12 @@ def _extract_libcxx(rctx):
     )
 
 def extract_alpine(rctx, config):
+    """Extracts Alpine Linux sysroot components.
+
+    Args:
+        rctx: Repository context.
+        config: Toolchain configuration.
+    """
     _extract_musl(rctx)
     _extract_libgcc(rctx)
     _extract_linux_sdk(rctx)

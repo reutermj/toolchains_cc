@@ -1,3 +1,5 @@
+"""Utilities for toolchain configurations."""
+
 load("@toolchains_cc_host_platform_constants//:platform_constants.bzl", "TRIPLE")
 
 SUPPORTED_CXX_STD_LIBS = [
@@ -11,6 +13,14 @@ SUPPORTED_TRIPLES = [
 ]
 
 def get_config_from_env_vars(rctx):
+    """Gets toolchain configurations from environment variables.
+
+    Args:
+        rctx: Repository context.
+
+    Returns:
+        A dictionary containing the configurations.
+    """
     cxx_std_lib_var = "{}_cxx_std_lib".format(rctx.attr.toolchain_name)
     cxx_std_lib = rctx.getenv(cxx_std_lib_var)
     if cxx_std_lib == None:

@@ -1,3 +1,5 @@
+"""Utilities for detecting features of the host platform."""
+
 visibility(["//..."])
 
 def detect_host(rctx):
