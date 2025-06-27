@@ -12,6 +12,8 @@ toolchain(
     target_compatible_with = [
         "@platforms//os:linux",
         "@platforms//cpu:x86_64",
+        "@toolchains_cc//c++:%{cxx_std_lib}",
+        "@toolchains_cc//vendor:%{vendor}",
     ],
     toolchain = ":host_cc_toolchain",
     toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",

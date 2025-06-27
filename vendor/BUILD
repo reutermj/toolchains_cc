@@ -1,19 +1,18 @@
-# TODO: need to rethink how to handle multiple toolchains in a single build graph
-# load("@toolchains_cc_host_platform_constants//:platform_constants.bzl", "VENDOR")
+load("@toolchains_cc_platform_defaults//:platform_constants.bzl", "VENDOR")
 
-# package(default_visibility = ["//visibility:public"])
+package(default_visibility = ["//visibility:public"])
 
-# constraint_setting(
-#     name = "vendor",
-#     default_constraint_value = VENDOR,
-# )
+constraint_setting(
+    name = "vendor",
+    default_constraint_value = VENDOR,
+)
 
-# constraint_value(
-#     name = "ubuntu",
-#     constraint_setting = ":vendor",
-# )
+constraint_value(
+    name = "unknown",
+    constraint_setting = ":vendor",
+)
 
-# constraint_value(
-#     name = "alpine",
-#     constraint_setting = ":vendor",
-# )
+constraint_value(
+    name = "alpine",
+    constraint_setting = ":vendor",
+)

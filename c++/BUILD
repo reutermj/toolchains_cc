@@ -1,17 +1,18 @@
-# TODO: need to rethink how to handle multiple toolchains in a single build graph
-# package(default_visibility = ["//visibility:public"])
+load("@toolchains_cc_platform_defaults//:platform_constants.bzl", "CXX_STD_LIB")
 
-# constraint_setting(
-#     name = "c++",
-#     default_constraint_value = "libstdc++",
-# )
+package(default_visibility = ["//visibility:public"])
 
-# constraint_value(
-#     name = "libc++",
-#     constraint_setting = ":c++",
-# )
+constraint_setting(
+    name = "c++",
+    default_constraint_value = CXX_STD_LIB,
+)
 
-# constraint_value(
-#     name = "libstdc++",
-#     constraint_setting = ":c++",
-# )
+constraint_value(
+    name = "libc++",
+    constraint_setting = ":c++",
+)
+
+constraint_value(
+    name = "libstdc++",
+    constraint_setting = ":c++",
+)

@@ -2,15 +2,7 @@
 
 visibility(["//..."])
 
-def detect_host(rctx):
-    """Detects the host platform.
-
-    Args:
-      rctx: The repository context.
-
-    Returns:
-      A dictionary containing the vendor, libc version, and target triple.
-    """
+def _detect_host(rctx):
     result = rctx.execute(["ldd", "--version"])
 
     ldd_output = result.stdout.lower()
@@ -40,7 +32,7 @@ def detect_host(rctx):
     }
 
 def _detect_host_platform_impl(rctx):
-    host_constants = detect_host(rctx)
+    host_constants = _detect_host(rctx)
 
     rctx.file("BUILD")
     rctx.file(

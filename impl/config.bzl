@@ -12,32 +12,38 @@ SUPPORTED_TRIPLES = [
     "x86_64-alpine-linux-musl",
 ]
 
-def get_config_from_env_vars(rctx):
+def get_config_from_env_vars(rctx, toolchain_name = None):
     """Gets toolchain configurations from environment variables.
 
     Args:
         rctx: Repository context.
+        toolchain_name: Name of the toolchain.
 
     Returns:
         A dictionary containing the configurations.
     """
-    cxx_std_lib_var = "{}_cxx_std_lib".format(rctx.attr.toolchain_name)
+    if toolchain_name == None:
+        toolchain_name = rctx.attr.toolchain_name
+
+    cxx_std_lib_var = "{}_cxx_std_lib".format(toolchain_name)
     cxx_std_lib = rctx.getenv(cxx_std_lib_var)
     if cxx_std_lib == None:
         cxx_std_lib = "libstdc++"
     if cxx_std_lib not in SUPPORTED_CXX_STD_LIBS:
         fail("Unrecognized cxx_std_lib: {}={}".format(cxx_std_lib_var, cxx_std_lib))
 
-    triple_var = "{}_triple".format(rctx.attr.toolchain_name)
+    triple_var = "{}_triple".format(toolchain_name)
     triple = rctx.getenv(triple_var)
     if triple == None:
         triple = TRIPLE
     if triple not in SUPPORTED_TRIPLES:
         fail("Unrecognized triple: {}={}".format(triple_var, triple))
     vendor = triple.split("-")[1]
+    libc_version = triple.split("-")[3]
 
     return {
         "cxx_std_lib": cxx_std_lib,
+        "libc_version": libc_version,
         "triple": triple,
         "vendor": vendor,
     }
