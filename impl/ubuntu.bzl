@@ -27,6 +27,10 @@ def _extract_libstdcxx(rctx):
         url = "https://github.com/reutermj/toolchains_cc.bzl/releases/download/binaries/libstdc++-12-dev_12.3.0-1ubuntu1.22.04_amd64.tar.xz",
         output = "sysroot",
     )
+    rctx.download_and_extract(
+        url = "https://github.com/reutermj/toolchains_cc/releases/download/binaries/libstdc++6_12.3.0-1ubuntu1.22.04_amd64.tar.xz",
+        output = "sysroot",
+    )
 
 def _extract_libcxx(rctx):
     rctx.download_and_extract(
