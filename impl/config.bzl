@@ -51,9 +51,11 @@ def get_config_from_env_vars(rctx, toolchain_name = None):
 def repro_dump(rctx, config):
     # buildifier: disable=print
     print("""
+--------============[[  Begin toolchains_cc repro dump  ]]============--------
 For reproducing this build, use the following configurations in your .bazelrc:
 common --repo_env={name}_triple={triple}
 common --repo_env={name}_cxx_std_lib={cxx_std_lib}
+--------============[[   End toolchains_cc repro dump   ]]============--------
 """.format(
         name = rctx.attr.toolchain_name,
         cxx_std_lib = config["cxx_std_lib"],
