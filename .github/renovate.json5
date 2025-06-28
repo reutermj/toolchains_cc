@@ -4,6 +4,89 @@
   ],
   separateMajorMinor: false,
   dependencyDashboard: true,
+  dependencyDashboardTitle: "🤖 Dependency Updates",
   automerge: true,
   semanticCommits: "enabled",
+  commitMessagePrefix: "deps:",
+  commitMessageAction: "update",
+  commitMessageTopic: "{{depName}}",
+  prTitle: "deps: update {{depName}} to {{newVersion}}",
+  prBodyDefinitions: {
+    Package: "{{depName}}",
+    Type: "{{depType}}",
+    Update: "{{updateType}}",
+    "Current value": "{{currentValue}}",
+    "New value": "{{newValue}}"
+  },
+  prBodyColumns: ["Package", "Type", "Update", "Current value", "New value"],
+  schedule: ["before 4am on Monday"],
+  timezone: "UTC",
+  labels: ["dependencies"],
+  reviewers: [],
+  assignees: [],
+  packageRules: [
+    {
+      // Group Bazel rules together
+      description: "Group Bazel rules updates",
+      matchPackagePatterns: ["^rules_", "bazel_skylib", "platforms"],
+      groupName: "bazel-rules",
+      commitMessageTopic: "Bazel rules",
+      prTitle: "deps: update Bazel rules",
+      schedule: ["before 4am on Monday"]
+    },
+    {
+      // Group GitHub Actions together
+      description: "Group GitHub Actions updates",
+      matchManagers: ["github-actions"],
+      groupName: "github-actions",
+      commitMessageTopic: "GitHub Actions",
+      prTitle: "deps: update GitHub Actions",
+      schedule: ["before 4am on Monday"]
+    },
+    {
+      // Auto-merge patch updates for Bazel rules
+      description: "Auto-merge patch updates for Bazel rules",
+      matchPackagePatterns: ["^rules_", "bazel_skylib", "platforms"],
+      matchUpdateTypes: ["patch"],
+      automerge: true,
+      automergeType: "pr",
+      requiredStatusChecks: null
+    },
+    {
+      // Auto-merge patch updates for GitHub Actions
+      description: "Auto-merge patch updates for GitHub Actions",
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["patch"],
+      automerge: true,
+      automergeType: "pr",
+      requiredStatusChecks: null
+    }
+  ],
+  // Enable Bazel support
+  enabledManagers: [
+    "bazel",
+    "bazel-module",
+    "github-actions"
+  ],
+  // Custom regex for version matching in shell scripts (optional)
+  regexManagers: [
+    {
+      description: "Update LLVM version in shell scripts",
+      fileMatch: ["\\.sh$"],
+      matchStrings: ["LLVM_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      depNameTemplate: "llvm-project",
+      datasourceTemplate: "github-releases",
+      lookupNameTemplate: "llvm/llvm-project",
+      versioningTemplate: "semver"
+    },
+    {
+      description: "Update LLVM version in download URLs",
+      fileMatch: ["\\.bzl$"],
+      matchStrings: ["url = \"https://github\\.com/reutermj/toolchains_cc\\.bzl/releases/download/binaries/llvm-(?<currentValue>\\d+\\.\\d+\\.\\d+)-"],
+      depNameTemplate: "llvm-binaries",
+      datasourceTemplate: "github-releases",
+      lookupNameTemplate: "llvm/llvm-project",
+      versioningTemplate: "semver"
+    }
+  ]
 }
