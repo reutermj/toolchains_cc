@@ -23,7 +23,7 @@ def _cxx_toolchains(module_ctx):
             # which toolchain is valid for the current platform.
             # `lazy_download_bins` only downloads the binaries when the toolchain
             # is actually used in a build.
-            # more context: https://github.com/reutermj/toolchains_cc.bzl/issues/1
+            # more context: https://github.com/reutermj/toolchains_cc/issues/1
 
             eager_declare_toolchain(
                 name = declared_toolchain.name,
