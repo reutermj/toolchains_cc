@@ -41,7 +41,15 @@ def get_config_from_env_vars(rctx, toolchain_name = None):
     vendor = triple.split("-")[1]
     libc_version = triple.split("-")[3]
 
+    accept_winsdk_license_var = "{}_accept_winsdk_license".format(toolchain_name)
+    accept_winsdk_license_str = rctx.getenv(accept_winsdk_license_var)
+    if accept_winsdk_license_str == None:
+        accept_winsdk_license = False
+    else:
+        accept_winsdk_license = accept_winsdk_license_str.lower() == "true"
+
     return {
+        "accept_winsdk_license": accept_winsdk_license,
         "cxx_std_lib": cxx_std_lib,
         "libc_version": libc_version,
         "triple": triple,

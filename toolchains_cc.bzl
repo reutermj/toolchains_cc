@@ -6,42 +6,24 @@ load("//impl:declare_tools.bzl", "lazy_download_bins")
 def _cxx_toolchains(module_ctx):
     for mod in module_ctx.modules:
         for declared_toolchain in mod.tags.declare:
-            # TODO: move to env vars
-            #             if declared_toolchain.vendor == "windows" and not declared_toolchain.accept_winsdk_license:
-            #                 fail(
-            #                     """
-            # Please view the Microsoft Visual Studio License terms: https://go.microsoft.com/fwlink/?LinkId=2086102.
-            # Accept the license by setting `accept_winsdk_license = True` in your toolchain declaration:
-            # cc_toolchains.declare(
-            #     name = "{}",
-            #     vendor = "{}",
-            #     accept_winsdk_license = True,
-            # )
-            # """.format(
-            #                         declared_toolchain.name,
-            #                         declared_toolchain.vendor,
-            #                         declared_toolchain.cxx_std_lib,
-            #                     ),
-            #                 )
-
-            # we need to use a module extension + two repository rules
-            # to enable lazy downloading of the toolchain binaries
-            # when registering many toolchains.
-            # repository rules arent allowed to call other repository rules,
-            # so we have to wrap the two repository rules in a module extension.
-            # `_eager_declare_toolchain` declares the toolchain(...) which is eagerly evaluated
-            # for every registered toolchain. This allows bazel to determime
-            # which toolchain is valid for the current platform.
-            # `_lazy_download_bins` only downloads the binaries when the toolchain
-            # is actually used in a build.
-            # more context: https://github.com/reutermj/toolchains_cc.bzl/issues/1
-
             # TODO: not super happy with this special case
             # it's needed to make the default toolchain env vars start with
             # `toolchains_cc_` rather than `toolchains_cc_default_toolchain_`.
             toolchain_name = declared_toolchain.name
             if declared_toolchain.name == "toolchains_cc_default_toolchain":
                 toolchain_name = "toolchains_cc"
+
+            # we need to use a module extension + two repository rules
+            # to enable lazy downloading of the toolchain binaries
+            # when registering many toolchains.
+            # repository rules arent allowed to call other repository rules,
+            # so we have to wrap the two repository rules in a module extension.
+            # `eager_declare_toolchain` declares the toolchain(...) which is eagerly evaluated
+            # for every registered toolchain. This allows bazel to determime
+            # which toolchain is valid for the current platform.
+            # `lazy_download_bins` only downloads the binaries when the toolchain
+            # is actually used in a build.
+            # more context: https://github.com/reutermj/toolchains_cc.bzl/issues/1
 
             eager_declare_toolchain(
                 name = declared_toolchain.name,
