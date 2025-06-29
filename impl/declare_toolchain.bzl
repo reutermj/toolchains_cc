@@ -1,4 +1,5 @@
 load("@rules_cc//cc/toolchains:args.bzl", "cc_args")
+load("//impl:config.bzl", "get_config_from_env_vars")
 # load("@rules_cc//cc/toolchains:toolchain.bzl", "cc_toolchain")
 
 def _declare_toolchain(name, visibility, cxx_std_lib, vendor, sysroot, all_tools, target_triple):
@@ -106,6 +107,9 @@ def _declare_toolchain(name, visibility, cxx_std_lib, vendor, sysroot, all_tools
 
 declare_toolchain = macro(
     attrs = {
+        # configurable = False is required because macros wrap configurable attrs in
+        # a select(...) which cant be used when inlining the labels and strings in
+        # the toolchain declaraltions.
         "cxx_std_lib": attr.string(mandatory = True, configurable = False),
         "vendor": attr.string(mandatory = True, configurable = False),
         "sysroot": attr.label(mandatory = True, configurable = False),
@@ -113,4 +117,61 @@ declare_toolchain = macro(
         "target_triple": attr.string(mandatory = True, configurable = False),
     },
     implementation = _declare_toolchain,
+)
+
+def _eager_declare_toolchain_impl(rctx):
+    """Eagerly declare the toolchain(...) to determine which registered toolchain is valid for the current platform."""
+    config = get_config_from_env_vars(rctx)
+
+    rctx.file(
+        "BUILD",
+        """
+load("@toolchains_cc//impl:declare_toolchain.bzl", "declare_toolchain")
+load("@rules_cc//cc/toolchains:toolchain.bzl", "cc_toolchain")
+declare_toolchain(
+    name = "{original_name}",
+    cxx_std_lib = "{cxx_std_lib}",
+    vendor = "{vendor}",
+    target_triple = "{target_triple}",
+    sysroot = "@@{bins_repo_name}//:{original_name}_bins.sysroot",
+    all_tools = "@@{bins_repo_name}//:{original_name}_bins.all_tools",
+    visibility = ["//visibility:public"],
+)
+
+# TODO: currently cant declare this in the macro because this rule creates
+#       a target that doesnt following the naming rules of macros.
+cc_toolchain(
+    name = "{original_name}_cc_toolchain",
+    args = [
+        ":{original_name}-no-canonical-prefixes",
+        ":{original_name}_target_triple",
+        ":{original_name}-sysroot-arg",
+        ":{original_name}_use_llvm_linker",
+        ":{original_name}_cxx_std_lib",
+    ],
+    enabled_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
+    known_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
+    tool_map = "@@{bins_repo_name}//:{original_name}_bins.all_tools",
+    visibility = ["//visibility:public"],
+)
+""".format(
+            original_name = rctx.original_name,
+            cxx_std_lib = config["cxx_std_lib"],
+            vendor = config["vendor"],
+            target_triple = config["triple"],
+            bins_repo_name = rctx.name + "_bins",
+        ),
+    )
+
+eager_declare_toolchain = repository_rule(
+    implementation = _eager_declare_toolchain_impl,
+    attrs = {
+        "toolchain_name": attr.string(
+            mandatory = True,
+            doc = "The name of the toolchain, used for registration.",
+        ),
+        "_build_tpl": attr.label(
+            default = "@toolchains_cc//:toolchain.BUILD.tpl",
+        ),
+    },
 )
