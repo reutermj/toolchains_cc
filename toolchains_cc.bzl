@@ -21,24 +21,62 @@ def _lazy_download_bins_impl(rctx):
         url = "https://github.com/reutermj/toolchains_cc.bzl/releases/download/binaries/llvm-19.1.7-linux-x86_64.tar.xz",
     )
 
-    rctx.template(
+    rctx.file(
         "BUILD",
-        rctx.attr._build_tpl,
+        """
+load("@toolchains_cc//impl:declare_tools.bzl", "declare_tools")
+declare_tools(
+    name = "{original_name}",
+    all_files = glob(["**"]),
+    visibility = ["//visibility:public"],
+)
+""".format(
+            original_name = rctx.original_name,
+        ),
     )
 
 def _eager_declare_toolchain_impl(rctx):
     """Eagerly declare the toolchain(...) to determine which registered toolchain is valid for the current platform."""
     config = get_config_from_env_vars(rctx)
-    rctx.template(
+
+    rctx.file(
         "BUILD",
-        rctx.attr._build_tpl,
-        substitutions = {
-            "%{toolchain_name}": rctx.original_name,
-            "%{cxx_std_lib}": config["cxx_std_lib"],
-            "%{target_triple}": config["triple"],
-            "%{bins_repo_name}": rctx.name + "_bins",
-            "%{vendor}": config["vendor"],
-        },
+        """
+load("@toolchains_cc//impl:declare_toolchain.bzl", "declare_toolchain")
+load("@rules_cc//cc/toolchains:toolchain.bzl", "cc_toolchain")
+declare_toolchain(
+    name = "{original_name}",
+    cxx_std_lib = "{cxx_std_lib}",
+    vendor = "{vendor}",
+    target_triple = "{target_triple}",
+    sysroot = "@@{bins_repo_name}//:{original_name}_bins.sysroot",
+    all_tools = "@@{bins_repo_name}//:{original_name}_bins.all_tools",
+    visibility = ["//visibility:public"],
+)
+
+# TODO: currently cant declare this in the macro because this rule creates
+#       a target that doesnt following the naming rules of macros.
+cc_toolchain(
+    name = "{original_name}_cc_toolchain",
+    args = [
+        ":{original_name}-no-canonical-prefixes",
+        ":{original_name}_target_triple",
+        ":{original_name}-sysroot-arg",
+        ":{original_name}_use_llvm_linker",
+        ":{original_name}_cxx_std_lib",
+    ],
+    enabled_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
+    known_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
+    tool_map = "@@{bins_repo_name}//:{original_name}_bins.all_tools",
+    visibility = ["//visibility:public"],
+)
+""".format(
+            original_name = rctx.original_name,
+            cxx_std_lib = config["cxx_std_lib"],
+            vendor = config["vendor"],
+            target_triple = config["triple"],
+            bins_repo_name = rctx.name + "_bins",
+        ),
     )
 
 _lazy_download_bins = repository_rule(
