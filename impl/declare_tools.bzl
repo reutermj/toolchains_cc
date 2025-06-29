@@ -122,6 +122,14 @@ def _lazy_download_bins_impl(rctx):
     config = get_config_from_env_vars(rctx)
     repro_dump(rctx, config)
 
+    if config["vendor"] == "windows" and not config["accept_winsdk_license"]:
+        fail(
+            """
+Please view the Microsoft Visual Studio License terms: https://go.microsoft.com/fwlink/?LinkId=2086102.
+Accept the license by setting `--repo_env={}_accept_winsdk_license=True` in your toolchain declaration.
+""".format(rctx.attr.toolchain_name),
+        )
+
     # TODO: not a huge fan of vendor == "unknown" but it's how ubuntu distrubtions are packaged
     if config["vendor"] == "unknown":
         extract_ubuntu(rctx, config)
