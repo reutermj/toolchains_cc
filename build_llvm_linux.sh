@@ -5,7 +5,7 @@ ROOT_DIR=$(pwd)
 
 # not super sure if all of these are necessary
 apk update
-apk add git coreutils diffutils \
+apk add --quiet git coreutils diffutils \
              musl-dev \
              gcc g++ binutils-dev \
              make cmake samurai \
@@ -52,7 +52,7 @@ mkdir $LLVM_PROJECT
 wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.src.tar.xz
 # --strip-components=1: the llvm tarball contains a top-level directory named llvm-project-<version>.src
 #                       we want to extract the contents of it directly into the llvm-project directory.
-tar --strip-components=1 -xvf llvm-project-${LLVM_VERSION}.src.tar.xz -C $LLVM_PROJECT
+tar --strip-components=1 -xf llvm-project-${LLVM_VERSION}.src.tar.xz -C $LLVM_PROJECT
 
 # to git apply patches, it needs to be a git repo
 # it takes way longer to git clone llvm than to download the tarball
