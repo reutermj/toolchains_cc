@@ -139,7 +139,7 @@ Accept the license by setting `--repo_env={}_accept_winsdk_license=True` in your
         fail("(toolchains_cc.bzl bug) Unknown vendor: %s" % config["vendor"])
 
     rctx.download_and_extract(
-        url = "https://github.com/reutermj/toolchains_cc.bzl/releases/download/binaries/llvm-19.1.7-linux-x86_64.tar.xz",
+        url = "https://github.com/reutermj/toolchains_cc/releases/download/binaries/llvm-19.1.7-linux-x86_64.tar.xz",
     )
 
     rctx.file(
