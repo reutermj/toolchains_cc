@@ -16,11 +16,5 @@ jobs:
             - name: what?
               run: ls
             
-            - name: what?
-              run: ls infra
-            
-            - name: what?
-              run: ls infra/llvm
-            
             - name: Build LLVM
-              run: ./infra/llvm/build_llvm_linux.sh
+              run: ./build_llvm_linux.sh
