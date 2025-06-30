@@ -1,0 +1,17 @@
+name: Build Clang
+
+on:
+    push:
+        branches: [ clang ]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest-16-cores
+        container:
+            image: alpine:latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            
+            - name: Build LLVM
+              run: ./infra/llvm/build_llvm_linux.sh
