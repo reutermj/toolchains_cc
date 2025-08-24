@@ -4,8 +4,8 @@ set -ex
 ROOT_DIR=$(pwd)
 
 # not super sure if all of these are necessary
-sudo apk update
-sudo apk add git coreutils diffutils sudo \
+apk update
+apk add git coreutils diffutils \
              musl-dev \
              gcc g++ binutils-dev \
              make cmake samurai \
