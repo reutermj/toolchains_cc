@@ -10,11 +10,17 @@ jobs:
         container:
             image: alpine:latest
         steps:
+            - name: Install dependencies
+              run: apk add --no-cache bash git
+            
             - name: Checkout code
               uses: actions/checkout@v4
             
+            - name: Make script executable
+              run: chmod +x build_llvm_linux.sh
+            
             - name: what?
-              run: ls
+              run: ls -la
             
             - name: Build LLVM
               run: ./build_llvm_linux.sh
