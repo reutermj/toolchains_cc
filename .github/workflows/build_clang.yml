@@ -13,5 +13,14 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
             
+            - name: what?
+              run: ls
+            
+            - name: what?
+              run: ls infra
+            
+            - name: what?
+              run: ls infra/llvm
+            
             - name: Build LLVM
               run: ./infra/llvm/build_llvm_linux.sh
