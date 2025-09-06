@@ -1,15 +1,54 @@
-# Use the official Alpine image as a parent image
-FROM alpine:latest
+FROM ubuntu:latest
 
-RUN apk update
-RUN apk add bash sudo
+# Install crosstool-ng dependencies
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install -y \
+        build-essential \
+        autoconf \
+        flex \
+        bison \
+        texinfo \
+        help2man \
+        file \
+        gawk \
+        libtool \
+        libtool-bin \
+        libncurses-dev \
+        python3 \
+        python3-dev \
+        unzip \
+        git \
+        wget \
+        curl \
+        sudo
 
-RUN adduser -D -s /bin/bash bazeler && \
-        echo "bazeler ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# Build and install crosstool-ng
+RUN git clone https://github.com/crosstool-ng/crosstool-ng /opt/crosstool-ng
+WORKDIR /opt/crosstool-ng
+RUN ./bootstrap && \
+    ./configure && \
+    make && \
+    make install
 
-COPY build_gcc_linux.sh /home/bazeler/build_gcc_linux.sh
-RUN chmod +x /home/bazeler/build_gcc_linux.sh
+# Create user 
+RUN useradd -m -s /bin/bash builder && \
+    usermod -aG sudo builder
+RUN echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER builder
+WORKDIR /home/builder
 
-USER bazeler
-WORKDIR /home/bazeler
-RUN ./build_gcc_linux.sh
+# Configure the toolchain
+RUN echo 'CT_CONFIG_VERSION="4"' > defconfig && \
+    echo 'CT_ARCH_X86=y' >> defconfig && \
+    echo 'CT_OMIT_TARGET_VENDOR=y' >> defconfig && \
+    echo 'CT_ARCH_64=y' >> defconfig && \
+    echo 'CT_STATIC_TOOLCHAIN=y' >> defconfig && \
+    echo 'CT_KERNEL_LINUX=y' >> defconfig && \
+    echo 'CT_GLIBC_KERNEL_VERSION_NONE=y' >> defconfig && \
+    echo 'CT_CC_GCC_LNK_HASH_STYLE_BOTH=y' >> defconfig && \
+    echo 'CT_CC_LANG_CXX=y' >> defconfig && \
+    echo 'CT_DEBUG_GDB=y' >> defconfig
+
+# Build the toolchain
+RUN ct-ng defconfig
+RUN ct-ng build
