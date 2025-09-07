@@ -83,10 +83,10 @@ RUN ct-ng build
 
 # Create tarballs of the toolchain components
 # Create bin tarball (contents of bin directory without the bin/ prefix)
-RUN cd /home/builder/x-tools/x86_64-linux-gnu && \
+RUN cd /home/builder/x-tools/x86_64-linux-${libc} && \
     XZ_OPT=-e9 tar cJf /home/builder/toolchain.tar.xz bin/ lib/ libexec/ share/
 
 # Create sysroot tarball (contents of sysroot directory without the sysroot/ prefix)
-RUN cd /home/builder/x-tools/x86_64-linux-gnu/x86_64-linux-gnu/sysroot && \
+RUN cd /home/builder/x-tools/x86_64-linux-${libc}/x86_64-linux-${libc}/sysroot && \
     XZ_OPT=-e9 tar cJf /home/builder/sysroot.tar.xz *
 
