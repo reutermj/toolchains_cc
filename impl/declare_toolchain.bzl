@@ -1,11 +1,22 @@
 load("@rules_cc//cc/toolchains:args.bzl", "cc_args")
 load("//impl:config.bzl", "get_config_from_env_vars")
-# load("@rules_cc//cc/toolchains:toolchain.bzl", "cc_toolchain")
+load("@rules_cc//cc/toolchains:toolchain.bzl", "cc_toolchain")
 
-def _declare_toolchain(name, visibility, cxx_std_lib, vendor, sysroot, all_tools, target_triple):
-    # buildifier: disable=unused-variable
-    _unused = all_tools
-
+# TODO: cant use symbolic macros here because cc_toolchain creates a target of the form: `_{}_cc_toolchain`.
+#       this violates the naming convention enforced by symbolic macros, but legacy macros have no such restriction.
+# Issue: https://github.com/reutermj/toolchains_cc/issues/26
+def declare_toolchain(name, visibility, cxx_std_lib, vendor, sysroot, all_tools, target_triple):
+    """Declares a CC toolchain with the specified configuration.
+    
+    Args:
+        name: The name of the toolchain
+        visibility: Visibility of the toolchain
+        cxx_std_lib: C++ standard library to use
+        vendor: Vendor name for the toolchain
+        sysroot: Path to the sysroot
+        all_tools: Map of all tools for the toolchain
+        target_triple: Target triple for cross-compilation
+    """
     native.toolchain(
         name = name,
         exec_compatible_with = [
@@ -23,22 +34,20 @@ def _declare_toolchain(name, visibility, cxx_std_lib, vendor, sysroot, all_tools
         visibility = visibility,
     )
 
-    # TODO: currently cant use a macro for this because this rule creates
-    #       a target named "_{}_cc_toolchain" which is not allowed in macros.
-    # cc_toolchain(
-    #     name = "{}_cc_toolchain".format(name),
-    #     args = [
-    #         ":{}-no-canonical-prefixes".format(name),
-    #         ":{}_target_triple".format(name),
-    #         ":{}-sysroot-arg".format(name),
-    #         ":{}_use_llvm_linker".format(name),
-    #         ":{}_cxx_std_lib".format(name),
-    #     ],
-    #     enabled_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
-    #     known_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
-    #     tool_map = all_tools,
-    #     visibility = visibility,
-    # )
+    cc_toolchain(
+        name = "{}_cc_toolchain".format(name),
+        args = [
+            ":{}-no-canonical-prefixes".format(name),
+            ":{}_target_triple".format(name),
+            ":{}-sysroot-arg".format(name),
+            ":{}_use_llvm_linker".format(name),
+            ":{}_cxx_std_lib".format(name),
+        ],
+        enabled_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
+        known_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
+        tool_map = all_tools,
+        visibility = visibility,
+    )
 
     # Bazel does not like absolute paths.
     # Clang will use absolute paths when reporting the include path for its headers causing bazel to error out.
@@ -105,20 +114,6 @@ def _declare_toolchain(name, visibility, cxx_std_lib, vendor, sysroot, all_tools
         visibility = visibility,
     )
 
-declare_toolchain = macro(
-    attrs = {
-        # configurable = False is required because macros wrap configurable attrs in
-        # a select(...) which cant be used when inlining the labels and strings in
-        # the toolchain declaraltions.
-        "cxx_std_lib": attr.string(mandatory = True, configurable = False),
-        "vendor": attr.string(mandatory = True, configurable = False),
-        "sysroot": attr.label(mandatory = True, configurable = False),
-        "all_tools": attr.label(mandatory = True, configurable = False),
-        "target_triple": attr.string(mandatory = True, configurable = False),
-    },
-    implementation = _declare_toolchain,
-)
-
 def _eager_declare_toolchain_impl(rctx):
     """Eagerly declare the toolchain(...) to determine which registered toolchain is valid for the current platform."""
     config = get_config_from_env_vars(rctx)
@@ -135,23 +130,6 @@ declare_toolchain(
     target_triple = "{target_triple}",
     sysroot = "@@{bins_repo_name}//:{original_name}_bins.sysroot",
     all_tools = "@@{bins_repo_name}//:{original_name}_bins.all_tools",
-    visibility = ["//visibility:public"],
-)
-
-# TODO: currently cant declare this in the macro because this rule creates
-#       a target that doesnt following the naming rules of macros.
-cc_toolchain(
-    name = "{original_name}_cc_toolchain",
-    args = [
-        ":{original_name}-no-canonical-prefixes",
-        ":{original_name}_target_triple",
-        ":{original_name}-sysroot-arg",
-        ":{original_name}_use_llvm_linker",
-        ":{original_name}_cxx_std_lib",
-    ],
-    enabled_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
-    known_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
-    tool_map = "@@{bins_repo_name}//:{original_name}_bins.all_tools",
     visibility = ["//visibility:public"],
 )
 """.format(
