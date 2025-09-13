@@ -5,27 +5,6 @@ bazel_dep(name = "rules_cc", version = "0.2.8")
 bazel_dep(name = "bazel_skylib", version = "1.8.1")
 bazel_dep(name = "platforms", version = "1.0.0")
 
-# TODO: improve this explanation
-# Use cases
-# * build c/c++ code for the host platform
-# * enable overriding the host platform defaults with environment variables
-# * use the default toolchain with the platform environment variables
-# * enable platform transitions to allow building for different platforms
-# To do this, we need to:
-# 1. Detect the host platform configurations and write them to constants as part of a repo rule
-# 2. Read the environment variable configurations, use host platform defaults if not set,
-#    and write them to constants as part of a separate repo rule
-# 3. In toolchains_cc, use the constants as the default for various `constraint_setting`s
-detect_host_platform = use_repo_rule("@toolchains_cc//impl:host_detect.bzl", "detect_host_platform")
-detect_host_platform(
-    name = "toolchains_cc_host_platform_constants",
-)
-
-platform_defaults = use_repo_rule("@toolchains_cc//impl:platform_defaults.bzl", "platform_defaults")
-platform_defaults(
-    name = "toolchains_cc_platform_defaults",
-)
-
 cxx_toolchains = use_extension("@toolchains_cc//:toolchains_cc.bzl", "cxx_toolchains")
 cxx_toolchains.declare(
     name = "toolchains_cc_default_toolchain",

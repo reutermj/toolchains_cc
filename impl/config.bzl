@@ -1,15 +1,12 @@
 """Utilities for toolchain configurations."""
 
-load("@toolchains_cc_host_platform_constants//:platform_constants.bzl", "TRIPLE")
-
 SUPPORTED_CXX_STD_LIBS = [
-    "libc++",
     "libstdc++",
 ]
 
 SUPPORTED_TRIPLES = [
-    "x86_64-unknown-linux-gnu",
-    "x86_64-alpine-linux-musl",
+    "x86_64-linux-gnu",
+    "x86_64-linux-musl",
 ]
 
 def get_config_from_env_vars(rctx, toolchain_name = None):
@@ -35,11 +32,14 @@ def get_config_from_env_vars(rctx, toolchain_name = None):
     triple_var = "{}_triple".format(toolchain_name)
     triple = rctx.getenv(triple_var)
     if triple == None:
-        triple = TRIPLE
+        triple = "x86_64-linux-gnu"
     if triple not in SUPPORTED_TRIPLES:
         fail("Unrecognized triple: {}={}".format(triple_var, triple))
-    vendor = triple.split("-")[1]
-    libc_version = triple.split("-")[3]
+
+    triple_split = triple.split("-")
+    arch = triple_split[0]
+    os = triple_split[1]
+    libc = triple_split[2]
 
     accept_winsdk_license_var = "{}_accept_winsdk_license".format(toolchain_name)
     accept_winsdk_license_str = rctx.getenv(accept_winsdk_license_var)
@@ -51,9 +51,10 @@ def get_config_from_env_vars(rctx, toolchain_name = None):
     return {
         "accept_winsdk_license": accept_winsdk_license,
         "cxx_std_lib": cxx_std_lib,
-        "libc_version": libc_version,
+        "arch": arch,
+        "os": os,
+        "libc": libc,
         "triple": triple,
-        "vendor": vendor,
     }
 
 def repro_dump(rctx, config):
