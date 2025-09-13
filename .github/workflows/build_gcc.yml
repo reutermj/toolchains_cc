@@ -1,0 +1,143 @@
+name: Build gcc
+
+on:
+    push:
+        branches: [ gcc ]
+
+env:
+    LIBC: gnu
+    LIBC_VERSION: ""
+    GCC_VERSION: 15
+    REBUILD_ID: 1
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        timeout-minutes: 480  # 8 hours for toolchain build
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v5.0.0
+            
+            - name: Install Dependencies
+              run: |
+                sudo apt update
+                sudo DEBIAN_FRONTEND=noninteractive apt install -y \
+                    build-essential \
+                    autoconf \
+                    flex \
+                    bison \
+                    texinfo \
+                    help2man \
+                    file \
+                    gawk \
+                    libtool \
+                    libtool-bin \
+                    libncurses-dev \
+                    python3 \
+                    python3-dev \
+                    unzip \
+                    git \
+                    wget \
+                    curl
+            
+            - name: Build and Install crosstool-ng
+              run: |
+                git clone https://github.com/crosstool-ng/crosstool-ng /opt/crosstool-ng
+                cd /opt/crosstool-ng
+                ./bootstrap
+                ./configure
+                make
+                sudo make install
+            
+            - name: Configure crosstool-ng
+              run: |
+                # Standard configs
+                echo 'CT_CONFIG_VERSION="4"' > defconfig
+                echo 'CT_ARCH_X86=y' >> defconfig
+                echo 'CT_OMIT_TARGET_VENDOR=y' >> defconfig
+                echo 'CT_ARCH_64=y' >> defconfig
+                echo 'CT_STATIC_TOOLCHAIN=y' >> defconfig
+                echo 'CT_KERNEL_LINUX=y' >> defconfig
+                echo 'CT_LOG_PROGRESS_BAR=n' >> defconfig
+                echo 'CT_PREFIX_DIR_RO=n' >> defconfig
+                echo 'CT_CC_LANG_CXX=y' >> defconfig
+                echo 'CT_DEBUG_GDB=y' >> defconfig
+                echo 'CT_CC_GCC_LNK_HASH_STYLE_BOTH=y' >> defconfig
+                
+                # GCC version configs
+                if [ "$GCC_VERSION" = "15" ]; then
+                    echo 'CT_GCC_V_15=y' >> defconfig
+                elif [ "$GCC_VERSION" = "14" ]; then
+                    echo 'CT_GCC_V_14=y' >> defconfig
+                    echo 'CT_GMP_EXTRA_CFLAGS="-std=gnu17"' >> defconfig
+                    echo 'CT_NCURSES_EXTRA_CFLAGS="-std=gnu17"' >> defconfig
+                elif [ "$GCC_VERSION" = "13" ]; then
+                    echo 'CT_GCC_V_13=y' >> defconfig
+                    echo 'CT_GMP_EXTRA_CFLAGS="-std=gnu17"' >> defconfig
+                    echo 'CT_NCURSES_EXTRA_CFLAGS="-std=gnu17"' >> defconfig
+                elif [ "$GCC_VERSION" = "12" ]; then
+                    echo 'CT_GCC_V_12=y' >> defconfig
+                    echo 'CT_GMP_EXTRA_CFLAGS="-std=gnu17"' >> defconfig
+                    echo 'CT_NCURSES_EXTRA_CFLAGS="-std=gnu17"' >> defconfig
+                else
+                    echo "Error: Unsupported gcc_version: $GCC_VERSION" >&2
+                    echo "Supported versions: 15, 14, 13, 12" >&2
+                    exit 1
+                fi
+                
+                # glibc configs
+                if [ "$LIBC" = "gnu" ]; then
+                    echo 'CT_GLIBC_KERNEL_VERSION_NONE=y' >> defconfig
+                    if [ -n "$LIBC_VERSION" ]; then
+                        echo "CT_GLIBC_V_$(echo $LIBC_VERSION | sed 's/\./_/g')=y" >> defconfig
+                    fi
+                fi
+                
+                # musl configs
+                if [ "$LIBC" = "musl" ]; then
+                    echo 'CT_LIBC_MUSL=y' >> defconfig
+                    if [ -n "$LIBC_VERSION" ]; then
+                        echo "CT_MUSL_V_$(echo $LIBC_VERSION | sed 's/\./_/g')=y" >> defconfig
+                    fi
+                fi
+            
+            - name: Current defconfig
+              run: cat defconfig
+            
+            - name: Build Toolchain
+              run: |
+                ct-ng defconfig
+                ct-ng build
+            
+            - name: Package Toolchain
+              run: |
+                gcc_full_version=$(./x-tools/x86_64-linux-${LIBC}/bin/x86_64-linux-${LIBC}-gcc --version | head -n1 | awk '{print $NF}')
+                cd ./x-tools/x86_64-linux-${LIBC}
+                
+                XZ_OPT=-e9 tar cJf ./gcc-${gcc_full_version}-x86_64-linux-${LIBC}-r${REBUILD_ID}.tar.xz \
+                    bin/ \
+                    libexec/ \
+                    x86_64-linux-${LIBC}/lib/ \
+                    x86_64-linux-${LIBC}/bin/
+                
+                XZ_OPT=-e9 tar cJf ./libgcc-${gcc_full_version}-x86_64-linux-${LIBC}-r${REBUILD_ID}.tar.xz \
+                    lib/
+                
+                XZ_OPT=-e9 tar cJf ./libstdcxx-${gcc_full_version}-x86_64-linux-${LIBC}-r${REBUILD_ID}.tar.xz \
+                    x86_64-linux-${LIBC}/include/ \
+                    x86_64-linux-${LIBC}/lib64/
+                
+                XZ_OPT=-e9 tar cJf ./sysroot-x86_64-linux-${LIBC}-r${REBUILD_ID}.tar.xz \
+                    x86_64-linux-${LIBC}/sysroot/
+            
+            - name: Upload Toolchain Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                name: gcc-toolchain-packages
+                path: |
+                  ./gcc-*.tar.xz
+                  ./libgcc-*.tar.xz
+                  ./libstdcxx-*.tar.xz
+                  ./sysroot-*.tar.xz
+                retention-days: 30
+

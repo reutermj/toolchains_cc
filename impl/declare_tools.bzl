@@ -2,9 +2,7 @@ load("@bazel_skylib//rules/directory:directory.bzl", "directory")
 load("@bazel_skylib//rules/directory:subdirectory.bzl", "subdirectory")
 load("@rules_cc//cc/toolchains:tool.bzl", "cc_tool")
 load("@rules_cc//cc/toolchains:tool_map.bzl", "cc_tool_map")
-load("//impl:alpine.bzl", "extract_alpine")
 load("//impl:config.bzl", "get_config_from_env_vars", "repro_dump")
-load("//impl:ubuntu.bzl", "extract_ubuntu")
 
 def _declare_tools(name, visibility, all_files):
     native.filegroup(
@@ -22,7 +20,7 @@ def _declare_tools(name, visibility, all_files):
     subdirectory(
         name = "{}.sysroot".format(name),
         parent = ":{}.root".format(name),
-        path = "sysroot",
+        path = "x86_64-linux-gnu/sysroot",
         visibility = visibility,
     )
 
@@ -42,70 +40,49 @@ def _declare_tools(name, visibility, all_files):
 
     cc_tool(
         name = "{}.ar_actions".format(name),
-        src = select({
-            "@platforms//os:windows": ":toolchain/bin/llvm-ar.exe",
-            "//conditions:default": ":toolchain/bin/llvm-ar",
-        }),
+        src = ":bin/x86_64-linux-gnu-ar",
         data = [":{}.all_files".format(name)],
         visibility = visibility,
     )
 
     cc_tool(
         name = "{}.assembly_actions".format(name),
-        src = select({
-            "@platforms//os:windows": ":toolchain/bin/clang++.exe",
-            "//conditions:default": ":toolchain/bin/clang++",
-        }),
+        src = ":bin/x86_64-linux-gnu-gcc",
         data = [":{}.all_files".format(name)],
         visibility = visibility,
     )
 
     cc_tool(
         name = "{}.c_compile".format(name),
-        src = select({
-            "@platforms//os:windows": ":toolchain/bin/clang.exe",
-            "//conditions:default": ":toolchain/bin/clang",
-        }),
+        src = ":bin/x86_64-linux-gnu-gcc",
         data = [":{}.all_files".format(name)],
         visibility = visibility,
     )
 
     cc_tool(
         name = "{}.cpp_compile_actions".format(name),
-        src = select({
-            "@platforms//os:windows": ":toolchain/bin/clang++.exe",
-            "//conditions:default": ":toolchain/bin/clang++",
-        }),
+        src = ":bin/x86_64-linux-gnu-g++",
         data = [":{}.all_files".format(name)],
         visibility = visibility,
     )
 
     cc_tool(
         name = "{}.link_actions".format(name),
-        src = select({
-            "@platforms//os:windows": ":toolchain/bin/clang++.exe",
-            "//conditions:default": ":toolchain/bin/clang++",
-        }),
+        src = ":bin/x86_64-linux-gnu-g++",
         data = [":{}.all_files".format(name)],
         visibility = visibility,
     )
 
     cc_tool(
         name = "{}.objcopy_embed_data".format(name),
-        src = select({
-            "@platforms//os:windows": ":toolchain/bin/llvm-objcopy.exe",
-            "//conditions:default": ":toolchain/bin/llvm-objcopy",
-        }),
+        src = ":bin/x86_64-linux-gnu-objcopy",
         data = [":{}.all_files".format(name)],
         visibility = visibility,
     )
 
     cc_tool(
         name = "{}.strip".format(name),
-        src = select({
-            "@platforms//os:windows": ":toolchain/bin/llvm-strip.exe",
-            "//conditions:default": ":toolchain/bin/llvm-strip",
-        }),
+        src = ":bin/x86_64-linux-gnu-strip",
         data = [":{}.all_files".format(name)],
         visibility = visibility,
     )
@@ -122,24 +99,21 @@ def _lazy_download_bins_impl(rctx):
     config = get_config_from_env_vars(rctx)
     repro_dump(rctx, config)
 
-    if config["vendor"] == "windows" and not config["accept_winsdk_license"]:
+    if config["os"] == "windows" and not config["accept_winsdk_license"]:
         fail(
             """
 Please view the Microsoft Visual Studio License terms: https://go.microsoft.com/fwlink/?LinkId=2086102.
 Accept the license by setting `--repo_env={}_accept_winsdk_license=True` in your toolchain declaration.
-""".format(rctx.attr.toolchain_name),
+""".format(rctx.attr.toolchain_name)
         )
 
-    # TODO: not a huge fan of vendor == "unknown" but it's how ubuntu distrubtions are packaged
-    if config["vendor"] == "unknown":
-        extract_ubuntu(rctx, config)
-    elif config["vendor"] == "alpine":
-        extract_alpine(rctx, config)
-    else:
-        fail("(toolchains_cc.bzl bug) Unknown vendor: %s" % config["vendor"])
-
+    # TODO: figure out how to package the toolchain and sysroot separately
+    #       currently the issue is that libstdc++ headers are outside the sysroot directory for who knows what reason....
     rctx.download_and_extract(
-        url = "https://github.com/reutermj/toolchains_cc/releases/download/binaries/llvm-19.1.7-linux-x86_64.tar.xz",
+        url = "https://github.com/reutermj/toolchains_cc/releases/download/binaries/toolchain.tar.xz",
+    )
+    rctx.download_and_extract(
+        url = "https://github.com/reutermj/toolchains_cc/releases/download/binaries/sysroot.tar.xz",
     )
 
     rctx.file(
