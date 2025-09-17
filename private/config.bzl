@@ -73,4 +73,18 @@ common --repo_env={name}_libc_version={libc_version}
 
 SUPPORT_MATRIX = {
     "x86_64-linux-gnu:2.28:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.29:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.30:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.31:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.32:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.33:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.34:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.35:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.36:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.37:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.38:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.39:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.40:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.41:gcc:15.2.0": True,
+    "x86_64-linux-gnu:2.42:gcc:15.2.0": True,
 }

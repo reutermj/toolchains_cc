@@ -1,0 +1,23 @@
+name: Buildifier
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  buildifier:
+    runs-on: ubuntu-latest
+    name: Run buildifier
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run buildifier
+        run: |
+          ./bazel run :buildifier.check
