@@ -10,7 +10,7 @@ GCC_FULL_VERSION=$("${OUTPUT_DIR}/bin/x86_64-linux-${LIBC}-gcc" --version | head
 
 # Create release name based on the specified format
 RELEASE_NAME=$(cat ${WORK_DIR}/release_name)
-COMMIT_SHA="1b5a2410b266af3bc7aaae0550e7d44ea9dcf878"
+COMMIT_SHA="5029c98c5aacb22442d8012596977516c418e575"
 
 # Create the release
 gh release create "${RELEASE_NAME}" \
