@@ -144,7 +144,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%cc_toolchains": {
       "general": {
-        "bzlTransitiveDigest": "XRP/rC5qQBj9ejYm+g4k3Siv5/J7x/KGxgTsrJYNZos=",
+        "bzlTransitiveDigest": "qT0Gt7DUVTNRaNjGXkvdLmrGrdDXL5etKZ36q/1vwZ4=",
         "usagesDigest": "YfaX2t5vYhiJB/9coUkgjETRqpceCNb0nxBDGxL1I4g=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
