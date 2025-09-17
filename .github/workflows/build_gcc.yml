@@ -8,7 +8,6 @@ permissions:
   # Required for uploading GitHub releases
   contents: write
   # Required for build provenance attestation
-  actions: read
   id-token: write
   attestations: write
 
@@ -21,7 +20,6 @@ env:
   
   GCC_VERSION: 15
   LIBC: gnu
-  LIBC_VERSION: 2.34
   REBUILD_ID: 1
 
 jobs:

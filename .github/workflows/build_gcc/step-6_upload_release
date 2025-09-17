@@ -7,17 +7,12 @@ if [[ -z "${GITHUB_TOKEN:-}" ]]; then
 fi
 
 GCC_FULL_VERSION=$("${OUTPUT_DIR}/bin/x86_64-linux-${LIBC}-gcc" --version | head -n1 | awk '{print $NF}')
-
-# Create release name based on the specified format
 RELEASE_NAME=$(cat ${WORK_DIR}/release_name)
-COMMIT_SHA="5029c98c5aacb22442d8012596977516c418e575"
 
-# Create the release
 gh release create "${RELEASE_NAME}" \
     ${ARTIFACT_DIR}/*.tar.xz \
     ${WORK_DIR}/build.log \
-    --repo https://github.com/reutermj/toolchains_cc \
-    --target "${COMMIT_SHA}" \
+    --repo=https://github.com/reutermj/toolchains_cc \
     --latest=false \
-    --title "${RELEASE_NAME}" \
-    --notes "GCC ${GCC_FULL_VERSION} toolchain for x86_64 Linux with ${LIBC} ${LIBC_VERSION}"
+    --title="${RELEASE_NAME}" \
+    --notes="GCC ${GCC_FULL_VERSION} toolchain for x86_64 Linux with ${LIBC} ${LIBC_VERSION}"
