@@ -1,0 +1,36 @@
+name: Publish to BCR
+
+on:
+  # Run the publish workflow after a successful release
+  # Will be triggered from the release.yaml workflow
+  workflow_call:
+    inputs:
+      tag_name:
+        required: true
+        type: string
+  # In case of problems, let release engineers retry by manually dispatching
+  # the workflow from the GitHub UI
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        required: true
+        type: string
+
+jobs:
+  publish:
+    uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@main
+    with:
+      tag_name: ${{ inputs.tag_name }}
+      # Replace with your fork of the bazel-central-registry
+      registry_fork: reutermj/bazel-central-registry
+      # Enable attestation support for provenance
+      attest: true
+    permissions:
+      contents: write
+      # Necessary if attest:true
+      id-token: write
+      # Necessary for attestations
+      attestations: write
+    secrets:
+      # Personal Access Token with workflow and repo permissions
+      publish_token: ${{ secrets.BCR_PUBLISH_TOKEN }}
