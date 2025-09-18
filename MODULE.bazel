@@ -2,7 +2,7 @@
 
 module(
     name = "toolchains_cc",
-    version = "2025.9.17",
+    version = "2025.9.18",
     bazel_compatibility = [">=7.0.0"],
     compatibility_level = 0,
 )
