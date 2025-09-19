@@ -19,16 +19,30 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Create release tag
-        id: create-tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./.github/workflows/create-release.sh
+      - name: Create source tarball
+        run: |
+          DATE=$(grep -o 'version = "[^"]*"' MODULE.bazel | cut -d '"' -f 2 | head -n 1)
+          SRC_TAR="toolchains_cc-$DATE.tar.gz"
+          git archive --format=tar.gz --output=$SRC_TAR main
+          echo "tag=$DATE" >> $GITHUB_OUTPUT
+          echo "release_source_tarball=$SRC_TAR" >> $GITHUB_ENV
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v3
         with:
           subject-path: ${{ env.release_source_tarball }}
+
+      - name: Download attestation
+        run: |
+          gh attestation download --repo reutermj/toolchains_cc ${{ env.release_source_tarball }} 
+          ls
+          mv ${{ env.release_source_tarball }}.jsonl ${{ env.release_source_tarball }}.intoto.jsonl || /bin/true
+
+      - name: Create release tag
+        id: create-tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/workflows/create-release.sh
 
   publish:
     needs: create-release
