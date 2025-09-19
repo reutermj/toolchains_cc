@@ -11,6 +11,7 @@ module.exports = {
                 'fix'
             ]
         ],
-        'body-max-line-length': [0]
+        'body-max-line-length': [0],
+        'subject-case': [0]
     }
 };
