@@ -40,7 +40,8 @@ def download_bins(rctx, config):
 DOWNLOAD_BASE_URL = "https://github.com/reutermj/toolchains_cc/releases/download"
 
 RELEASE_TO_DATE = {
-    # GCC 14.3.0
+    ## GCC 14.3.0
+    # glibc
     "x86_64-linux-gnu-2.28-gcc-14.3.0": "20250919",
     "x86_64-linux-gnu-2.29-gcc-14.3.0": "20250919",
     "x86_64-linux-gnu-2.30-gcc-14.3.0": "20250919",
@@ -57,7 +58,8 @@ RELEASE_TO_DATE = {
     "x86_64-linux-gnu-2.41-gcc-14.3.0": "20250919",
     "x86_64-linux-gnu-2.42-gcc-14.3.0": "20250919",
 
-    # GCC 15.2.0
+    ## GCC 15.2.0
+    # glibc
     "x86_64-linux-gnu-2.28-gcc-15.2.0": "20250917",
     "x86_64-linux-gnu-2.29-gcc-15.2.0": "20250917",
     "x86_64-linux-gnu-2.30-gcc-15.2.0": "20250917",
@@ -73,10 +75,13 @@ RELEASE_TO_DATE = {
     "x86_64-linux-gnu-2.40-gcc-15.2.0": "20250917",
     "x86_64-linux-gnu-2.41-gcc-15.2.0": "20250917",
     "x86_64-linux-gnu-2.42-gcc-15.2.0": "20250917",
+    # musl
+    "x86_64-linux-musl-1.2.5-gcc-15.2.0": "20250919",
 }
 
 TARBALL_TO_SHA256 = {
-    # GCC 14.3.0
+    ## GCC 14.3.0
+    # glibc
     "x86_64-linux-gnu-2.28-gcc-14.3.0-20250919.tar.xz": "08ad189eaff9916b448dce54eb6c036d34e855234622a366172a7ddb08f9f47e",
     "x86_64-linux-gnu-2.29-gcc-14.3.0-20250919.tar.xz": "3e73be3a7ff6b3e27fa43aa73e6c25f3aa417441738a78a7fd4f7893bbfe7fc3",
     "x86_64-linux-gnu-2.30-gcc-14.3.0-20250919.tar.xz": "833bf06dbf29fbf23ec8f7c8becbf0557971ddac349c1db730d3717ccdc66d63",
@@ -93,7 +98,8 @@ TARBALL_TO_SHA256 = {
     "x86_64-linux-gnu-2.41-gcc-14.3.0-20250919.tar.xz": "e2e47fb4eef5548793d4550c4d5618cd3b00e95bed4b2507a49c3d58401e7f7f",
     "x86_64-linux-gnu-2.42-gcc-14.3.0-20250919.tar.xz": "52632245e9a98f3186f1e0d1e8f849f5c65bf729c89d3393db64d625eb068a3a",
 
-    # GCC 15.2.0
+    ## GCC 15.2.0
+    # glibc
     "x86_64-linux-gnu-2.28-gcc-15.2.0-20250917.tar.xz": "8682c5ba40e75e735e4cc33fb6de413af5233482f2460b0a9eefbf6366f8fede",
     "x86_64-linux-gnu-2.29-gcc-15.2.0-20250917.tar.xz": "55eb640906968edcec2e043e44771235e0783d79ed7e439bb6c8f6cccda1eb9b",
     "x86_64-linux-gnu-2.30-gcc-15.2.0-20250917.tar.xz": "15e5ca6f03d1b013f3fe5ac8b0d192b4c6339df8c8af1852140bea67e7fc15e1",
@@ -109,4 +115,6 @@ TARBALL_TO_SHA256 = {
     "x86_64-linux-gnu-2.40-gcc-15.2.0-20250917.tar.xz": "e790919dfee8a139bf5900c930b65f7b37064268f7dd5ae8b71db1f44d5d9156",
     "x86_64-linux-gnu-2.41-gcc-15.2.0-20250917.tar.xz": "5e61350d827b983c214384f519ecd84deb713639ccc542d610f3534062e213f6",
     "x86_64-linux-gnu-2.42-gcc-15.2.0-20250917.tar.xz": "0db82980827155fef787c795b061c3cad64ab917efd9998d98eea6bda4e478ce",
+    # musl
+    "x86_64-linux-musl-1.2.5-gcc-15.2.0-20250919.tar.xz": "f21d588769c3732f8fe134947e360a7efd3266fa96939b36a2630458dac42f20",
 }

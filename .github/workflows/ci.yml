@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  gcc_15_2_0:
+  x86_64-linux-gnu-gcc_15_2_0:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,11 +29,35 @@ jobs:
       - name: Build with LIBC ${{ matrix.libc_version }}
         run: |
           ./bazel build \
+            --repo_env=toolchains_cc_target=x86_64-linux-gnu \
             --repo_env=toolchains_cc_libc_version=${{ matrix.libc_version }} \
             --repo_env=toolchains_cc_compiler_version=15.2.0 \
             //...
 
-  gcc_14_3_0:
+  x86_64-linux-musl-gcc_15_2_0:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        libc_version: [
+          "1.2.5",
+        ]
+      fail-fast: false  # Continue running other matrix jobs even if one fails
+
+    name: Check Build for gcc 15.2.0 musl ${{ matrix.libc_version }} on x86_64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Build with LIBC ${{ matrix.libc_version }}
+        run: |
+          ./bazel build \
+            --repo_env=toolchains_cc_target=x86_64-linux-musl \
+            --repo_env=toolchains_cc_libc_version=${{ matrix.libc_version }} \
+            --repo_env=toolchains_cc_compiler_version=15.2.0 \
+            //...
+
+  x86_64-linux-gnu-gcc_14_3_0:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -52,6 +76,7 @@ jobs:
       - name: Build with LIBC ${{ matrix.libc_version }}
         run: |
           ./bazel build \
+            --repo_env=toolchains_cc_target=x86_64-linux-gnu \
             --repo_env=toolchains_cc_libc_version=${{ matrix.libc_version }} \
             --repo_env=toolchains_cc_compiler_version=14.3.0 \
             //...
@@ -59,13 +84,13 @@ jobs:
   all-matrix-builds:
     runs-on: ubuntu-latest
     name: All matrix builds passed
-    needs: [gcc_14_3_0, gcc_15_2_0]
+    needs: [x86_64-linux-gnu-gcc_14_3_0, x86_64-linux-gnu-gcc_15_2_0, x86_64-linux-musl-gcc_15_2_0]
     if: always()
     
     steps:
       - name: Check matrix job results
         run: |
-          if [[ "${{ needs.gcc_14_3_0.result }}" != "success" || "${{ needs.gcc_15_2_0.result }}" != "success" ]]; then
+          if [[ "${{ needs.x86_64-linux-gnu-gcc_14_3_0.result }}" != "success" || "${{ needs.x86_64-linux-gnu-gcc_15_2_0.result }}" != "success" || "${{ needs.x86_64-linux-musl-gcc_15_2_0.result }}" != "success" ]]; then
             exit 1
           fi
 

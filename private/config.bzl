@@ -72,7 +72,7 @@ common --repo_env={name}_libc_version={libc_version}
     ))
 
 SUPPORT_MATRIX = {
-    # GCC 14.3.0
+    ## GCC 14.3.0
     "x86_64-linux-gnu:2.28:gcc:14.3.0": True,
     "x86_64-linux-gnu:2.29:gcc:14.3.0": True,
     "x86_64-linux-gnu:2.30:gcc:14.3.0": True,
@@ -89,7 +89,8 @@ SUPPORT_MATRIX = {
     "x86_64-linux-gnu:2.41:gcc:14.3.0": True,
     "x86_64-linux-gnu:2.42:gcc:14.3.0": True,
 
-    # GCC 15.2.0
+    ## GCC 15.2.0
+    # glibc
     "x86_64-linux-gnu:2.28:gcc:15.2.0": True,
     "x86_64-linux-gnu:2.29:gcc:15.2.0": True,
     "x86_64-linux-gnu:2.30:gcc:15.2.0": True,
@@ -105,4 +106,6 @@ SUPPORT_MATRIX = {
     "x86_64-linux-gnu:2.40:gcc:15.2.0": True,
     "x86_64-linux-gnu:2.41:gcc:15.2.0": True,
     "x86_64-linux-gnu:2.42:gcc:15.2.0": True,
+    # musl
+    "x86_64-linux-musl:1.2.5:gcc:15.2.0": True,
 }
