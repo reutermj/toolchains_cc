@@ -34,7 +34,7 @@ jobs:
     needs: create-release
     uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@main
     with:
-      tag_name: ${{ needs.create-release.outputs.release-tag }}
+      tag_name: ${{ needs.create-release.outputs.release_tag }}
       registry_fork: reutermj/bazel-central-registry
       attest: true
     permissions:
