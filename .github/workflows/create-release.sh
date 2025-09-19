@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euox pipefail
 
-DATE=$(date +'%Y.%-m.%-d')
+DATE=$(grep -o 'version = "[^"]*"' MODULE.bazel | cut -d '"' -f 2)
 SRC_TAR="toolchains_cc-$DATE.tar.gz"
 git archive --format=tar.gz --output=$SRC_TAR main
 gh release create "$DATE" \
