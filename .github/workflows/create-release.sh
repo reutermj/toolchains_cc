@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 DATE=$(date +'%Y.%-m.%-d')
 SRC_TAR="toolchains_cc-$DATE.tar.gz"
@@ -14,5 +14,5 @@ register_toolchains(\"@toolchains_cc\")
 \`\`\`"
 
 # Output the tag for the workflow
-echo "release_tag=$DATE" >> $GITHUB_OUTPUT
+echo "tag=$DATE" >> $GITHUB_OUTPUT
 echo "release_source_tarball=$SRC_TAR" >> $GITHUB_ENV
