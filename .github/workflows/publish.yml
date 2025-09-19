@@ -37,8 +37,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh attestation download --repo reutermj/toolchains_cc ${{ env.release_source_tarball }} 
-          ls
-          mv ${{ env.release_source_tarball }}.jsonl ${{ env.release_source_tarball }}.intoto.jsonl || /bin/true
+          attestation=$(ls *.jsonl | head -n 1)
+          cat $attestation
+          mv $attestation ${{ env.release_source_tarball }}.intoto.jsonl
 
       - name: Create release tag
         id: create-tag
