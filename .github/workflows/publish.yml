@@ -26,7 +26,7 @@ jobs:
         run: ./.github/workflows/create-release.sh
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v3
         with:
           subject-path: ${{ env.release_source_tarball }}
 
