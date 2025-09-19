@@ -60,10 +60,14 @@ jobs:
     runs-on: ubuntu-latest
     name: All matrix builds passed
     needs: [gcc_14_3_0, gcc_15_2_0]
+    if: always()
     
     steps:
-      - name: No-Op
-        run: /bin/true
+      - name: Check matrix job results
+        run: |
+          if [[ "${{ needs.gcc_14_3_0.result }}" != "success" || "${{ needs.gcc_15_2_0.result }}" != "success" ]]; then
+            exit 1
+          fi
 
   buildifier:
     runs-on: ubuntu-latest
