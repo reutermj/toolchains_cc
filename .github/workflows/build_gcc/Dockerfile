@@ -6,7 +6,6 @@ FROM ubuntu:latest
 #                  the supported values will differ between different commits of ct-ng.
 #   * LIBC: build a glibc or musl based toolchain
 #   * LIBC_VERSION: version of the specified libc to use. based on the supported versions ct-ng enables building.
-#   * REBUILD_ID: used to differentiate newer builds of an already supported toolchain for toolchains_cc releases.
 #   * GITHUB_TOKEN: the token used to upload artifacts to the release. will skip the upload if not provided
 
 # =================
@@ -40,7 +39,6 @@ RUN mkdir -p $SCRIPTS_DIR
 ARG GCC_VERSION=15
 ARG LIBC=gnu
 ARG LIBC_VERSION=2.34
-ARG REBUILD_ID=1
 
 # =====================
 # || Build Toolchain ||
