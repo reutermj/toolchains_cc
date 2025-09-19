@@ -20,6 +20,7 @@ jobs:
           fetch-depth: 0
 
       - name: Create source tarball
+        id: create-tag
         run: |
           DATE=$(grep -o 'version = "[^"]*"' MODULE.bazel | cut -d '"' -f 2 | head -n 1)
           SRC_TAR="toolchains_cc-$DATE.tar.gz"
@@ -42,7 +43,6 @@ jobs:
           mv $attestation ${{ env.release_source_tarball }}.intoto.jsonl
 
       - name: Create release tag
-        id: create-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./.github/workflows/create-release.sh
