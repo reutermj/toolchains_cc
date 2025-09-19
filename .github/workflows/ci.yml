@@ -29,3 +29,15 @@ jobs:
       - name: Build with LIBC ${{ matrix.libc_version }}
         run: |
           ./bazel build --repo_env=toolchains_cc_libc_version=${{ matrix.libc_version }} //...
+
+  buildifier:
+    runs-on: ubuntu-latest
+    name: Run buildifier
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Run buildifier
+        run: |
+          ./bazel run :buildifier.check

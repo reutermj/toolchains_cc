@@ -1,8 +1,24 @@
 name: Build gcc
 
 on:
-  push:
-    branches: [ gcc ]
+  workflow_dispatch:
+    inputs:
+      gcc_version:
+        description: 'GCC version to build'
+        required: true
+        default: '15'
+        type: string
+      libc:
+        description: 'Libc to use'
+        required: true
+        type: choice
+        options:
+        - gnu
+        - musl
+      libc_versions:
+        description: 'JSON array of libc versions for matrix'
+        required: true
+        type: string
 
 permissions:
   # Required for uploading GitHub releases
@@ -18,16 +34,16 @@ env:
   WORK_DIR: /tmp/toolchain/work
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_gcc
   
-  GCC_VERSION: 15
-  LIBC: gnu
-  REBUILD_ID: 1
+  GCC_VERSION: ${{ github.event.inputs.gcc_version }}
+  LIBC: ${{ github.event.inputs.libc }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        libc_version: ["2.34", "2.39"]
+        libc_version: ${{ fromJson(github.event.inputs.libc_versions) }}
+      fail-fast: false  # Continue running other matrix jobs even if one fails
     env:
       LIBC_VERSION: ${{ matrix.libc_version }}
 
