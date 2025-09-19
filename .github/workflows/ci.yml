@@ -30,6 +30,15 @@ jobs:
         run: |
           ./bazel build --repo_env=toolchains_cc_libc_version=${{ matrix.libc_version }} //...
 
+  all-matrix-builds:
+    runs-on: ubuntu-latest
+    name: All matrix builds passed
+    needs: [build]
+    
+    steps:
+      - name: No-Op
+        run: /bin/true
+
   buildifier:
     runs-on: ubuntu-latest
     name: Run buildifier
