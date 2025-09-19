@@ -41,3 +41,24 @@ jobs:
       - name: Run buildifier
         run: |
           ./bazel run :buildifier.check
+
+  commitlint:
+    runs-on: ubuntu-latest
+    name: Run commitlint
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install commitlint
+        run: npm install -g @commitlint/cli @commitlint/config-conventional
+
+      - name: Run commitlint
+        run: |
+          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.sha }} --verbose

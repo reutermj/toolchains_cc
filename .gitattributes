@@ -11,3 +11,4 @@ bazel export-ignore
 bazel.bat export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
+.commitlintrc.js export-ignore
