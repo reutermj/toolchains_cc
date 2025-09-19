@@ -28,19 +28,19 @@ jobs:
           echo "tag=$DATE" >> $GITHUB_OUTPUT
           echo "release_source_tarball=$SRC_TAR" >> $GITHUB_ENV
 
-      - name: Attest build provenance
-        uses: actions/attest-build-provenance@v3
-        with:
-          subject-path: ${{ env.release_source_tarball }}
+      # - name: Attest build provenance
+      #   uses: actions/attest-build-provenance@v3
+      #   with:
+      #     subject-path: ${{ env.release_source_tarball }}
 
-      - name: Download attestation
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh attestation download --repo reutermj/toolchains_cc ${{ env.release_source_tarball }} 
-          attestation=$(ls *.jsonl | head -n 1)
-          cat $attestation
-          mv $attestation ${{ env.release_source_tarball }}.intoto.jsonl
+      # - name: Download attestation
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     gh attestation download --repo reutermj/toolchains_cc ${{ env.release_source_tarball }} 
+      #     attestation=$(ls *.jsonl | head -n 1)
+      #     cat $attestation
+      #     mv $attestation ${{ env.release_source_tarball }}.intoto.jsonl
 
       - name: Create release tag
         env:
@@ -53,7 +53,7 @@ jobs:
     with:
       tag_name: ${{ needs.create-release.outputs.release-tag }}
       registry_fork: reutermj/bazel-central-registry
-      attest: true
+      attest: false # will try to get this working after first release
       tag_prefix: "" # defaults to "v"
     permissions:
       contents: write
