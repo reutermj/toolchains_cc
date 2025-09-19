@@ -40,6 +40,24 @@ def download_bins(rctx, config):
 DOWNLOAD_BASE_URL = "https://github.com/reutermj/toolchains_cc/releases/download"
 
 RELEASE_TO_DATE = {
+    # GCC 14.3.0
+    "x86_64-linux-gnu-2.28-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.29-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.30-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.31-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.32-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.33-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.34-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.35-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.36-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.37-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.38-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.39-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.40-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.41-gcc-14.3.0": "20250919",
+    "x86_64-linux-gnu-2.42-gcc-14.3.0": "20250919",
+
+    # GCC 15.2.0
     "x86_64-linux-gnu-2.28-gcc-15.2.0": "20250917",
     "x86_64-linux-gnu-2.29-gcc-15.2.0": "20250917",
     "x86_64-linux-gnu-2.30-gcc-15.2.0": "20250917",
@@ -58,6 +76,24 @@ RELEASE_TO_DATE = {
 }
 
 TARBALL_TO_SHA256 = {
+    # GCC 14.3.0
+    "x86_64-linux-gnu-2.28-gcc-14.3.0-20250919.tar.xz": "08ad189eaff9916b448dce54eb6c036d34e855234622a366172a7ddb08f9f47e",
+    "x86_64-linux-gnu-2.29-gcc-14.3.0-20250919.tar.xz": "3e73be3a7ff6b3e27fa43aa73e6c25f3aa417441738a78a7fd4f7893bbfe7fc3",
+    "x86_64-linux-gnu-2.30-gcc-14.3.0-20250919.tar.xz": "833bf06dbf29fbf23ec8f7c8becbf0557971ddac349c1db730d3717ccdc66d63",
+    "x86_64-linux-gnu-2.31-gcc-14.3.0-20250919.tar.xz": "130c6124a0a784836b525bbf82393f753cceba9854df4ee8d71c85edf7bd7b6b",
+    "x86_64-linux-gnu-2.32-gcc-14.3.0-20250919.tar.xz": "a3baec1cd96624daee97061dd33e82f33f11d4adbf226d549e7dd4179d3dc02c",
+    "x86_64-linux-gnu-2.33-gcc-14.3.0-20250919.tar.xz": "264c53835324ee6aaad2901e815f97a73e36287f579de017b6f7fcfc8b602111",
+    "x86_64-linux-gnu-2.34-gcc-14.3.0-20250919.tar.xz": "fa111edda3406c1ab6c190c76395512fd6efca9bd34c92833ecf5ba9686c8c63",
+    "x86_64-linux-gnu-2.35-gcc-14.3.0-20250919.tar.xz": "accdfd0e5eeca2eb01c70cdc3137ded99f1748136a5ab6c3ce056cbe89097d43",
+    "x86_64-linux-gnu-2.36-gcc-14.3.0-20250919.tar.xz": "853139f917a6a6ae9a004d49a35b55b704d574260dbe9c93b4c87625ff422121",
+    "x86_64-linux-gnu-2.37-gcc-14.3.0-20250919.tar.xz": "1710cd65d0d41174c9407144f9b1da18af828a5e0793efd69ffb4c5340c04137",
+    "x86_64-linux-gnu-2.38-gcc-14.3.0-20250919.tar.xz": "d18ac2d759a9e97a559671b79b3995360edfa6dcc2ad47bfbf8ffb8734a70172",
+    "x86_64-linux-gnu-2.39-gcc-14.3.0-20250919.tar.xz": "b95574a9167a31505aa03e7fcaf514836de5b863dd361ee5fa8be06a2420b6af",
+    "x86_64-linux-gnu-2.40-gcc-14.3.0-20250919.tar.xz": "5aab36c676c9a54f9ee6a5f8bb73df60a700969bfd21caaa8999c324c3390989",
+    "x86_64-linux-gnu-2.41-gcc-14.3.0-20250919.tar.xz": "e2e47fb4eef5548793d4550c4d5618cd3b00e95bed4b2507a49c3d58401e7f7f",
+    "x86_64-linux-gnu-2.42-gcc-14.3.0-20250919.tar.xz": "52632245e9a98f3186f1e0d1e8f849f5c65bf729c89d3393db64d625eb068a3a",
+
+    # GCC 15.2.0
     "x86_64-linux-gnu-2.28-gcc-15.2.0-20250917.tar.xz": "8682c5ba40e75e735e4cc33fb6de413af5233482f2460b0a9eefbf6366f8fede",
     "x86_64-linux-gnu-2.29-gcc-15.2.0-20250917.tar.xz": "55eb640906968edcec2e043e44771235e0783d79ed7e439bb6c8f6cccda1eb9b",
     "x86_64-linux-gnu-2.30-gcc-15.2.0-20250917.tar.xz": "15e5ca6f03d1b013f3fe5ac8b0d192b4c6339df8c8af1852140bea67e7fc15e1",

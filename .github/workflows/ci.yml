@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  gcc_15_2_0:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,12 +28,38 @@ jobs:
 
       - name: Build with LIBC ${{ matrix.libc_version }}
         run: |
-          ./bazel build --repo_env=toolchains_cc_libc_version=${{ matrix.libc_version }} //...
+          ./bazel build \
+            --repo_env=toolchains_cc_libc_version=${{ matrix.libc_version }} \
+            --repo_env=toolchains_cc_compiler_version=15.2.0 \
+            //...
+
+  gcc_14_3_0:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        libc_version: [
+          "2.28", "2.29", "2.30", "2.31", "2.32", "2.33", "2.34", 
+          "2.35", "2.36", "2.37", "2.38", "2.39", "2.40", "2.41", "2.42"
+        ]
+      fail-fast: false  # Continue running other matrix jobs even if one fails
+
+    name: Check Build for gcc 14.3.0 glibc ${{ matrix.libc_version }} on x86_64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Build with LIBC ${{ matrix.libc_version }}
+        run: |
+          ./bazel build \
+            --repo_env=toolchains_cc_libc_version=${{ matrix.libc_version }} \
+            --repo_env=toolchains_cc_compiler_version=14.3.0 \
+            //...
 
   all-matrix-builds:
     runs-on: ubuntu-latest
     name: All matrix builds passed
-    needs: [build]
+    needs: [gcc_14_3_0, gcc_15_2_0]
     
     steps:
       - name: No-Op
