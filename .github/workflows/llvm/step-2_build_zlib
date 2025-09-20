@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euox pipefail
+
+pushd ${ZLIB_DIR}
+
+# alpine doesnt build libz.a with -fPIC so we need to build it
+wget https://github.com/madler/zlib/releases/download/v${ZLIB_VERSION}/zlib-${ZLIB_VERSION}.tar.gz
+tar -xzf zlib-${ZLIB_VERSION}.tar.gz --strip-components=1
+CFLAGS="-fPIC" ./configure --static
+make
+sudo make install
+
+popd

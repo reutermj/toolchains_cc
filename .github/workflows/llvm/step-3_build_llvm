@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euox pipefail
+
+pushd ${LLVM_DIR}
+
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.src.tar.xz
+tar --strip-components=1 -xvf llvm-project-${LLVM_VERSION}.src.tar.xz
+
+cmake -G Ninja -S llvm -B build \
+    -DLLVM_ENABLE_PROJECTS="clang;lld" \
+    -DLIBCLANG_BUILD_STATIC=ON \
+    -DLLVM_BUILD_STATIC=ON \
+    -DLLVM_LINK_LLVM_DYLIB=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DLLVM_ENABLE_ZLIB=ON \
+    -DCMAKE_EXE_LINKER_FLAGS="-static" \
+    -DCMAKE_BUILD_TYPE=Release
+
+ninja -C build
+
+popd

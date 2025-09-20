@@ -2,52 +2,38 @@
 # when attempting glibc, it failed to link because clang uses some symbols that are only available when dynamic linking glibc
 FROM alpine:latest
 
-# Install crosstool-ng dependencies
-RUN apk update && \
-    apk add \
-        bash \
-        git \
-        coreutils \
-        diffutils \
-        sudo \
-        musl-dev \
-        gcc \
-        g++ \
-        binutils-dev \
-        make \
-        cmake \
-        samurai \
-        python3 \
-        py3-setuptools \
-        libffi-dev \
-        openssl-dev \
-        ncurses-dev \
-        libedit-dev \
-        libxml2-dev
-        # zlib-dev \
-        # zlib-static
+RUN apk update && apk add sudo
 
-# Create user 
+# =================
+# || Create User ||
+# =================
 RUN adduser -D -s /bin/bash builder && \
     adduser builder wheel
 RUN echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER builder
 WORKDIR /home/builder
 
-ARG llvm_version=21.1.1
-RUN wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${llvm_version}/llvm-project-${llvm_version}.src.tar.xz && \
-    mkdir llvm && \
-    tar --strip-components=1 -xvf llvm-project-${llvm_version}.src.tar.xz -C llvm
+# =======================
+# || Environment Setup ||
+# =======================
+ENV SCRIPTS_DIR="/tmp/scripts"
+ENV ZLIB_DIR="/tmp/zlib"
+ENV LLVM_DIR="/tmp/llvm"
 
-# -DLLVM_ENABLE_ZLIB=OFF shouldnt be necessary but alpine doesnt build libzlib.a with fpic leading to failures when linking it into .sos
-RUN cd llvm && \
-    cmake -G Ninja -S llvm -B build \
-      -DLLVM_ENABLE_PROJECTS="clang;lld" \
-      -DLIBCLANG_BUILD_STATIC=ON \
-      -DLLVM_BUILD_STATIC=ON \
-      -DLLVM_LINK_LLVM_DYLIB=OFF \
-      -DBUILD_SHARED_LIBS=OFF \
-      -DLLVM_ENABLE_ZLIB=OFF \
-      -DCMAKE_EXE_LINKER_FLAGS="-static" \
-      -DCMAKE_BUILD_TYPE=Release && \
-    ninja -C build
+RUN mkdir -p $SCRIPTS_DIR
+RUN mkdir -p $ZLIB_DIR
+RUN mkdir -p $LLVM_DIR
+
+# =====================
+# || Build Toolchain ||
+# =====================
+COPY step-1_install_dependencies $SCRIPTS_DIR/step-1_install_dependencies
+RUN $SCRIPTS_DIR/step-1_install_dependencies
+
+ARG ZLIB_VERSION=1.3.1
+COPY step-2_build_zlib $SCRIPTS_DIR/step-2_build_zlib
+RUN $SCRIPTS_DIR/step-2_build_zlib
+
+ARG LLVM_VERSION=21.1.1
+COPY step-3_build_llvm $SCRIPTS_DIR/step-3_build_llvm
+RUN $SCRIPTS_DIR/step-3_build_llvm
