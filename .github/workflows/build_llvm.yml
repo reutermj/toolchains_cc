@@ -25,6 +25,7 @@ env:
   ZLIB_DIR: /tmp/zlib
   LLVM_DIR: /tmp/llvm
   ARTIFACT_DIR: /tmp/toolchain/artifacts
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/gcc
   
   ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
   LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
@@ -32,9 +33,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: alpine:latest
-      options: --user root
 
     steps:
       - name: Checkout repository
@@ -45,7 +43,6 @@ jobs:
           mkdir -p $ZLIB_DIR
           mkdir -p $LLVM_DIR
           mkdir -p $ARTIFACT_DIR
-          echo "SCRIPTS_DIR=$(pwd)/.github/workflows/llvm" >> $GITHUB_ENV
       
       - name: Install Dependencies
         run: $SCRIPTS_DIR/step-1_install_dependencies

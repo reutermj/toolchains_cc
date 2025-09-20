@@ -1,14 +1,14 @@
 # needs to be musl based to statically link
 # when attempting glibc, it failed to link because clang uses some symbols that are only available when dynamic linking glibc
-FROM alpine:latest
-
-RUN apk update && apk add sudo
+FROM ubuntu:latest
 
 # =================
 # || Create User ||
 # =================
-RUN adduser -D -s /bin/bash builder && \
-    adduser builder wheel
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y sudo gh
+
+RUN useradd -m -s /bin/bash builder && \
+    usermod -aG sudo builder
 RUN echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER builder
 WORKDIR /home/builder
@@ -19,10 +19,14 @@ WORKDIR /home/builder
 ENV SCRIPTS_DIR="/tmp/scripts"
 ENV ZLIB_DIR="/tmp/zlib"
 ENV LLVM_DIR="/tmp/llvm"
+ENV GCC_DIR="/tmp/gcc"
+ENV GCC_SYSROOT="${GCC_DIR}/x86_64-linux-musl/sysroot/"
+ENV GCC_BINS="${GCC_DIR}/bin/"
 
 RUN mkdir -p $SCRIPTS_DIR
 RUN mkdir -p $ZLIB_DIR
 RUN mkdir -p $LLVM_DIR
+RUN mkdir -p $GCC_DIR
 
 # =====================
 # || Build Toolchain ||
