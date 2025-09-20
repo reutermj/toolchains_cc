@@ -32,7 +32,7 @@ env:
   ARTIFACT_DIR: /tmp/toolchain/artifacts
   OUTPUT_DIR: /tmp/toolchain/output
   WORK_DIR: /tmp/toolchain/work
-  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_gcc
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/gcc
   
   GCC_VERSION: ${{ github.event.inputs.gcc_version }}
   LIBC: ${{ github.event.inputs.libc }}

@@ -1,0 +1,57 @@
+name: Build LLVM/Clang
+
+on:
+  workflow_dispatch:
+    inputs:
+      llvm_version:
+        description: 'LLVM version to build'
+        required: true
+        default: '21.1.1'
+        type: string
+      zlib_version:
+        description: 'zlib version to build'
+        required: true
+        default: '1.3.1'
+        type: string
+
+permissions:
+  # Required for uploading GitHub releases
+  contents: write
+  # Required for build provenance attestation
+  id-token: write
+  attestations: write
+
+env:
+  ZLIB_DIR: /tmp/zlib
+  LLVM_DIR: /tmp/llvm
+  ARTIFACT_DIR: /tmp/toolchain/artifacts
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/llvm
+  
+  ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
+  LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: alpine:latest
+      options: --user root
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5.0.0
+      
+      - name: Create Directories
+        run: |
+          mkdir -p $ZLIB_DIR
+          mkdir -p $LLVM_DIR
+          mkdir -p $ARTIFACT_DIR
+      
+      - name: Install Dependencies
+        run: $SCRIPTS_DIR/step-1_install_dependencies
+      
+      - name: Build zlib
+        run: $SCRIPTS_DIR/step-2_build_zlib
+      
+      - name: Build LLVM
+        run: $SCRIPTS_DIR/step-3_build_llvm
