@@ -25,7 +25,7 @@ env:
   ZLIB_DIR: /tmp/zlib
   LLVM_DIR: /tmp/llvm
   ARTIFACT_DIR: /tmp/toolchain/artifacts
-  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/gcc
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/llvm
   
   ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
   LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
