@@ -56,4 +56,7 @@ if [ "$LIBC" = "musl" ]; then
     echo "CT_MUSL_V_$(echo "$LIBC_VERSION" | sed 's/\./_/g')=y"      >> defconfig
 fi
 
+# print out the final config for debugging
+cat defconfig
+
 popd

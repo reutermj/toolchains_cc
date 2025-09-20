@@ -36,10 +36,6 @@ RUN mkdir -p $OUTPUT_DIR
 RUN mkdir -p $WORK_DIR
 RUN mkdir -p $SCRIPTS_DIR
 
-ARG GCC_VERSION=15
-ARG LIBC=gnu
-ARG LIBC_VERSION=2.34
-
 # =====================
 # || Build Toolchain ||
 # =====================
@@ -49,6 +45,9 @@ RUN $SCRIPTS_DIR/step-1_install_dependencies
 COPY step-2_build_crosstool_ng $SCRIPTS_DIR/step-2_build_crosstool_ng
 RUN $SCRIPTS_DIR/step-2_build_crosstool_ng
 
+ARG GCC_VERSION=15
+ARG LIBC=musl
+ARG LIBC_VERSION=1.2.5
 COPY step-3_configure_toolchain $SCRIPTS_DIR/step-3_configure_toolchain
 RUN $SCRIPTS_DIR/step-3_configure_toolchain
 
