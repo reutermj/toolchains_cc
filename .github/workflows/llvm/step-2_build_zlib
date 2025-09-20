@@ -3,11 +3,17 @@ set -euox pipefail
 
 pushd ${ZLIB_DIR}
 
-# alpine doesnt build libz.a with -fPIC so we need to build it
 wget https://github.com/madler/zlib/releases/download/v${ZLIB_VERSION}/zlib-${ZLIB_VERSION}.tar.gz
 tar -xzf zlib-${ZLIB_VERSION}.tar.gz --strip-components=1
-CFLAGS="-fPIC" ./configure --static
+
+export PATH=${GCC_BINS}:$PATH
+export CC="${GCC_BINS}/x86_64-linux-musl-gcc"
+export CXX="${GCC_BINS}/x86_64-linux-musl-g++"
+export CFLAGS="-fPIC --sysroot=${GCC_SYSROOT}"
+export CXXFLAGS="--sysroot=${GCC_SYSROOT}"
+
+./configure --static --prefix=${GCC_SYSROOT}/usr
 make
-sudo make install
+make install
 
 popd

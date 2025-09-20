@@ -1,23 +1,16 @@
-#!/bin/sh
-# gotta use sh here because alpine doesnt ship with
+#!/bin/bash
 
-sudo apk update
-sudo apk add \
-    bash \
+sudo apt update
+DEBIAN_FRONTEND=noninteractive sudo apt install -y \
+    build-essential \
     git \
-    coreutils \
-    diffutils \
-    musl-dev \
-    gcc \
-    g++ \
-    binutils-dev \
-    make \
-    cmake \
-    samurai \
+    ninja-build \
     python3 \
-    py3-setuptools \
-    libffi-dev \
-    openssl-dev \
-    ncurses-dev \
-    libedit-dev \
-    libxml2-dev
+    cmake \
+    wget \
+    curl
+
+pushd $GCC_DIR
+wget https://github.com/reutermj/toolchains_cc/releases/download/x86_64-linux-musl-1.2.5-gcc-15.2.0-20250919/x86_64-linux-musl-1.2.5-gcc-15.2.0-20250919.tar.xz
+tar xvf x86_64-linux-musl-1.2.5-gcc-15.2.0-20250919.tar.xz
+popd
