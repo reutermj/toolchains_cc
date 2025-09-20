@@ -25,7 +25,6 @@ env:
   ZLIB_DIR: /tmp/zlib
   LLVM_DIR: /tmp/llvm
   ARTIFACT_DIR: /tmp/toolchain/artifacts
-  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/llvm
   
   ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
   LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
@@ -46,6 +45,7 @@ jobs:
           mkdir -p $ZLIB_DIR
           mkdir -p $LLVM_DIR
           mkdir -p $ARTIFACT_DIR
+          echo "SCRIPTS_DIR=$(pwd)/.github/workflows/llvm" >> $GITHUB_ENV
       
       - name: Install Dependencies
         run: $SCRIPTS_DIR/step-1_install_dependencies
