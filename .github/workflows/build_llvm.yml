@@ -27,8 +27,8 @@ env:
   ARTIFACT_DIR: /tmp/toolchain/artifacts
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/llvm
   GCC_DIR: "/tmp/gcc"
-  GCC_SYSROOT: "${GCC_DIR}/x86_64-linux-musl/sysroot/"
-  GCC_BINS: "${GCC_DIR}/bin/"
+  GCC_SYSROOT: "/tmp/gcc/x86_64-linux-musl/sysroot/"
+  GCC_BINS: "/tmp/gcc/bin/"
   
   ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
   LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
