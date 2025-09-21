@@ -24,6 +24,8 @@ def declare_toolchain(name, visibility, sysroot, all_tools):
         args = [
             ":{}_no_canonical_prefixes".format(name),
             ":{}_sysroot".format(name),
+            ":{}_target".format(name),
+            ":{}_fuse-ld".format(name),
         ],
         enabled_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
         known_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
@@ -47,7 +49,7 @@ def declare_toolchain(name, visibility, sysroot, all_tools):
         ],
         args = [
             "-no-canonical-prefixes",
-            "-fno-canonical-system-headers",  # gcc only? yes, need to configure this when adding clang support
+            # "-fno-canonical-system-headers",  # gcc only? yes, need to configure this when adding clang support
         ],
         visibility = ["//visibility:private"],
     )
@@ -59,10 +61,30 @@ def declare_toolchain(name, visibility, sysroot, all_tools):
             "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
             "@rules_cc//cc/toolchains/actions:link_actions",
         ],
-        args = ["--sysroot={sysroot}"],
+        args = ["--sysroot", "{sysroot}"],
         format = {
             "sysroot": sysroot,
         },
+        visibility = ["//visibility:private"],
+    )
+
+    cc_args(
+        name = "{}_fuse-ld".format(name),
+        actions = [
+            "@rules_cc//cc/toolchains/actions:link_actions",
+        ],
+        args = ["-fuse-ld=lld"],
+        visibility = ["//visibility:private"],
+    )
+
+    cc_args(
+        name = "{}_target".format(name),
+        actions = [
+            "@rules_cc//cc/toolchains/actions:c_compile",
+            "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
+            "@rules_cc//cc/toolchains/actions:link_actions",
+        ],
+        args = ["-target", "x86_64-linux-gnu"],
         visibility = ["//visibility:private"],
     )
 

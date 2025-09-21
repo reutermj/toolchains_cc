@@ -9,32 +9,36 @@ def download_bins(rctx, config):
       rctx: The lazy_download_bins repository context.
       config: The configuration dictionary.
     """
-    release_name = "{target}-{libc_version}-gcc-{compiler_version}".format(
-        compiler_version = config["compiler_version"],
-        target = config["target"],
-        libc_version = config["libc_version"],
-    )
-    release_date = RELEASE_TO_DATE[release_name]
+    # release_name = "{target}-{libc_version}-gcc-{compiler_version}".format(
+    #     compiler_version = config["compiler_version"],
+    #     target = config["target"],
+    #     libc_version = config["libc_version"],
+    # )
+    # release_date = RELEASE_TO_DATE[release_name]
 
-    release_url = "{base_url}/{release_name}-{release_date}".format(
-        base_url = DOWNLOAD_BASE_URL,
-        release_name = release_name,
-        release_date = release_date,
-    )
+    # release_url = "{base_url}/{release_name}-{release_date}".format(
+    #     base_url = DOWNLOAD_BASE_URL,
+    #     release_name = release_name,
+    #     release_date = release_date,
+    # )
 
-    tarball_name = "{target}-{libc_version}-gcc-{compiler_version}-{release_date}.tar.xz".format(
-        compiler_version = config["compiler_version"],
-        target = config["target"],
-        libc_version = config["libc_version"],
-        release_date = release_date,
-    )
+    # tarball_name = "{target}-{libc_version}-gcc-{compiler_version}-{release_date}.tar.xz".format(
+    #     compiler_version = config["compiler_version"],
+    #     target = config["target"],
+    #     libc_version = config["libc_version"],
+    #     release_date = release_date,
+    # )
+
+    # rctx.download_and_extract(
+    #     url = "{release_url}/{tarball_name}".format(
+    #         release_url = release_url,
+    #         tarball_name = tarball_name,
+    #     ),
+    #     sha256 = TARBALL_TO_SHA256[tarball_name],
+    # )
 
     rctx.download_and_extract(
-        url = "{release_url}/{tarball_name}".format(
-            release_url = release_url,
-            tarball_name = tarball_name,
-        ),
-        sha256 = TARBALL_TO_SHA256[tarball_name],
+        url = "https://github.com/reutermj/toolchains_cc_old/releases/download/testing/clang-symlinked.tar.xz",
     )
 
 DOWNLOAD_BASE_URL = "https://github.com/reutermj/toolchains_cc/releases/download"

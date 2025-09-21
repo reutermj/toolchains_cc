@@ -29,13 +29,13 @@ def _declare_tools(name, visibility, all_files, target):
 
     tool_map = {}
     tools = [
-        ("ar_actions", "ar"),
-        ("assembly_actions", "gcc"),
-        ("c_compile", "gcc"),
-        ("cpp_compile_actions", "g++"),
-        ("link_actions", "g++"),
-        ("objcopy_embed_data", "objcopy"),
-        ("strip", "strip"),
+        # ("ar_actions", "ar"),
+        ("assembly_actions", "clang"),
+        ("c_compile", "clang"),
+        ("cpp_compile_actions", "clang++"),
+        ("link_actions", "clang++"),
+        ("objcopy_embed_data", "llvm-objcopy"),
+        ("strip", "llvm-strip"),
     ]
 
     for (action, tool) in tools:
@@ -43,7 +43,7 @@ def _declare_tools(name, visibility, all_files, target):
         tool_map["@rules_cc//cc/toolchains/actions:{}".format(action)] = target_name
         cc_tool(
             name = target_name,
-            src = ":bin/{}-{}".format(target, tool),
+            src = ":bin/{}".format(tool),
             data = [all_files_target],
             visibility = ["//visibility:private"],
         )

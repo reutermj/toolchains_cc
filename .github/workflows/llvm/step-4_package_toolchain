@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd ${ARTIFACTS_DIR}
+
+RELEASE_NAME="x86_64-linux-llvm-${LLVM_VERSION}-$(date +%Y%m%d)"
+echo $RELEASE_NAME > ${ARTIFACTS_DIR}/release_name
+
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${RELEASE_NAME}.tar.xz" \
+    bin/clang \
+    bin/clang++ \
+    bin/clang-21 \
+    bin/llvm-ar \
+    bin/llvm-objcopy \
+    bin/llvm-strip \
+    lib/clang/
+
+popd

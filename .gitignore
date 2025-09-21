@@ -1,4 +1,2 @@
 bazel-*
 .vscode
-examples/hello_world/MODULE.bazel.lock
-ignored

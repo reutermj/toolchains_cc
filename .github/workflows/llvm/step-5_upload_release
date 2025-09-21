@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+    echo "GITHUB_TOKEN is not set, exiting"
+    exit 0
+fi
+
+RELEASE_NAME=$(cat ${ARTIFACTS_DIR}/release_name)
+
+gh release create "${RELEASE_NAME}" \
+    ${ARTIFACTS_DIR}/*.tar.xz \
+    --repo=https://github.com/reutermj/toolchains_cc \
+    --latest=false \
+    --title="${RELEASE_NAME}" \
+    --notes="LLVM ${LLVM_VERSION} toolchain for x86_64 Linux"

@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euox pipefail
+
+export ZLIB_DIR="/tmp/zlib"
+export LLVM_DIR="/tmp/llvm"
+export ARTIFACTS_DIR="/tmp/artifacts"
+export GCC_DIR="/tmp/gcc"
+export GCC_SYSROOT="${GCC_DIR}/x86_64-linux-musl/sysroot/"
+export GCC_BINS="${GCC_DIR}/bin/"
+
+mkdir -p $ZLIB_DIR
+mkdir -p $LLVM_DIR
+mkdir -p $ARTIFACTS_DIR
+mkdir -p $GCC_DIR
+
+if [ -n "$GITHUB_ENV" ]; then
+    echo "ARTIFACTS_DIR=$ARTIFACTS_DIR" >> "$GITHUB_ENV"
+fi
