@@ -37,9 +37,6 @@ jobs:
       - name: Install Dependencies
         run: $SCRIPTS_DIR/step-1_install_dependencies
 
-      - name: Testing github env
-        run: echo "ARTIFACTS_DIR=$ARTIFACTS_DIR"
-      
       - name: Build zlib
         run: $SCRIPTS_DIR/step-2_build_zlib
       
