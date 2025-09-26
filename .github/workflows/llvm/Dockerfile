@@ -1,5 +1,3 @@
-# needs to be musl based to statically link
-# when attempting glibc, it failed to link because clang uses some symbols that are only available when dynamic linking glibc
 FROM ubuntu:latest
 
 # =================
@@ -17,16 +15,8 @@ WORKDIR /home/builder
 # || Environment Setup ||
 # =======================
 ENV SCRIPTS_DIR="/tmp/scripts"
-ENV ZLIB_DIR="/tmp/zlib"
-ENV LLVM_DIR="/tmp/llvm"
-ENV GCC_DIR="/tmp/gcc"
-ENV GCC_SYSROOT="${GCC_DIR}/x86_64-linux-musl/sysroot/"
-ENV GCC_BINS="${GCC_DIR}/bin/"
-
-RUN mkdir -p $SCRIPTS_DIR
-RUN mkdir -p $ZLIB_DIR
-RUN mkdir -p $LLVM_DIR
-RUN mkdir -p $GCC_DIR
+RUN mkdir -p ${SCRIPTS_DIR}
+COPY environment $SCRIPTS_DIR/environment
 
 # =====================
 # || Build Toolchain ||
@@ -41,3 +31,10 @@ RUN $SCRIPTS_DIR/step-2_build_zlib
 ARG LLVM_VERSION=21.1.1
 COPY step-3_build_llvm $SCRIPTS_DIR/step-3_build_llvm
 RUN $SCRIPTS_DIR/step-3_build_llvm
+
+COPY step-4_package_toolchain $SCRIPTS_DIR/step-4_package_toolchain
+RUN $SCRIPTS_DIR/step-4_package_toolchain
+
+ARG GITHUB_TOKEN
+COPY step-5_upload_release $SCRIPTS_DIR/step-5_upload_release
+RUN $SCRIPTS_DIR/step-5_upload_release

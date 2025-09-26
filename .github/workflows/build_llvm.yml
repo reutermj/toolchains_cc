@@ -22,14 +22,7 @@ permissions:
   attestations: write
 
 env:
-  ZLIB_DIR: /tmp/zlib
-  LLVM_DIR: /tmp/llvm
-  ARTIFACT_DIR: /tmp/toolchain/artifacts
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/llvm
-  GCC_DIR: "/tmp/gcc"
-  GCC_SYSROOT: "/tmp/gcc/x86_64-linux-musl/sysroot/"
-  GCC_BINS: "/tmp/gcc/bin/"
-  
   ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
   LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
 
@@ -41,18 +34,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5.0.0
       
-      - name: Create Directories
-        run: |
-          mkdir -p $ZLIB_DIR
-          mkdir -p $LLVM_DIR
-          mkdir -p $ARTIFACT_DIR
-          mkdir -p $GCC_DIR
-      
       - name: Install Dependencies
         run: $SCRIPTS_DIR/step-1_install_dependencies
+
+      - name: Testing github env
+        run: echo "ARTIFACTS_DIR=$ARTIFACTS_DIR"
       
       - name: Build zlib
         run: $SCRIPTS_DIR/step-2_build_zlib
       
       - name: Build LLVM
         run: $SCRIPTS_DIR/step-3_build_llvm
+      
+      - name: Package Toolchain
+        run: $SCRIPTS_DIR/step-4_package_toolchain
+      
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v3.0.0
+        with:
+          # This is ok: ARTIFACTS_DIR gets set by the environment script
+          subject-path: ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+      
+      - name: Upload Release
+        run: $SCRIPTS_DIR/step-5_upload_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
