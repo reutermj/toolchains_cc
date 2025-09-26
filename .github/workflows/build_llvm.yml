@@ -57,3 +57,5 @@ jobs:
       
       - name: Upload Release
         run: $SCRIPTS_DIR/step-5_upload_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
