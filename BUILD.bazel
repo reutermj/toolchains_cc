@@ -7,6 +7,7 @@ alias(
     actual = "@toolchains_cc_default_toolchain",
 )
 
+# ./bazel run :buildifier.check
 buildifier(
     name = "buildifier.check",
     exclude_patterns = [
@@ -17,6 +18,7 @@ buildifier(
     visibility = ["//visibility:private"],
 )
 
+# ./bazel run :buildifier.fix
 buildifier(
     name = "buildifier.fix",
     exclude_patterns = [

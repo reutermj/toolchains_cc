@@ -3,7 +3,85 @@
 load("@rules_cc//cc/toolchains:args.bzl", "cc_args")
 load("@rules_cc//cc/toolchains:toolchain.bzl", "cc_toolchain")
 
-def declare_toolchain(name, visibility, sysroot, all_tools):
+def declare_toolchain(name, visibility, sysroot, all_tools, compiler):
+    """Declares a cc_toolchain with the given parameters.
+
+    Args:
+        name: Name of the toolchain
+        visibility: Visibility of the toolchain
+        sysroot: Label for the sysroot subdirectory target
+        all_tools: Tool map for the toolchain
+        compiler: Compiler type
+    """
+    args = []
+    # ==================================
+    # || Declare General Purpose Args ||
+    # ==================================
+
+    # Bazel does not like absolute paths.
+    # Clang and GCC will use absolute paths when reporting the include path for its headers causing bazel to error out.
+    # This changes the toolchains to use relative paths.
+    # Symptom:
+    # ERROR: C:/users/mark/desktop/new_toolchain/BUILD:1:10: Compiling main.c failed: absolute path inclusion(s) found in rule '//:main':
+    # the source file 'main.c' includes the following non-builtin files with absolute paths (if these are builtin files, make sure these paths are in your toolchain):
+    #   'C:/Users/mark/_bazel_mark/w77p7fta/external/+_repo_rules+llvm_toolchain/toolchain/lib/clang/19/include/vadefs.h'
+    no_canonical_prefixes_arg = "{}_no_canonical_prefixes".format(name)
+    args.append(no_canonical_prefixes_arg)
+    cc_args(
+        name = no_canonical_prefixes_arg,
+        actions = [
+            "@rules_cc//cc/toolchains/actions:c_compile",
+            "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
+            "@rules_cc//cc/toolchains/actions:link_actions",
+        ],
+        args = [
+            "-no-canonical-prefixes",
+        ],
+        visibility = ["//visibility:private"],
+    )
+
+    sysroot_arg = "{}_sysroot".format(name)
+    args.append(sysroot_arg)
+    cc_args(
+        name = sysroot_arg,
+        actions = [
+            "@rules_cc//cc/toolchains/actions:c_compile",
+            "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
+            "@rules_cc//cc/toolchains/actions:link_actions",
+        ],
+        args = ["--sysroot={sysroot}"],
+        format = {
+            "sysroot": sysroot,
+        },
+        visibility = ["//visibility:private"],
+    )
+
+    # =====================================
+    # || Declare Toolchain Specific Args ||
+    # =====================================
+    if compiler == "gcc":
+        no_canonical_system_headers_arg = "{}_no_canonical_system_headers".format(name)
+        args.append(no_canonical_system_headers_arg)
+        cc_args(
+            name = no_canonical_system_headers_arg,
+            actions = [
+                "@rules_cc//cc/toolchains/actions:c_compile",
+                "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
+                "@rules_cc//cc/toolchains/actions:link_actions",
+            ],
+            args = [
+                "-fno-canonical-system-headers",
+            ],
+            visibility = ["//visibility:private"],
+        )
+    elif compiler == "llvm":
+        pass
+    else:
+        fail("[toolchains_cc bug] Failed to handle a supported compiler: {}".format(compiler))
+
+    # =======================
+    # || Declare Toolchain ||
+    # =======================
     native.toolchain(
         name = name,
         exec_compatible_with = [
@@ -21,48 +99,10 @@ def declare_toolchain(name, visibility, sysroot, all_tools):
 
     cc_toolchain(
         name = "{}_cc_toolchain".format(name),
-        args = [
-            ":{}_no_canonical_prefixes".format(name),
-            ":{}_sysroot".format(name),
-        ],
+        args = args,
         enabled_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
         known_features = ["@rules_cc//cc/toolchains/args:experimental_replace_legacy_action_config_features"],
         tool_map = all_tools,
-        visibility = ["//visibility:private"],
-    )
-
-    # Bazel does not like absolute paths.
-    # Clang will use absolute paths when reporting the include path for its headers causing bazel to error out.
-    # This changes clang to prefer relative paths.
-    # Symptom:
-    # ERROR: C:/users/mark/desktop/new_toolchain/BUILD:1:10: Compiling main.c failed: absolute path inclusion(s) found in rule '//:main':
-    # the source file 'main.c' includes the following non-builtin files with absolute paths (if these are builtin files, make sure these paths are in your toolchain):
-    #   'C:/Users/mark/_bazel_mark/w77p7fta/external/+_repo_rules+llvm_toolchain/toolchain/lib/clang/19/include/vadefs.h'
-    cc_args(
-        name = "{}_no_canonical_prefixes".format(name),
-        actions = [
-            "@rules_cc//cc/toolchains/actions:c_compile",
-            "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
-            "@rules_cc//cc/toolchains/actions:link_actions",
-        ],
-        args = [
-            "-no-canonical-prefixes",
-            "-fno-canonical-system-headers",  # gcc only? yes, need to configure this when adding clang support
-        ],
-        visibility = ["//visibility:private"],
-    )
-
-    cc_args(
-        name = "{}_sysroot".format(name),
-        actions = [
-            "@rules_cc//cc/toolchains/actions:c_compile",
-            "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
-            "@rules_cc//cc/toolchains/actions:link_actions",
-        ],
-        args = ["--sysroot={sysroot}"],
-        format = {
-            "sysroot": sysroot,
-        },
         visibility = ["//visibility:private"],
     )
 
