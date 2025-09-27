@@ -16,12 +16,14 @@ load("@toolchains_cc//private:declare_tools.bzl", "declare_tools")
 declare_tools(
     name = "{original_name}",
     all_files = glob(["**"]),
-    target = "{target}",
+    target_platform = "{target_platform}",
+    compiler = "{compiler}",
     visibility = ["//visibility:public"],
 )
 """.lstrip().format(
             original_name = rctx.original_name,
-            target = config["target"],
+            target_platform = config["target"],
+            compiler = config["compiler"],
         ),
     )
 

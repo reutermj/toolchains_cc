@@ -73,6 +73,7 @@ common --repo_env={name}_libc_version={libc_version}
 
 SUPPORT_MATRIX = {
     ## GCC 14.3.0
+    # glibc
     "x86_64-linux-gnu:2.28:gcc:14.3.0": True,
     "x86_64-linux-gnu:2.29:gcc:14.3.0": True,
     "x86_64-linux-gnu:2.30:gcc:14.3.0": True,
