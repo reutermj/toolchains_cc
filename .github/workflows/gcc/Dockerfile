@@ -46,8 +46,8 @@ COPY step-2_build_crosstool_ng $SCRIPTS_DIR/step-2_build_crosstool_ng
 RUN $SCRIPTS_DIR/step-2_build_crosstool_ng
 
 ARG GCC_VERSION=15
-ARG LIBC=musl
-ARG LIBC_VERSION=1.2.5
+ARG LIBC=gnu
+ARG LIBC_VERSION=2.34
 COPY step-3_configure_toolchain $SCRIPTS_DIR/step-3_configure_toolchain
 RUN $SCRIPTS_DIR/step-3_configure_toolchain
 
