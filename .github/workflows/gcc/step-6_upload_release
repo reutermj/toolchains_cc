@@ -11,7 +11,7 @@ GCC_FULL_VERSION=$("${OUTPUT_DIR}/bin/x86_64-linux-${LIBC}-gcc" --version | head
 RELEASE_NAME=$(cat ${WORK_DIR}/release_name)
 
 gh release create "${RELEASE_NAME}" \
-    ${ARTIFACT_DIR}/*.tar.xz \
+    ${ARTIFACTS_DIR}/*.tar.xz \
     ${WORK_DIR}/build.log \
     --repo=https://github.com/reutermj/toolchains_cc \
     --latest=false \
