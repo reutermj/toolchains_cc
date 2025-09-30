@@ -7,7 +7,7 @@ export OUTPUT_DIR="/tmp/output"
 export WORK_DIR="/tmp/work"
 
 mkdir -p $CT_NG_SRC_DIR
-mkdir -p $ARTIFACT_DIR
+mkdir -p $ARTIFACTS_DIR
 mkdir -p $OUTPUT_DIR
 mkdir -p $WORK_DIR
 
