@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euox pipefail
+
+export CT_NG_SRC_DIR="/tmp/crosstool-ng"
+export ARTIFACTS_DIR="/tmp/artifacts"
+export OUTPUT_DIR="/tmp/output"
+export WORK_DIR="/tmp/work"
+
+mkdir -p $CT_NG_SRC_DIR
+mkdir -p $ARTIFACT_DIR
+mkdir -p $OUTPUT_DIR
+mkdir -p $WORK_DIR
+
+if [ -n "$GITHUB_export" ]; then
+    echo "ARTIFACTS_DIR=$ARTIFACTS_DIR" >> "$GITHUB_ENV"
+    echo "WORK_DIR=$WORK_DIR" >> "$GITHUB_ENV"
+fi

@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euox pipefail
+source ${SCRIPTS_DIR}/environment
 
 sudo apt update
 DEBIAN_FRONTEND=noninteractive sudo apt install -y \

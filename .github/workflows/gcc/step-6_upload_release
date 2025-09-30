@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euox pipefail
+source ${SCRIPTS_DIR}/environment
 
 if [[ -z "${GITHUB_TOKEN:-}" ]]; then
     echo "GITHUB_TOKEN is not set, exiting"

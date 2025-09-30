@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euox pipefail
+source ${SCRIPTS_DIR}/environment
 
 pushd "${OUTPUT_DIR}"
 GCC_FULL_VERSION=$("bin/x86_64-linux-${LIBC}-gcc" --version | head -n1 | awk '{print $NF}')
@@ -10,7 +11,10 @@ echo $RELEASE_NAME > ${WORK_DIR}/release_name
 # =======================
 # || Package libstdc++ ||
 # =======================
+cp -r share share-libstdcxx
+
 LIBSTDCXX_FILES=()
+LIBSTDCXX_FILES+=(share-libstdcxx)
 LIBSTDCXX_FILES+=(x86_64-linux-${LIBC}/include/c++/)
 LIBSTDCXX_FILES+=(x86_64-linux-${LIBC}/lib64/libitm*)
 LIBSTDCXX_FILES+=(x86_64-linux-${LIBC}/lib64/libstdc++*)
@@ -27,7 +31,10 @@ rm -rf "${LIBSTDCXX_FILES[@]}"
 # =======================================
 # || Package gcc compiler runtime libs ||
 # =======================================
+cp -r share share-libgcc
+
 LIBGCC_FILES=()
+LIBGCC_FILES+=(share-libgcc)
 LIBGCC_FILES+=(lib/gcc)
 LIBGCC_FILES+=(x86_64-linux-${LIBC}/lib64/libgcc*)
 LIBGCC_FILES+=(x86_64-linux-${LIBC}/lib64/libatomic*)
