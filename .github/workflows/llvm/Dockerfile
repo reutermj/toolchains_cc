@@ -15,7 +15,6 @@ WORKDIR /home/builder
 # || Environment Setup ||
 # =======================
 ENV SCRIPTS_DIR="/tmp/scripts"
-RUN mkdir -p ${SCRIPTS_DIR}
 COPY environment $SCRIPTS_DIR/environment
 
 # =====================

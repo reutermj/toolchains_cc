@@ -11,7 +11,7 @@ mkdir -p $ARTIFACTS_DIR
 mkdir -p $OUTPUT_DIR
 mkdir -p $WORK_DIR
 
-if [ -n "$GITHUB_ENV" ]; then
+if [ -n "${GITHUB_ENV:-}" ]; then
     echo "ARTIFACTS_DIR=$ARTIFACTS_DIR" >> "$GITHUB_ENV"
     echo "WORK_DIR=$WORK_DIR" >> "$GITHUB_ENV"
 fi

@@ -13,6 +13,6 @@ mkdir -p $LLVM_DIR
 mkdir -p $ARTIFACTS_DIR
 mkdir -p $GCC_DIR
 
-if [ -n "$GITHUB_ENV" ]; then
+if [ -n "${GITHUB_ENV:-}" ]; then
     echo "ARTIFACTS_DIR=$ARTIFACTS_DIR" >> "$GITHUB_ENV"
 fi
