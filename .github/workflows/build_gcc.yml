@@ -28,12 +28,7 @@ permissions:
   attestations: write
 
 env:
-  CT_NG_SRC_DIR: /tmp/crosstool-ng
-  ARTIFACT_DIR: /tmp/toolchain/artifacts
-  OUTPUT_DIR: /tmp/toolchain/output
-  WORK_DIR: /tmp/toolchain/work
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/gcc
-  
   GCC_VERSION: ${{ github.event.inputs.gcc_version }}
   LIBC: ${{ github.event.inputs.libc }}
 
@@ -50,13 +45,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5.0.0
-      
-      - name: Create Directories
-        run: |
-          mkdir -p $CT_NG_SRC_DIR
-          mkdir -p $ARTIFACT_DIR
-          mkdir -p $OUTPUT_DIR
-          mkdir -p $WORK_DIR
       
       - name: Install Dependencies
         run: $SCRIPTS_DIR/step-1_install_dependencies
@@ -77,7 +65,7 @@ jobs:
         uses: actions/attest-build-provenance@v3.0.0
         with:
           subject-path: |
-            ${{ env.ARTIFACT_DIR }}/*.tar.xz
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
             ${{ env.WORK_DIR }}/build.log
 
       - name: Upload Release

@@ -24,16 +24,7 @@ WORKDIR /home/builder
 # =======================
 # || Environment Setup ||
 # =======================
-ENV CT_NG_SRC_DIR="/tmp/crosstool-ng"
-ENV ARTIFACT_DIR="/tmp/toolchain/artifacts"
-ENV OUTPUT_DIR="/tmp/toolchain/output"
-ENV WORK_DIR="/tmp/toolchain/work"
 ENV SCRIPTS_DIR="/tmp/scripts"
-
-RUN mkdir -p $CT_NG_SRC_DIR
-RUN mkdir -p $ARTIFACT_DIR
-RUN mkdir -p $OUTPUT_DIR
-RUN mkdir -p $WORK_DIR
 RUN mkdir -p $SCRIPTS_DIR
 
 # =====================
