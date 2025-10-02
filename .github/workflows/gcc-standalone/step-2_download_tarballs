@@ -12,4 +12,3 @@ if ! wget -O "${NCURSES_TARBALL}" "${NCURSES_URL}"; then
     wget -O "${NCURSES_TARBALL}" "${NCURSES_MIRROR}"
 fi
 
-popd
