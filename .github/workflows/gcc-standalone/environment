@@ -3,7 +3,7 @@ set -euox pipefail
 
 export BUILD_TOOLS="/tmp/buildtools"
 export TARBALLS="/tmp/tarballs"
-mkdir ${TARBALLS}
+mkdir "${TARBALLS}"
 
 export NCURSES_TARBALL="${TARBALLS}/ncurses.tar.gz"
 
