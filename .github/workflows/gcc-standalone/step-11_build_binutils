@@ -1,0 +1,53 @@
+#!/bin/bash
+source ${SCRIPTS_DIR}/environment
+
+pushd "${BINUTILS_DIR}"
+
+env CC_FOR_BUILD=gcc \
+    CFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include" \
+    CXXFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include" \
+    CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    ./configure \
+        --build=x86_64-build_pc-linux-gnu \
+        --host=x86_64-build_pc-linux-gnu \
+        --target=x86_64-linux-gnu \
+        --prefix="${OUTPUT_DIR}" \
+        --with-sysroot="${SYSROOT_DIR}" \
+        --disable-werror \
+        --enable-ld=yes \
+        --enable-gold=no \
+        --enable-deterministic-archives \
+        --disable-multilib \
+        --disable-gprofng \
+        --disable-sim \
+        --disable-gdb \
+        --without-debuginfod \
+        --disable-nls \
+        --without-zstd
+
+make -j$(nproc) -l configure-host
+make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc) -l
+make install
+
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-addr2line ${BUILD_TOOLS}/bin/x86_64-linux-gnu-addr2line
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-ar ${BUILD_TOOLS}/bin/x86_64-linux-gnu-ar
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-as ${BUILD_TOOLS}/bin/x86_64-linux-gnu-as
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-c++filt ${BUILD_TOOLS}/bin/x86_64-linux-gnu-c++filt
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-elfedit ${BUILD_TOOLS}/bin/x86_64-linux-gnu-elfedit
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-gprof ${BUILD_TOOLS}/bin/x86_64-linux-gnu-gprof
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-ld ${BUILD_TOOLS}/bin/x86_64-linux-gnu-ld
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-ld.bfd ${BUILD_TOOLS}/bin/x86_64-linux-gnu-ld.bfd
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-nm ${BUILD_TOOLS}/bin/x86_64-linux-gnu-nm
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-objcopy ${BUILD_TOOLS}/bin/x86_64-linux-gnu-objcopy
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-objdump ${BUILD_TOOLS}/bin/x86_64-linux-gnu-objdump
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-ranlib ${BUILD_TOOLS}/bin/x86_64-linux-gnu-ranlib
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-readelf ${BUILD_TOOLS}/bin/x86_64-linux-gnu-readelf
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-size ${BUILD_TOOLS}/bin/x86_64-linux-gnu-size
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-strings ${BUILD_TOOLS}/bin/x86_64-linux-gnu-strings
+ln -sfv ${OUTPUT_DIR}/bin/x86_64-linux-gnu-strip ${BUILD_TOOLS}/bin/x86_64-linux-gnu-strip
+mkdir -p ${BUILD_TOOLS}/x86_64-linux-gnu
+ln -sv ${OUTPUT_DIR}/x86_64-linux-gnu/bin ${BUILD_TOOLS}/x86_64-linux-gnu/bin
+
+popd

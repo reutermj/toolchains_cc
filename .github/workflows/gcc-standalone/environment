@@ -1,0 +1,47 @@
+#!/bin/bash
+set -euox pipefail
+
+export OUTPUT_DIR="/tmp/output"
+export SYSROOT_DIR="${OUTPUT_DIR}/x86_64-linux-gnu/sysroot"
+export BUILD_TOOLS="/tmp/buildtools"
+
+# idk why but crosstool-ng creates these at the beginning
+mkdir -p ${OUTPUT_DIR}
+mkdir -p ${OUTPUT_DIR}/x86_64-linux-gnu/debug-root
+mkdir -p ${OUTPUT_DIR}/lib
+
+mkdir -p ${SYSROOT_DIR}
+mkdir -p ${SYSROOT_DIR}/usr/include
+mkdir -p ${SYSROOT_DIR}/lib
+mkdir -p ${SYSROOT_DIR}/usr/lib
+
+# ==============================
+# || Setup Source Directories ||
+# ==============================
+export BINUTILS_DIR="/tmp/binutils"
+export EXPAT_DIR="/tmp/expat"
+export GCC_DIR="/tmp/gcc"
+export GMP_DIR="/tmp/gmp"
+export ISL_DIR="/tmp/isl"
+export LINUX_DIR="/tmp/linux"
+export MPC_DIR="/tmp/mpc"
+export MPFR_DIR="/tmp/mpfr"
+export NCURSES_DIR="/tmp/ncurses"
+export ZLIB_DIR="/tmp/zlib"
+export ZSTD_DIR="/tmp/zstd"
+
+mkdir -p ${BINUTILS_DIR}
+mkdir -p ${EXPAT_DIR}
+mkdir -p ${GCC_DIR}
+mkdir -p ${GMP_DIR}
+mkdir -p ${ISL_DIR}
+mkdir -p ${LINUX_DIR}
+mkdir -p ${MPC_DIR}
+mkdir -p ${MPFR_DIR}
+mkdir -p ${NCURSES_DIR}
+mkdir -p ${ZLIB_DIR}
+mkdir -p ${ZSTD_DIR}
+
+if [ -n "${GITHUB_ENV:-}" ]; then
+    echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> "${GITHUB_ENV}"
+fi
