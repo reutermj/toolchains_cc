@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euox pipefail
+
+export BUILD_TOOLS="/tmp/buildtools"
+export TARBALLS="/tmp/tarballs"
+mkdir ${TARBALLS}
+
+export NCURSES_TARBALL="${TARBALLS}/ncurses.tar.gz"
+
+if [ -n "${GITHUB_ENV:-}" ]; then
+    echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> "${GITHUB_ENV}"
+fi

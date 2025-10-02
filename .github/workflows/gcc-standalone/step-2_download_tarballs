@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+# =============
+# || ncurses ||
+# =============
+NCURSES_VERSION="6.5"
+NCURSES_URL="https://invisible-mirror.net/archives/ncurses/ncurses-${NCURSES_VERSION}.tar.gz"
+NCURSES_MIRROR="https://ftp.gnu.org/gnu/ncurses/ncurses-${NCURSES_VERSION}.tar.gz"
+if ! wget -O "${NCURSES_TARBALL}" "${NCURSES_URL}"; then
+    wget -O "${NCURSES_TARBALL}" "${NCURSES_MIRROR}"
+fi
+
+popd

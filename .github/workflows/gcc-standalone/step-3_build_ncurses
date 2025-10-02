@@ -1,0 +1,52 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+# [DEBUG]    ==> Executing:  CFLAGS='-O2 -g -I/tmp/work/.build/x86_64-linux-gnu/buildtools/include   -std=gnu17' LDFLAGS='-L/tmp/work/.build/x86_64-linux-gnu/buildtools/lib  ' '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-gnu/src/ncurses/configure' '--build=x86_64-build_pc-linux-gnu' '--host=x86_64-build_pc-linux-gnu' '--prefix=' '--with-install-prefix=/tmp/work/.build/x86_64-linux-gnu/buildtools' '--without-debug' '--enable-termcap' '--enable-symlinks' '--without-manpages' '--without-tests' '--without-cxx' '--without-cxx-binding' '--without-ada' '--without-fallbacks' '--disable-widec'
+# CFLAGS='-O2 -g -I/tmp/work/.build/x86_64-linux-gnu/buildtools/include   -std=gnu17' 
+# LDFLAGS='-L/tmp/work/.build/x86_64-linux-gnu/buildtools/lib  ' 
+# '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-gnu/src/ncurses/configure' 
+# '--build=x86_64-build_pc-linux-gnu'
+# '--host=x86_64-build_pc-linux-gnu' 
+# '--prefix=' 
+# '--with-install-prefix=/tmp/work/.build/x86_64-linux-gnu/buildtools'
+# '--without-debug' 
+# '--enable-termcap' 
+# '--enable-symlinks' 
+# '--without-manpages' 
+# '--without-tests' 
+# '--without-cxx' 
+# '--without-cxx-binding' 
+# '--without-ada' 
+# '--without-fallbacks' 
+# '--disable-widec'
+
+
+NCURSES_DIR="/tmp/ncurses"
+mkdir -p ${NCURSES_DIR}
+
+tar -xzf "${NCURSES_TARBALL}" -C "${NCURSES_DIR}" --strip-components=1
+
+pushd "${NCURSES_DIR}"
+
+env CFLAGS='-O2 -g -I/tmp/work/.build/x86_64-linux-gnu/buildtools/include -std=gnu17' \
+    LDFLAGS='-L/tmp/work/.build/x86_64-linux-gnu/buildtools/lib ' \
+    ./configure \
+        --build=x86_64-build_pc-linux-gnu \
+        --host=x86_64-build_pc-linux-gnu \
+        --prefix= \
+        --with-install-prefix="${BUILD_TOOLS}" \
+        --without-debug \
+        --enable-termcap \
+        --enable-symlinks \
+        --without-manpages \
+        --without-tests \
+        --without-cxx \
+        --without-cxx-binding \
+        --without-ada \
+        --without-fallbacks \
+        --disable-widec
+
+make -j$(nproc)
+make install
+
+popd
