@@ -1,4 +1,4 @@
-name: Build LLVM/Clang
+name: Build LLVM/Clang on windows
 
 on:
   workflow_dispatch:
@@ -7,11 +7,6 @@ on:
         description: 'LLVM version to build'
         required: true
         default: '21.1.1'
-        type: string
-      zlib_version:
-        description: 'zlib version to build'
-        required: true
-        default: '1.3.1'
         type: string
 
 permissions:
@@ -22,37 +17,26 @@ permissions:
   attestations: write
 
 env:
-  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/llvm
-  ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
   LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-11-arm
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5.0.0
       
-      - name: Install Dependencies
-        run: $SCRIPTS_DIR/step-1_install_dependencies
+      - name: Download llvm source
+        run: |
+          mkdir llvm-src
+          curl -L -o llvm-project-${{ env.LLVM_VERSION }}.src.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-${{ env.LLVM_VERSION }}/llvm-project-${{ env.LLVM_VERSION }}.src.tar.xz
+          tar -xf llvm-project-${{ env.LLVM_VERSION }}.src.tar.xz -C llvm-src --strip-components=1
 
-      - name: Build zlib
-        run: $SCRIPTS_DIR/step-2_build_zlib
-      
-      - name: Build LLVM
-        run: $SCRIPTS_DIR/step-3_build_llvm
-      
-      - name: Package Toolchain
-        run: $SCRIPTS_DIR/step-4_package_toolchain
-      
-      - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v3.0.0
-        with:
-          # This is ok: ARTIFACTS_DIR gets set by the environment script
-          subject-path: ${{ env.ARTIFACTS_DIR }}/*.tar.xz
-      
-      - name: Upload Release
-        run: $SCRIPTS_DIR/step-5_upload_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build LLVM/Clang
+        run: |
+          cd llvm-src
+          mkdir build
+          cd build
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld" -DCMAKE_INSTALL_PREFIX=C:\LLVM ..\llvm
+          ninja
