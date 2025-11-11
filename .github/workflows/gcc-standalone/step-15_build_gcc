@@ -1,0 +1,120 @@
+#!/bin/bash
+source ${SCRIPTS_DIR}/environment
+
+GCC_BUILD_DIR=/tmp/gcc-final-build/
+mkdir -p ${GCC_BUILD_DIR}
+
+pushd "${GCC_BUILD_DIR}"
+
+env CC_FOR_BUILD="x86_64-build_pc-linux-gnu-gcc" \
+    CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" 
+    CFLAGS_FOR_BUILD="-O2 -g -pipe -I${BUILD_TOOLS}/include" 
+    CXXFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS_FOR_BUILD="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib -static" \
+    CFLAGS_FOR_TARGET="-g -O2" \
+    CXXFLAGS_FOR_TARGET="-g -O2" \
+    LDFLAGS_FOR_TARGET="" \
+    ${GCC_SOURCE}/configure \
+        --build=x86_64-build_pc-linux-gnu \
+        --host=x86_64-build_pc-linux-gnu \
+        --target=x86_64-linux-gnu \
+        --with-sysroot="${SYSROOT_DIR}" \
+        --enable-languages=c,c++ \
+        --enable-__cxa_atexit \
+        --disable-libmudflap \
+        --disable-libgomp \
+        --disable-libssp \
+        --disable-libquadmath \
+        --disable-libquadmath-support \
+        --disable-libsanitizer \
+        --enable-libmpx \
+        --with-gmp="${BUILD_TOOLS}" \
+        --with-mpfr="${BUILD_TOOLS}" \
+        --with-mpc="${BUILD_TOOLS}" \
+        --with-isl="${BUILD_TOOLS}" \
+        --enable-lto \
+        --enable-threads=posix \
+        --enable-target-optspace \
+        --with-linker-hash-style=both \
+        --disable-plugin \
+        --disable-nls \
+        --disable-multilib \
+        --with-local-prefix="${SYSROOT_DIR}" \
+        --enable-long-long
+
+make -j$(nproc) -l all
+make install prefix="${OUTPUT_DIR}" exec_prefix="${OUTPUT_DIR}"
+make install prefix="${GCC_ARTIFACTS}" exec_prefix="${GCC_ARTIFACTS}"
+
+# TODO housekeeping
+# ln -sfv x86_64-linux-gnu-gcc /tmp/output/bin/x86_64-linux-gnu-cc
+# rm -rf sysroot-check
+# mkdir -p sysroot-check
+# touch sysroot-check/seen sysroot-check/unique
+# ln -sfv ../../libexec/gcc/x86_64-linux-gnu/15.2.0/liblto_plugin.a /tmp/output/lib/bfd-plugins/liblto_plugin.a
+# rm -rf sysroot-check
+# mkdir -p sysroot-check
+# touch sysroot-check/seen sysroot-check/unique
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libatomic.a /tmp/output/x86_64-linux-gnu/sysroot/lib64/libatomic.a
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libatomic.a /tmp/output/x86_64-linux-gnu/lib64/libatomic.a
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libatomic.so /tmp/output/x86_64-linux-gnu/sysroot/lib64/libatomic.so
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libatomic.so /tmp/output/x86_64-linux-gnu/lib64/libatomic.so
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libatomic.so.1 /tmp/output/x86_64-linux-gnu/sysroot/lib64/libatomic.so.1
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libatomic.so.1 /tmp/output/x86_64-linux-gnu/lib64/libatomic.so.1
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libatomic.so.1.2.0 /tmp/output/x86_64-linux-gnu/sysroot/lib64/libatomic.so.1.2.0
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libatomic.so.1.2.0 /tmp/output/x86_64-linux-gnu/lib64/libatomic.so.1.2.0
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libgcc_s.so /tmp/output/x86_64-linux-gnu/sysroot/lib64/libgcc_s.so
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libgcc_s.so /tmp/output/x86_64-linux-gnu/lib64/libgcc_s.so
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libgcc_s.so.1 /tmp/output/x86_64-linux-gnu/sysroot/lib64/libgcc_s.so.1
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libgcc_s.so.1 /tmp/output/x86_64-linux-gnu/lib64/libgcc_s.so.1
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libitm.a /tmp/output/x86_64-linux-gnu/sysroot/lib64/libitm.a
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libitm.a /tmp/output/x86_64-linux-gnu/lib64/libitm.a
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libitm.so /tmp/output/x86_64-linux-gnu/sysroot/lib64/libitm.so
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libitm.so /tmp/output/x86_64-linux-gnu/lib64/libitm.so
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libitm.so.1 /tmp/output/x86_64-linux-gnu/sysroot/lib64/libitm.so.1
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libitm.so.1 /tmp/output/x86_64-linux-gnu/lib64/libitm.so.1
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libitm.so.1.0.0 /tmp/output/x86_64-linux-gnu/sysroot/lib64/libitm.so.1.0.0
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libitm.so.1.0.0 /tmp/output/x86_64-linux-gnu/lib64/libitm.so.1.0.0
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libitm.spec /tmp/output/x86_64-linux-gnu/sysroot/lib64/libitm.spec
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libitm.spec /tmp/output/x86_64-linux-gnu/lib64/libitm.spec
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libstdc++.a /tmp/output/x86_64-linux-gnu/sysroot/lib64/libstdc++.a
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libstdc++.a /tmp/output/x86_64-linux-gnu/lib64/libstdc++.a
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libstdc++.modules.json /tmp/output/x86_64-linux-gnu/sysroot/lib64/libstdc++.modules.json
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libstdc++.modules.json /tmp/output/x86_64-linux-gnu/lib64/libstdc++.modules.json
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libstdc++.so /tmp/output/x86_64-linux-gnu/sysroot/lib64/libstdc++.so
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libstdc++.so /tmp/output/x86_64-linux-gnu/lib64/libstdc++.so
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libstdc++.so.6 /tmp/output/x86_64-linux-gnu/sysroot/lib64/libstdc++.so.6
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libstdc++.so.6 /tmp/output/x86_64-linux-gnu/lib64/libstdc++.so.6
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libstdc++.so.6.0.34 /tmp/output/x86_64-linux-gnu/sysroot/lib64/libstdc++.so.6.0.34
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libstdc++.so.6.0.34 /tmp/output/x86_64-linux-gnu/lib64/libstdc++.so.6.0.34
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libstdc++.so.6.0.34-gdb.py /tmp/output/x86_64-linux-gnu/sysroot/lib64/libstdc++.so.6.0.34-gdb.py
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libstdc++.so.6.0.34-gdb.py /tmp/output/x86_64-linux-gnu/lib64/libstdc++.so.6.0.34-gdb.py
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libstdc++exp.a /tmp/output/x86_64-linux-gnu/sysroot/lib64/libstdc++exp.a
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libstdc++exp.a /tmp/output/x86_64-linux-gnu/lib64/libstdc++exp.a
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libstdc++fs.a /tmp/output/x86_64-linux-gnu/sysroot/lib64/libstdc++fs.a
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libstdc++fs.a /tmp/output/x86_64-linux-gnu/lib64/libstdc++fs.a
+# mkdir -p /tmp/output/x86_64-linux-gnu/sysroot/lib64
+# mv /tmp/output/x86_64-linux-gnu/lib64/libsupc++.a /tmp/output/x86_64-linux-gnu/sysroot/lib64/libsupc++.a
+# ln -sf ../../x86_64-linux-gnu/sysroot/lib64/libsupc++.a /tmp/output/x86_64-linux-gnu/lib64/libsupc++.a
+
+popd

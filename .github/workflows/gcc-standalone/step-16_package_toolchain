@@ -1,0 +1,18 @@
+#!/bin/bash
+source ${SCRIPTS_DIR}/environment
+
+pushd "${OUTPUT_DIR}"
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/toolchain.tar.xz" *
+popd
+
+pushd "${BINUTILS_ARTIFACTS}"
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/binutils.tar.xz" *
+popd
+
+pushd "${GCC_ARTIFACTS}"
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/gcc.tar.xz" *
+popd
+
+pushd "${GLIBC_ARTIFACTS}"
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/glibc.tar.xz" *
+popd

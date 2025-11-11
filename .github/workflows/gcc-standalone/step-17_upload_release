@@ -1,0 +1,14 @@
+#!/bin/bash
+source ${SCRIPTS_DIR}/environment
+
+if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+    echo "GITHUB_TOKEN is not set, exiting"
+    exit 0
+fi
+
+gh release create "gcc-standalone" \
+    ${ARTIFACTS_DIR}/*.tar.xz \
+    --repo=https://github.com/reutermj/toolchains_cc \
+    --latest=false \
+    --title="Standalone gcc" \
+    --notes="Standalone gcc"
