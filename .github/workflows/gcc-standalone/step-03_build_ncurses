@@ -1,0 +1,30 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd "${NCURSES_SOURCE}"
+
+env CFLAGS="-O2 -g -I${BUILD_TOOLS}/include -std=gnu17" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    ./configure \
+        --build=x86_64-build_pc-linux-gnu \
+        --host=x86_64-build_pc-linux-gnu \
+        --prefix= \
+        --with-install-prefix="${BUILD_TOOLS}" \
+        --without-debug \
+        --enable-termcap \
+        --enable-symlinks \
+        --without-manpages \
+        --without-tests \
+        --without-cxx \
+        --without-cxx-binding \
+        --without-ada \
+        --without-fallbacks \
+        --disable-widec
+
+make -j$(nproc) -l
+
+env STRIPPROG=strip \
+    make install
+
+popd
