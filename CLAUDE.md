@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Getting Started
+
+**BEFORE ANYTHING ELSE**: Run `bd onboard` and follow the instructions to set up the beads development environment.
+
 ## Project Overview
 
 toolchains_cc is a Bazel module that provides hermetic C/C++ toolchains and sysroots. It offers easy-to-use, hermetic toolchains for building C/C++ code with Bazel using GCC (currently only GCC support, though the architecture supports multiple compilers).
