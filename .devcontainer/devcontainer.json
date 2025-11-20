@@ -1,13 +1,16 @@
 {
   "name": "toolchains_cc",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
     }
   },
-
   "customizations": {
     "vscode": {
       "extensions": [
@@ -15,12 +18,12 @@
         "llvm-vs-code-extensions.vscode-clangd",
         "Anthropic.claude-code",
         "mhutchie.git-graph",
-        "ms-vscode.cmake-tools"
+        "ms-vscode.cmake-tools",
+        "github.vscode-github-actions",
+        "ms-azuretools.vscode-docker"
       ]
     }
   },
-
   "postCreateCommand": "bash .devcontainer/post-create.sh",
-
   "remoteUser": "vscode"
 }

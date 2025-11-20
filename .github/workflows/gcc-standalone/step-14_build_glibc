@@ -1,0 +1,79 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+GLIBC_BUILD_DIR=/tmp/glibc-build/
+mkdir -p ${GLIBC_BUILD_DIR}
+
+pushd "${GLIBC_BUILD_DIR}"
+
+env BUILD_CC=x86_64-linux-gnu-gcc \
+    CC="x86_64-linux-gnu-gcc -g -O2 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int -fcf-protection=none" \
+    CFLAGS="-fcf-protection=none" \
+    AR=x86_64-linux-gnu-ar \
+    RANLIB=x86_64-linux-gnu-ranlib \
+    ${GLIBC_SOURCE}/configure \
+        --prefix=/usr \
+        --build=x86_64-build_pc-linux-gnu --host=x86_64-linux-gnu \
+        --without-cvs \
+        --disable-profile \
+        --without-gd \
+        --with-headers=${SYSROOT_DIR}/usr/include \
+        --disable-debug \
+        --disable-cet \
+        --disable-sanity-checks \
+        --enable-obsolete-rpc \
+        --enable-kernel="" \
+        --with-__thread \
+        --with-tls \
+        --enable-shared \
+        --enable-add-ons=no \
+        --disable-werror
+
+# --cache-file=/tmp/work/.build/x86_64-linux-gnu/build/build-libc/multilib/config.cache \
+
+make -j$(nproc) -l \
+    CXX="" \
+    LDFLAGS="" \
+    default_cflags="" \
+    BUILD_CFLAGS="-O2 -g -I${BUILD_TOOLS}/include" \
+    BUILD_CPPFLAGS="" \
+    BUILD_LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    all
+
+make -j$(nproc) -l \
+    CXX="" \
+    default_cflags="" \
+    BUILD_CFLAGS="-O2 -g -I${BUILD_TOOLS}/include" \
+    BUILD_CPPFLAGS="" \
+    BUILD_LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    install_root="${SYSROOT_DIR}" \
+    install
+
+# ln -sfv x86_64-linux-gnu-gcc ${BUILD_TOOLS}/bin/x86_64-linux-gnu-cc
+# rm -rf sysroot-check
+# mkdir -p sysroot-check
+# touch sysroot-check/seen sysroot-check/unique
+# ln -sfv lib ${SYSROOT_DIR}/lib64
+# ln -sfv lib ${SYSROOT_DIR}/usr/lib64
+
+popd
+
+# Why --disable-cet and -fcf-protection=none?
+# I was getting the error:
+# /usr/bin/ld: /tmp/glibc-build/elf/librtld.os: in function `_rtld_main_check':
+# /tmp/glibc/elf/../sysdeps/x86/dl-prop.h:33:(.text+0x315d): undefined reference to `_dl_cet_check'
+# /usr/bin/ld: /tmp/glibc/elf/../sysdeps/x86/dl-prop.h:33:(.text+0x36e0): undefined reference to `_dl_cet_check'
+# /usr/bin/ld: /tmp/glibc-build/elf/librtld.os: in function `_dl_open_check':
+# /tmp/glibc/elf/../sysdeps/x86/dl-prop.h:41:(.text+0x13161): undefined reference to `_dl_cet_open_check'
+# /usr/bin/ld: /tmp/glibc-build/elf/ld.so.new: hidden symbol `_dl_cet_open_check' isn't defined
+# /usr/bin/ld: final link failed: bad value
+# collect2: error: ld returned 1 exit status
+# make[2]: Leaving directory '/tmp/glibc/elf'
+# make[2]: *** [Makefile:487: /tmp/glibc-build/elf/ld.so] Error 1
+# make[1]: *** [Makefile:258: elf/subdir_lib] Error 2
+# make[1]: Leaving directory '/tmp/glibc'
+# make: *** [Makefile:9: all] Error 2
+# The command '/bin/sh -c $SCRIPTS_DIR/step-14_build_glibc' returned a non-zero code: 2
+# TODO: check to make sure we're using the version of ld we built
+# TODO: is this fine to disable?

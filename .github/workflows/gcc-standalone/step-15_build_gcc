@@ -1,0 +1,51 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+GCC_BUILD_DIR=/tmp/gcc-final-build/
+mkdir -p ${GCC_BUILD_DIR}
+
+pushd "${GCC_BUILD_DIR}"
+
+env CC_FOR_BUILD="x86_64-build_pc-linux-gnu-gcc" \
+    CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" 
+    CFLAGS_FOR_BUILD="-O2 -g -pipe -I${BUILD_TOOLS}/include" 
+    CXXFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS_FOR_BUILD="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib -static" \
+    CFLAGS_FOR_TARGET="-g -O2" \
+    CXXFLAGS_FOR_TARGET="-g -O2" \
+    LDFLAGS_FOR_TARGET="" \
+    ${GCC_SOURCE}/configure \
+        --build=x86_64-build_pc-linux-gnu \
+        --host=x86_64-build_pc-linux-gnu \
+        --target=x86_64-linux-gnu \
+        --with-sysroot="${SYSROOT_DIR}" \
+        --enable-languages=c,c++ \
+        --enable-__cxa_atexit \
+        --disable-libmudflap \
+        --disable-libgomp \
+        --disable-libssp \
+        --disable-libquadmath \
+        --disable-libquadmath-support \
+        --disable-libsanitizer \
+        --enable-libmpx \
+        --with-gmp="${BUILD_TOOLS}" \
+        --with-mpfr="${BUILD_TOOLS}" \
+        --with-mpc="${BUILD_TOOLS}" \
+        --with-isl="${BUILD_TOOLS}" \
+        --enable-lto \
+        --enable-threads=posix \
+        --enable-target-optspace \
+        --with-linker-hash-style=both \
+        --disable-plugin \
+        --disable-nls \
+        --disable-multilib \
+        --with-local-prefix="${SYSROOT_DIR}" \
+        --enable-long-long
+
+make -j$(nproc) -l all
+make install prefix="${OUTPUT_DIR}" exec_prefix="${OUTPUT_DIR}"
+make install prefix="${GCC_ARTIFACTS}" exec_prefix="${GCC_ARTIFACTS}"
+
+popd

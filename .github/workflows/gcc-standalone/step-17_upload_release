@@ -1,0 +1,18 @@
+#!/bin/bash
+source ${SCRIPTS_DIR}/environment
+
+if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+    echo "GITHUB_TOKEN is not set, exiting"
+    exit 0
+fi
+
+GCC_FULL_VERSION=$("${OUTPUT_DIR}/bin/x86_64-linux-gnu-gcc" --version | head -n1 | awk '{print $NF}')
+RELEASE_NAME=$(cat ${WORK_DIR}/release_name)
+
+gh release create "${RELEASE_NAME}" \
+    ${ARTIFACTS_DIR}/*.tar.xz \
+    ${WORK_DIR}/build.log \
+    --repo=https://github.com/reutermj/toolchains_cc \
+    --latest=false \
+    --title="${RELEASE_NAME}" \
+    --notes="GCC ${GCC_FULL_VERSION} toolchain for x86_64 Linux for glibc"

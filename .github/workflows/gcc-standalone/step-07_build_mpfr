@@ -1,0 +1,24 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd "${MPFR_SOURCE}"
+
+./autogen.sh
+
+env CC=gcc \
+    CFLAGS='-O2 -g -pipe -I${BUILD_TOOLS}/include' \
+    LDFLAGS='-L${BUILD_TOOLS}/lib' \
+    ./configure \
+        --build=x86_64-build_pc-linux-gnu \
+        --host=x86_64-build_pc-linux-gnu \
+        --prefix="${BUILD_TOOLS}" \
+        --with-gmp="${BUILD_TOOLS}" \
+        --enable-thread-safe \
+        --disable-shared \
+        --enable-static
+
+make -j$(nproc) -l
+make install
+
+popd
