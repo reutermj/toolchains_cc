@@ -12,6 +12,33 @@ toolchains_cc is a Bazel module that provides hermetic C/C++ toolchains and sysr
 - **Module system**: Uses Bazel's MODULE system exclusively (no WORKSPACE support)
 - **Wrapper script**: Use `./bazel` instead of direct `bazel` commands
 
+## Issue Tracking with Beads
+
+This repository uses **beads** - a git-backed issue tracker designed for AI coding agents. The `bd` command-line tool is available in the devcontainer for managing tasks and dependencies.
+
+### Using Beads
+
+```bash
+# Find work that's ready to start (no open blockers)
+bd ready --json
+
+# Create a new issue
+bd create "Task description" -p 1
+
+# List issues
+bd list --status open
+
+# View dependency tree
+bd dep tree <issue-id>
+
+# Sync changes (happens automatically after 5 seconds)
+bd sync
+```
+
+Beads automatically syncs with git, storing issues in [.beads/issues.jsonl](.beads/issues.jsonl). Changes are committed to git for distributed collaboration.
+
+For more details, see the [beads repository](https://github.com/steveyegge/beads).
+
 ## Common Commands
 
 ### Building

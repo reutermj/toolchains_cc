@@ -1,2 +1,7 @@
 bazel-*
 .vscode
+
+# Beads SQLite cache (JSONL files are tracked)
+.beads/*.db
+.beads/*.db-shm
+.beads/*.db-wal
