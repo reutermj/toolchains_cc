@@ -45,7 +45,9 @@ env CC_FOR_BUILD="x86_64-build_pc-linux-gnu-gcc" \
         --enable-long-long
 
 make -j$(nproc) -l all
-make install prefix="${OUTPUT_DIR}" exec_prefix="${OUTPUT_DIR}"
 make install prefix="${GCC_ARTIFACTS}" exec_prefix="${GCC_ARTIFACTS}"
+
+MESSAGE="See https://github.com/reutermj/toolchains_cc/blob/main/lore/gcc/load_bearing_directories.md"
+echo ${MESSAGE} > ${GCC_ARTIFACTS}/lib/keep_load_bearing_directory
 
 popd

@@ -57,7 +57,7 @@ GCC performs **runtime directory existence checks** to determine which library s
 
 If these directories don't exist, GCC **silently omits** the corresponding library search paths from the linker command, even if the actual library files exist in subdirectories like `lib64` or `usr/lib64`.
 
-### Why Files Exist But Aren't Found
+### Why Files Exist But Aren't Found?
 
 The actual C runtime files (`crt1.o`, `crti.o`, etc.) are typically located in:
 - `<sysroot>/usr/lib64/`
@@ -66,7 +66,7 @@ However, GCC's search path generation logic requires the parent directories to e
 - `<sysroot>/lib/` must exist for `-Lx86_64-linux-gnu/sysroot/lib` and `-Lx86_64-linux-gnu/sysroot/lib/../lib64`
 - `<sysroot>/usr/lib/` must exist for `-Lx86_64-linux-gnu/sysroot/usr/lib` and `-Lx86_64-linux-gnu/sysroot/usr/lib/../lib64`
 
-### Why Packaging Loses These Directories
+### Why Packaging Loses These Directories?
 
 During the build process, these directories are created (see environment setup scripts), but they remain empty because:
 - `lib/` is empty (all 64-bit libraries go to `lib64/`)
@@ -81,7 +81,7 @@ tar cJf toolchain.tar.xz *
 
 ## The Fix
 
-Create placeholder files in load-bearing empty directories before packaging:
+Create placeholder files in load-bearing directories before packaging:
 
 ```bash
 # In the packaging script, before creating the tar archive:
@@ -116,55 +116,3 @@ popd
 
 # ... rest of packaging script
 ```
-
-## Verification
-
-After applying the fix, verify the toolchain works:
-
-```bash
-# Extract the packaged toolchain
-tar xJf toolchain.tar.xz -C test-toolchain/
-
-# Compile a test program
-cd test-toolchain
-bin/x86_64-linux-gnu-gcc -o test main.c -v -static --sysroot=x86_64-linux-gnu/sysroot/
-
-# Check that the linker command includes full paths (not bare filenames)
-# You should see: x86_64-linux-gnu/sysroot/usr/lib/../lib64/crt1.o
-# Not just: crt1.o
-
-# Run the test binary
-./test
-```
-
-## Alternative Solutions
-
-1. **Explicit directory creation in installation scripts:**
-   ```bash
-   mkdir -p x86_64-linux-gnu/sysroot/lib
-   mkdir -p x86_64-linux-gnu/sysroot/usr/lib
-   ```
-   Less robust - requires users to know about this requirement.
-
-2. **Use tar with explicit directory listing:**
-   ```bash
-   tar cJf toolchain.tar.xz --no-recursion <explicit-list-of-dirs-and-files>
-   ```
-   More complex to maintain.
-
-3. **Document required directory structure:**
-   Still requires manual intervention during extraction.
-
-The placeholder file approach is recommended because it's self-contained, survives packaging/extraction, and provides a natural place to link to this documentation.
-
-## Related Issues
-
-- This issue can affect any GCC cross-compiler or relocatable toolchain
-- Similar issues may exist with other compilers that perform runtime path detection
-- The problem is architecture-independent (affects x86_64, ARM, etc.)
-
-## References
-
-- GCC driver source code: `gcc/gcc.cc` (search for sysroot path construction)
-- GNU tar manual: Empty directories and archiving behavior
-- Original issue: Comparison of `success.txt` vs `failure.txt` compilation logs
