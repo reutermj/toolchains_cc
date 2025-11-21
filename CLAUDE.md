@@ -12,7 +12,7 @@ This CLAUDE.md file contains frequently-used context and quick references. For d
 
 ## Development Guidelines
 
-**Commit messages**: Follow the structured format in [docs/runbooks/commit-message-guidelines.md](docs/runbooks/commit-message-guidelines.md). Focus on "why" and "what" rather than "how". Use markdown formatting with Problem and Context sections.
+**Commit messages**: Follow the structured format in [docs/runbooks/commit-message-guidelines.md](docs/runbooks/commit-message-guidelines.md). Use markdown with required sections: Problem (why?), Context (what's wrong?), Solution (what approach?), Rationale (why this way?).
 
 ## Project Overview
 
