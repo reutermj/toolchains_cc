@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **BEFORE ANYTHING ELSE**: Run `bd onboard` and follow the instructions to set up the beads development environment.
 
+## Documentation Structure
+
+This CLAUDE.md file contains frequently-used context and quick references. For detailed procedures and runbooks that are used less frequently, see [docs/runbooks/](docs/runbooks/). This structure minimizes token usage while keeping important information accessible.
+
 ## Project Overview
 
 toolchains_cc is a Bazel module that provides hermetic C/C++ toolchains and sysroots. It offers easy-to-use, hermetic toolchains for building C/C++ code with Bazel using GCC (currently only GCC support, though the architecture supports multiple compilers).
@@ -80,10 +84,7 @@ Default: `x86_64-linux-gnu:2.28:gcc:15.2.0`
 
 Valid configurations are defined in [private/config.bzl](private/config.bzl) `SUPPORT_MATRIX`. Release URLs and SHA256 hashes are maintained in [private/download_bins.bzl](private/download_bins.bzl).
 
-When adding new toolchain configurations:
-1. Add entry to `SUPPORT_MATRIX` in [private/config.bzl](private/config.bzl)
-2. Add release date to `RELEASE_TO_DATE` in [private/download_bins.bzl](private/download_bins.bzl)
-3. Add SHA256 hash to `TARBALL_TO_SHA256` in [private/download_bins.bzl](private/download_bins.bzl)
+**Adding new toolchain configurations**: Update `SUPPORT_MATRIX`, `RELEASE_TO_DATE`, and `TARBALL_TO_SHA256` in the files above. See [docs/runbooks/add-toolchain-configuration.md](docs/runbooks/add-toolchain-configuration.md) for detailed procedure
 
 ### Key Files
 
