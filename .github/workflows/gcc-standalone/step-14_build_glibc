@@ -30,8 +30,6 @@ env BUILD_CC=x86_64-linux-gnu-gcc \
         --enable-add-ons=no \
         --disable-werror
 
-# --cache-file=/tmp/work/.build/x86_64-linux-gnu/build/build-libc/multilib/config.cache \
-
 make -j$(nproc) -l \
     CXX="" \
     LDFLAGS="" \
@@ -49,13 +47,6 @@ make -j$(nproc) -l \
     BUILD_LDFLAGS="-L${BUILD_TOOLS}/lib" \
     install_root="${SYSROOT_DIR}" \
     install
-
-# ln -sfv x86_64-linux-gnu-gcc ${BUILD_TOOLS}/bin/x86_64-linux-gnu-cc
-# rm -rf sysroot-check
-# mkdir -p sysroot-check
-# touch sysroot-check/seen sysroot-check/unique
-# ln -sfv lib ${SYSROOT_DIR}/lib64
-# ln -sfv lib ${SYSROOT_DIR}/usr/lib64
 
 popd
 
