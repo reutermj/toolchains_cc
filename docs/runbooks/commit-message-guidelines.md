@@ -21,10 +21,6 @@ Commits use markdown formatting and follow this structure:
 
 <what is wrong with the current state of the code?>
 
-### <optional subsection>
-
-<additional context points as needed>
-
 ## Solution
 
 <what approach does this commit take?>
@@ -101,7 +97,15 @@ The code was wrong.
 
 ### 3. Context Section
 
-Describe **what is wrong with the current state of the code**. This answers: What are the symptoms? What functionality is missing? What user experience is blocked? What performance issues exist? What is unclear about the current code?
+Describe **what is wrong with the current state of the code**. Use subsections in question format to organize different aspects of the problem.
+
+**Example subsection questions**:
+- What are the symptoms?
+- What functionality is missing?
+- What user experience is blocked?
+- What performance issues exist?
+- What is unclear or confusing about the current code?
+- What errors or failures occur?
 
 **Good examples**:
 ```markdown
@@ -110,13 +114,13 @@ Describe **what is wrong with the current state of the code**. This answers: Wha
 Currently, all documentation procedures are inlined in CLAUDE.md, which is
 loaded on every conversation regardless of relevance.
 
-### Token Waste
+### What performance issues exist?
 
 The "adding new toolchain configurations" procedure consumes ~200 tokens
 even in conversations that never touch toolchain configuration. As more
 procedures are added, this overhead will grow linearly.
 
-### Discoverability Problem
+### What is unclear about the current code?
 
 There's no established pattern for where to put detailed procedures, leading
 developers to either bloat CLAUDE.md or scatter documentation across ad-hoc
@@ -129,13 +133,13 @@ locations.
 The toolchain only supports glibc targets. Attempting to build for musl fails
 at configuration time with "unsupported target triple".
 
-### Missing Functionality
+### What functionality is missing?
 
 Users cannot create static binaries for Alpine Linux containers or embedded
 systems that require musl libc. This blocks deployment scenarios where glibc
 is unavailable or undesirable.
 
-### User Impact
+### What user experience is blocked?
 
 Workarounds require maintaining separate build systems or manually patching
 the toolchain configuration, both error-prone and difficult to maintain.
@@ -171,7 +175,14 @@ This includes:
 
 ### 5. Rationale Section
 
-Explain **why this approach was chosen** over alternatives. Include trade-offs, constraints, or specific reasons for design decisions.
+Explain **why this approach was chosen** over alternatives. Use subsections in question format to address different design decisions.
+
+**Example subsection questions**:
+- Why use X instead of Y?
+- Why this specific version/configuration?
+- Why modify existing code vs. creating new code?
+- Why this architecture/pattern?
+- Why not [obvious alternative]?
 
 **Good examples**:
 ```markdown
@@ -285,13 +296,13 @@ glibc targets.
 The toolchain only supports glibc targets. Attempting to build for musl
 fails at configuration time with "unsupported target triple".
 
-### Missing Functionality
+### What functionality is missing?
 
 Users cannot create static binaries for Alpine Linux containers or embedded
 systems that require musl libc. This blocks deployment scenarios where glibc
 is unavailable or undesirable.
 
-### User Impact
+### What user experience is blocked?
 
 Workarounds require maintaining separate build systems or manually patching
 the toolchain configuration, both error-prone and difficult to maintain.
@@ -383,7 +394,7 @@ Bazel downloads toolchain binaries even for Python-only builds, adding
 The current implementation eagerly downloads all toolchain binaries during
 the repository rule phase, before Bazel knows which languages will be used.
 
-### Performance Impact
+### What performance issues exist?
 
 Python-only builds spend 5+ minutes downloading GCC and sysroot tarballs
 that are never used. In polyglot repositories with frequent Python-only
@@ -414,15 +425,17 @@ toolchain resolution.
 
 1. **Write for future maintainers**: Someone (including future you) will read this commit in 6 months trying to understand why a decision was made
 
-2. **Answer the question "why this approach?"**: If there were alternative solutions, briefly explain why you chose this one
+2. **Use question format for subsections**: Questions like "What functionality is missing?" or "Why X instead of Y?" make the structure immediately clear and guide the reader
 
-3. **Include relevant context**: Benchmark numbers, error messages, compatibility requirements, or architectural constraints
+3. **Answer the question "why this approach?"**: If there were alternative solutions, briefly explain why you chose this one
 
-4. **Link to related issues/PRs**: Use `#123` notation for GitHub integration
+4. **Include relevant context**: Benchmark numbers, error messages, compatibility requirements, or architectural constraints
 
-5. **Use markdown formatting**: Headers, lists, code blocks, and emphasis make messages scannable
+5. **Link to related issues/PRs**: Use `#123` notation for GitHub integration
 
-6. **Be concise but complete**: Every sentence should add value, but don't leave out important context
+6. **Use markdown formatting**: Headers, lists, code blocks, and emphasis make messages scannable
+
+7. **Be concise but complete**: Every sentence should add value, but don't leave out important context
 
 ## Commit Message Checklist
 
