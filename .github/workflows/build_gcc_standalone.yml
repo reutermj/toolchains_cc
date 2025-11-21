@@ -66,6 +66,9 @@ jobs:
       - name: Build GCC
         run: $SCRIPTS_DIR/step-15_build_gcc
 
+      - name: Package Toolchain
+        run: $SCRIPTS_DIR/step-16_package_toolchain
+
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v3.0.0
         with:
@@ -75,4 +78,4 @@ jobs:
       - name: Upload Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: $SCRIPTS_DIR/step-6_upload_release
+        run: $SCRIPTS_DIR/step-17_upload_release
