@@ -8,28 +8,33 @@ Commit messages should focus on **why** and **what**, not **how**. The diff show
 
 ## Format
 
-Commits use markdown formatting and follow this structure:
+Commits use underlined headers and follow this structure:
 
 ```
 <type>: <subject>
 
-## Problem
+Problem
+================================================================================
 
 <description of what problem this solves or what need this addresses>
 
-## Context
+Context
+================================================================================
 
 <what is wrong with the current state of the code?>
 
-## Solution
+Solution
+================================================================================
 
 <what approach does this commit take?>
 
-## Rationale
+Rationale
+================================================================================
 
 <why was this approach chosen?>
 
-## <optional additional sections>
+<optional additional sections>
+================================================================================
 
 <other sections as appropriate: Test Plan, Breaking Changes, etc.>
 
@@ -65,31 +70,35 @@ Commits use markdown formatting and follow this structure:
 Explain **what problem** this commit solves or **what need** it addresses. This is the "why are we making this change?" section.
 
 **Good examples**:
-```markdown
-## Problem
+```
+Problem
+================================================================================
 
 Claude Code loads CLAUDE.md on every conversation, consuming tokens even for
 rarely-used content like detailed procedures. As documentation grows, this
 wastes tokens and slows down conversations that don't need the detailed context.
 ```
 
-```markdown
-## Problem
+```
+Problem
+================================================================================
 
 Users need to build C/C++ code against musl libc for static linking, but the
 toolchain currently only supports glibc targets.
 ```
 
 **Bad examples**:
-```markdown
-## Problem
+```
+Problem
+================================================================================
 
 This commit adds a new file.
 ```
 *(This describes "what" you did, not "why")*
 
-```markdown
-## Problem
+```
+Problem
+================================================================================
 
 The code was wrong.
 ```
@@ -108,38 +117,44 @@ Describe **what is wrong with the current state of the code**. Use subsections i
 - What errors or failures occur?
 
 **Good examples**:
-```markdown
-## Context
+```
+Context
+================================================================================
 
 Currently, all documentation procedures are inlined in CLAUDE.md, which is
 loaded on every conversation regardless of relevance.
 
-### What performance issues exist?
+What performance issues exist?
+--------------------------------------------------------------------------------
 
 The "adding new toolchain configurations" procedure consumes ~200 tokens
 even in conversations that never touch toolchain configuration. As more
 procedures are added, this overhead will grow linearly.
 
-### What is unclear about the current code?
+What is unclear about the current code?
+--------------------------------------------------------------------------------
 
 There's no established pattern for where to put detailed procedures, leading
 developers to either bloat CLAUDE.md or scatter documentation across ad-hoc
 locations.
 ```
 
-```markdown
-## Context
+```
+Context
+================================================================================
 
 The toolchain only supports glibc targets. Attempting to build for musl fails
 at configuration time with "unsupported target triple".
 
-### What functionality is missing?
+What functionality is missing?
+--------------------------------------------------------------------------------
 
 Users cannot create static binaries for Alpine Linux containers or embedded
 systems that require musl libc. This blocks deployment scenarios where glibc
 is unavailable or undesirable.
 
-### What user experience is blocked?
+What user experience is blocked?
+--------------------------------------------------------------------------------
 
 Workarounds require maintaining separate build systems or manually patching
 the toolchain configuration, both error-prone and difficult to maintain.
@@ -150,8 +165,9 @@ the toolchain configuration, both error-prone and difficult to maintain.
 Explain **what approach this commit takes** to solve the problem. Describe the key changes at a conceptual level.
 
 **Good examples**:
-```markdown
-## Solution
+```
+Solution
+================================================================================
 
 Introduce a two-tier documentation structure:
 - Keep frequently-used quick references in CLAUDE.md
@@ -162,8 +178,9 @@ The "adding new toolchain configurations" procedure becomes the first runbook,
 demonstrating the pattern for future documentation.
 ```
 
-```markdown
-## Solution
+```
+Solution
+================================================================================
 
 Add musl libc 1.2.5 as a new supported target triple (x86_64-linux-musl).
 
@@ -185,43 +202,51 @@ Explain **why this approach was chosen** over alternatives. Use subsections in q
 - Why not [obvious alternative]?
 
 **Good examples**:
-```markdown
-## Rationale
+```
+Rationale
+================================================================================
 
-### Why Not Git Submodules for Documentation?
+Why Not Git Submodules for Documentation?
+--------------------------------------------------------------------------------
 
 Git submodules add complexity and require explicit initialization. A simple
 directory structure is more discoverable and requires no special git knowledge.
 
-### Why docs/runbooks/ Specifically?
+Why docs/runbooks/ Specifically?
+--------------------------------------------------------------------------------
 
 The "runbooks" terminology is familiar to operations teams and clearly
 indicates procedural documentation. The docs/ prefix follows common
 conventions and keeps the repo root clean.
 
-### Why Keep References in CLAUDE.md?
+Why Keep References in CLAUDE.md?
+--------------------------------------------------------------------------------
 
 Without at least a pointer in CLAUDE.md, the runbooks would be invisible
 to Claude Code. The reference costs minimal tokens (~10) while ensuring
 discoverability.
 ```
 
-```markdown
-## Rationale
+```
+Rationale
+================================================================================
 
-### Why Separate Target Triple Instead of Flag?
+Why Separate Target Triple Instead of Flag?
+--------------------------------------------------------------------------------
 
 Adding musl as a distinct target triple (x86_64-linux-musl) rather than
 a flag maintains clean separation. This prevents accidental mixing of
 glibc and musl headers/libraries, which would cause subtle runtime bugs.
 
-### Why Musl 1.2.5?
+Why Musl 1.2.5?
+--------------------------------------------------------------------------------
 
 This is the latest stable release as of 2024-11. Starting with the newest
 version ensures modern features and security fixes. Older versions can be
 added if users need them for specific compatibility requirements.
 
-### Why Not Modify Existing Toolchains?
+Why Not Modify Existing Toolchains?
+--------------------------------------------------------------------------------
 
 The two-phase design (eager declaration + lazy download) already supports
 multiple independent toolchains. Adding musl as a new toolchain is cleaner
@@ -234,8 +259,9 @@ Add additional sections as appropriate for your commit:
 
 ### Test Plan
 
-```markdown
-## Test Plan
+```
+Test Plan
+================================================================================
 
 - [x] Verify all existing glibc configurations still build
 - [x] Build hello world with musl target
@@ -245,8 +271,9 @@ Add additional sections as appropriate for your commit:
 
 ### Breaking Changes
 
-```markdown
-## Breaking Changes
+```
+Breaking Changes
+================================================================================
 
 The `toolchains_cc_libc` environment variable has been renamed to
 `toolchains_cc_libc_version` to better reflect that it specifies a version
@@ -259,8 +286,9 @@ Users must update their build commands:
 
 ### Migration Guide
 
-```markdown
-## Migration Guide
+```
+Migration Guide
+================================================================================
 
 For users currently using custom toolchain configurations:
 
@@ -271,8 +299,9 @@ For users currently using custom toolchain configurations:
 
 ### Related Changes
 
-```markdown
-## Related Changes
+```
+Related Changes
+================================================================================
 
 This is part of a larger effort to support multiple C libraries:
 - #45: Add musl support (this PR)
@@ -285,30 +314,35 @@ This is part of a larger effort to support multiple C libraries:
 ```
 feat: add support for musl libc 1.2.5
 
-## Problem
+Problem
+================================================================================
 
 Users need to build C/C++ code against musl libc for static linking and
 containerized deployments, but the toolchain currently only supports
 glibc targets.
 
-## Context
+Context
+================================================================================
 
 The toolchain only supports glibc targets. Attempting to build for musl
 fails at configuration time with "unsupported target triple".
 
-### What functionality is missing?
+What functionality is missing?
+--------------------------------------------------------------------------------
 
 Users cannot create static binaries for Alpine Linux containers or embedded
 systems that require musl libc. This blocks deployment scenarios where glibc
 is unavailable or undesirable.
 
-### What user experience is blocked?
+What user experience is blocked?
+--------------------------------------------------------------------------------
 
 Workarounds require maintaining separate build systems or manually patching
 the toolchain configuration, both error-prone and difficult to maintain.
 Static binaries are essential for minimal container images.
 
-## Solution
+Solution
+================================================================================
 
 Add musl libc 1.2.5 as a new supported target triple (x86_64-linux-musl).
 
@@ -317,27 +351,32 @@ Changes include:
 - Release metadata and SHA256 hashes for musl toolchain binaries
 - CI test coverage for musl builds
 
-## Rationale
+Rationale
+================================================================================
 
-### Why Separate Target Triple Instead of Flag?
+Why Separate Target Triple Instead of Flag?
+--------------------------------------------------------------------------------
 
 Adding musl as a distinct target triple (x86_64-linux-musl) rather than
 a flag maintains clean separation. This prevents accidental mixing of
 glibc and musl headers/libraries, which would cause subtle runtime bugs.
 
-### Why Musl 1.2.5?
+Why Musl 1.2.5?
+--------------------------------------------------------------------------------
 
 This is the latest stable release as of 2024-11. Starting with the newest
 version ensures modern features and security fixes. Older versions can be
 added if users need them for specific compatibility requirements.
 
-### Why Not Modify Existing Toolchains?
+Why Not Modify Existing Toolchains?
+--------------------------------------------------------------------------------
 
 The two-phase design (eager declaration + lazy download) already supports
 multiple independent toolchains. Adding musl as a new toolchain is cleaner
 than conditionally modifying glibc toolchains.
 
-## Test Plan
+Test Plan
+================================================================================
 
 - [x] Build and test with musl 1.2.5 target
 - [x] Verify static linking with `ldd` (should show "not a dynamic executable")
@@ -354,16 +393,18 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ❌ **Don't repeat the diff**: The code changes are visible in the diff
 
-```markdown
-## Problem
+```
+Problem
+================================================================================
 
 Changed line 42 from `foo` to `bar`.
 ```
 
 ❌ **Don't write implementation details**: Save those for code comments
 
-```markdown
-## Context
+```
+Context
+================================================================================
 
 This uses a for loop to iterate over the list and calls the transform
 function on each element, then appends to a new list.
@@ -371,50 +412,59 @@ function on each element, then appends to a new list.
 
 ❌ **Don't be vague**:
 
-```markdown
-## Problem
+```
+Problem
+================================================================================
 
 Things weren't working right.
 
-## Context
+Context
+================================================================================
 
 Fixed it.
 ```
 
 ✅ **Do separate concerns properly**:
 
-```markdown
-## Problem
+```
+Problem
+================================================================================
 
 Bazel downloads toolchain binaries even for Python-only builds, adding
 5+ minutes to CI runs that don't need C/C++ compilation.
 
-## Context
+Context
+================================================================================
 
 The current implementation eagerly downloads all toolchain binaries during
 the repository rule phase, before Bazel knows which languages will be used.
 
-### What performance issues exist?
+What performance issues exist?
+--------------------------------------------------------------------------------
 
 Python-only builds spend 5+ minutes downloading GCC and sysroot tarballs
 that are never used. In polyglot repositories with frequent Python-only
 changes, this wastes significant CI time and bandwidth.
 
-## Solution
+Solution
+================================================================================
 
 Split toolchain setup into two phases:
 - Eager declaration: Register toolchain metadata immediately
 - Lazy download: Download binaries only when compilation actually occurs
 
-## Rationale
+Rationale
+================================================================================
 
-### Why Not Download Everything Upfront?
+Why Not Download Everything Upfront?
+--------------------------------------------------------------------------------
 
 Pre-downloading simplifies the implementation but wastes resources. The
 two-phase approach is more complex but essential for polyglot repositories
 where different builds have different needs.
 
-### Why Repository Rules Instead of Actions?
+Why Repository Rules Instead of Actions?
+--------------------------------------------------------------------------------
 
 Repository rules run before the analysis phase, allowing Bazel to know
 about available toolchains without downloading. Actions run too late for
@@ -433,7 +483,7 @@ toolchain resolution.
 
 5. **Link to related issues/PRs**: Use `#123` notation for GitHub integration
 
-6. **Use markdown formatting**: Headers, lists, code blocks, and emphasis make messages scannable
+6. **Use underlined headers**: Section headers (80 `=`) and subsection headers (`-`) make messages scannable in plain text
 
 7. **Be concise but complete**: Every sentence should add value, but don't leave out important context
 
@@ -448,7 +498,7 @@ Before committing, verify:
 - [ ] **Rationale** section explains why this approach was chosen
 - [ ] Subsections used when multiple points exist in any section
 - [ ] Focus is on "why" and "what", not "how"
-- [ ] Markdown formatting used for readability
+- [ ] Underlined headers used for readability (80 `=` for sections, `-` for subsections)
 - [ ] Message will make sense to someone 6 months from now
 - [ ] No implementation details that belong in code comments
 
