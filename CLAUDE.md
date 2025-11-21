@@ -6,13 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **BEFORE ANYTHING ELSE**: Run `bd onboard` and follow the instructions to set up the beads development environment.
 
-## Documentation Structure
+## Runbooks
 
-This CLAUDE.md file contains frequently-used context and quick references. For detailed procedures and runbooks that are used less frequently, see [docs/runbooks/](docs/runbooks/). This structure minimizes token usage while keeping important information accessible.
+This CLAUDE.md file contains frequently-used context and quick references. Detailed procedures are in [docs/runbooks/](docs/runbooks/). **When a runbook's context occurs, ALWAYS read the runbook BEFORE taking any action.**
 
-## Development Guidelines
-
-**Commit messages**: Follow the structured format in [docs/runbooks/commit-message-guidelines.md](docs/runbooks/commit-message-guidelines.md). Use markdown with required sections: Problem (why?), Context (what's wrong?), Solution (what approach?), Rationale (why this way?).
+- **Before creating any commit**: Read [docs/runbooks/commit-message-guidelines.md](docs/runbooks/commit-message-guidelines.md)
+- **Before adding new toolchain configurations**: Read [docs/runbooks/add-toolchain-configuration.md](docs/runbooks/add-toolchain-configuration.md)
 
 ## Project Overview
 
