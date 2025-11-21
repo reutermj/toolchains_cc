@@ -10,6 +10,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This CLAUDE.md file contains frequently-used context and quick references. For detailed procedures and runbooks that are used less frequently, see [docs/runbooks/](docs/runbooks/). This structure minimizes token usage while keeping important information accessible.
 
+## Development Guidelines
+
+**Commit messages**: Follow the structured format in [docs/runbooks/commit-message-guidelines.md](docs/runbooks/commit-message-guidelines.md). Focus on "why" and "what" rather than "how". Use markdown formatting with Problem and Context sections.
+
 ## Project Overview
 
 toolchains_cc is a Bazel module that provides hermetic C/C++ toolchains and sysroots. It offers easy-to-use, hermetic toolchains for building C/C++ code with Bazel using GCC (currently only GCC support, though the architecture supports multiple compilers).
