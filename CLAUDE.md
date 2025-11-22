@@ -12,6 +12,7 @@ This CLAUDE.md file contains frequently-used context and quick references. Detai
 
 - **Before creating any commit**: Read [docs/runbooks/commit-message-guidelines.md](docs/runbooks/commit-message-guidelines.md)
 - **Before adding new toolchain configurations**: Read [docs/runbooks/add-toolchain-configuration.md](docs/runbooks/add-toolchain-configuration.md)
+- **Before creating or modifying GitHub Actions workflows**: Read [docs/runbooks/github-actions-workflows.md](docs/runbooks/github-actions-workflows.md)
 
 ## Project Overview
 

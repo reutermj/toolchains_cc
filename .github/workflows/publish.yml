@@ -45,7 +45,7 @@ jobs:
       - name: Create release tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./.github/workflows/create-release.sh
+        run: ./.github/workflows/publish/publish.sh
 
   publish:
     needs: create-release
