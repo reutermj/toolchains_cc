@@ -11,7 +11,7 @@ permissions:
   attestations: write
 
 env:
-  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/gcc-standalone
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_gcc_standalone
 
 jobs:
   build:

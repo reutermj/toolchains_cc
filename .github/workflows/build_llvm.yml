@@ -22,7 +22,7 @@ permissions:
   attestations: write
 
 env:
-  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/llvm
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_llvm
   ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
   LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
 

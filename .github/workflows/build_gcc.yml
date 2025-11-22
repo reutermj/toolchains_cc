@@ -28,7 +28,7 @@ permissions:
   attestations: write
 
 env:
-  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/gcc
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_gcc
   GCC_VERSION: ${{ github.event.inputs.gcc_version }}
   LIBC: ${{ github.event.inputs.libc }}
 
