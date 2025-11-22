@@ -1,0 +1,4 @@
+{
+    "bazel.buildifierExecutable": "./bazel run -- @buildifier_prebuilt//:buildifier",
+    "bazel.executable": "./bazel"
+}
