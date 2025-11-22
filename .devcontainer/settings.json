@@ -1,5 +1,4 @@
 {
     "claudeCode.allowDangerouslySkipPermissions": true,
-    "claudeCode.initialPermissionMode": "bypassPermissions",
-    "bazel.buildifierExecutable": "./buildifier"
+    "claudeCode.initialPermissionMode": "bypassPermissions"
 }
