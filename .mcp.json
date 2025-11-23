@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "beads": {
+      "command": "beads-mcp",
+      "env": {
+        "BEADS_USE_DAEMON": "1"
+      }
+    }
+  }
+}
