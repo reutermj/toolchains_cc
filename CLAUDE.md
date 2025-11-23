@@ -1,9 +1,5 @@
 # toolchains_cc
 
-## Task Management
-
-**ALWAYS use Beads MCP for task management, NOT markdown-based task management.**
-
 ## Runbooks
 
 Runbooks are detaild procedures for use in a specific context.

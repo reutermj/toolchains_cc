@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "beads": {
-      "type": "stdio",
-      "command": "beads-mcp",
-      "args": []
-    }
-  }
-}
