@@ -1,17 +1,13 @@
 #!/bin/bash
 set -euox pipefail
 
-pwd
+# This bash file runs in the toolchains_cc repo root.
 
-pushd /workspaces/toolchains_cc
-pwd
-
+# This project uses Beads to provide agents with structured task tracking.
+# See: https://github.com/steveyegge/beads/blob/main/README.md
 curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash
 pip3 install beads-mcp
 bd init --quiet
 bd daemon start
 
-# Install Claude Code
 curl -fsSL https://claude.ai/install.sh | bash
-
-popd
