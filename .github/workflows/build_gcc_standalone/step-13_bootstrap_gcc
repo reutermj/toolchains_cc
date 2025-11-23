@@ -45,7 +45,7 @@ env CC_FOR_BUILD=gcc \
         --with-isl="${BUILD_TOOLS}" \
         --enable-lto \
         --enable-target-optspace \
-        --with-glibc-version=2.28 \
+        --with-glibc-version=${GLIBC_VERSION} \
         --with-linker-hash-style=both \
         --disable-plugin \
         --disable-nls \
