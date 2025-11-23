@@ -1,5 +1,9 @@
 # toolchains_cc
 
+## Task Management
+
+**ALWAYS use Beads (bd) for task management in this repository, and DO NOT use markdown-based todo lists (TodoWrite tool)**
+
 ## Runbooks
 
 Runbooks are detaild procedures for use in a specific context.
