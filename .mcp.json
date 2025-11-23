@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "beads": {
+      "command": "beads-mcp",
+      "env": {
+        "BEADS_USE_DAEMON": "1",
+        "BEADS_WORKING_DIR": "/workspaces/toolchains_cc"
+      }
+    }
+  }
+}
