@@ -14,4 +14,4 @@ gh release create "${RELEASE_NAME}" \
     --repo=https://github.com/reutermj/toolchains_cc \
     --latest=false \
     --title="${RELEASE_NAME}" \
-    --notes="GCC ${GCC_FULL_VERSION} toolchain for x86_64 Linux for glibc"
+    --notes="GCC ${GCC_FULL_VERSION} toolchain for x86_64 Linux with glibc ${GLIBC_VERSION}"

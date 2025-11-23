@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euox pipefail
 
+# Matrix variables from workflow
+export GCC_VERSION="${GCC_VERSION}"
+export GLIBC_VERSION="${GLIBC_VERSION}"
+
 export OUTPUT_DIR="/tmp/output"
 export SYSROOT_DIR="${OUTPUT_DIR}/x86_64-linux-gnu/sysroot"
 export BUILD_TOOLS="/tmp/buildtools"
