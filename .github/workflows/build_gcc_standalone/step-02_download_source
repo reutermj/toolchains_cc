@@ -41,10 +41,12 @@ git clone --depth 1 \
 # =========
 # || gmp ||
 # =========
-# TODO: gmp uses Mercurial instead of get. using wget for now
+# gmplib.org is unreliable when running on GitHub Actions runners.
+# Downloading from our vendored dependencies release instead.
+# See: https://github.com/reutermj/toolchains_cc/releases/tag/dependencies-v1
 GMP_TARBALL="${TARBALLS}/gmp.tar.xz"
 GMP_VERSION="6.3.0"
-GMP_URL="https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.xz"
+GMP_URL="https://github.com/reutermj/toolchains_cc/releases/download/dependencies-v1/gmp-${GMP_VERSION}.tar.xz"
 wget -O "${GMP_TARBALL}" "${GMP_URL}"
 tar xvf "${GMP_TARBALL}" -C "${GMP_SOURCE}" --strip-components=1
 
