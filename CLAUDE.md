@@ -2,8 +2,6 @@
 
 ## Guidelines
 
-* **YOU MUST ALWAYS** use Beads for task management in this repository
-* **DO NOT** use markdown-based todo lists (TodoWrite tool)
 * **DO NOT** commit directly to the main branch; **YOU MUST** create a new feature branch for all changes
 
 ## Runbooks
