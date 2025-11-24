@@ -471,6 +471,34 @@ about available toolchains without downloading. Actions run too late for
 toolchain resolution.
 ```
 
+## Clarifying Before Writing
+
+**CRITICAL: Before writing any commit message, ask clarifying questions to gather Context and Rationale.**
+
+The Q&A subsection format in commit messages requires real answers, not speculation. When preparing to commit:
+
+1. **Identify what you don't know**: What's the actual problem? Why was this approach chosen? What alternatives were considered?
+
+2. **Ask questions before committing**: Pose the questions that will appear in the commit message and ask the user to confirm, deny, or provide different answers
+
+3. **Provide default answers when possible**: If you have a reasonable guess, offer it for confirmation (e.g., "I think we chose X over Y because of performance - is that correct?")
+
+4. **Don't speculate in the commit**: The commit message should contain facts and decisions, not guesses about what might have been the reasoning
+
+**Example pre-commit dialogue**:
+```
+Before I create the commit, I have some questions for the Context and Rationale sections:
+
+Context Questions:
+- What functionality is currently missing? [I believe users can't build for Alpine Linux - is that the main blocker?]
+- What performance issues exist? [Are there any, or is this purely about functionality?]
+
+Rationale Questions:
+- Why use a separate target triple instead of a flag? [My guess: to prevent mixing glibc/musl headers]
+- Why start with musl 1.2.5 specifically? [Is it just because it's the latest, or are there other reasons?]
+- Were there other approaches considered? [What alternatives did you evaluate?]
+```
+
 ## Tips for Writing Good Commit Messages
 
 1. **Write for future maintainers**: Someone (including future you) will read this commit in 6 months trying to understand why a decision was made
@@ -487,20 +515,24 @@ toolchain resolution.
 
 7. **Be concise but complete**: Every sentence should add value, but don't leave out important context
 
+8. **Ask questions before writing**: Never speculate about context or rationale - ask the user to confirm your understanding first
+
 ## Commit Message Checklist
 
 Before committing, verify:
 
+- [ ] **Asked clarifying questions** about Context and Rationale before writing the commit
 - [ ] Subject line follows `<type>: <subject>` format
 - [ ] **Problem** section explains why this change is needed
-- [ ] **Context** section describes what's wrong with current code (symptoms, missing functionality, blocked UX, performance issues, unclear code)
+- [ ] **Context** section describes what's wrong with current code (symptoms, missing functionality, blocked UX, performance issues, unclear code) - based on user confirmation, not speculation
 - [ ] **Solution** section explains what approach this commit takes
-- [ ] **Rationale** section explains why this approach was chosen
+- [ ] **Rationale** section explains why this approach was chosen - based on user confirmation, not speculation
 - [ ] Subsections used when multiple points exist in any section
 - [ ] Focus is on "why" and "what", not "how"
 - [ ] Underlined headers used for readability (80 `=` for sections, `-` for subsections)
 - [ ] Message will make sense to someone 6 months from now
 - [ ] No implementation details that belong in code comments
+- [ ] No speculation or guesses - all Context and Rationale answers are factual
 
 ## Tools
 
