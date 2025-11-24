@@ -48,6 +48,15 @@ make -j$(nproc) -l \
     install_root="${SYSROOT_DIR}" \
     install
 
+make -j$(nproc) -l \
+    CXX="" \
+    default_cflags="" \
+    BUILD_CFLAGS="-O2 -g -I${BUILD_TOOLS}/include" \
+    BUILD_CPPFLAGS="" \
+    BUILD_LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    install_root="${GLIBC_ARTIFACTS}" \
+    install
+
 popd
 
 # Why --disable-cet and -fcf-protection=none?

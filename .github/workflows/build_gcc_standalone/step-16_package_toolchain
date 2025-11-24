@@ -41,6 +41,16 @@ XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/x86_64-linux-gnu-glibc-${GLIBC_VERSION}-lib
 
 rm -rf "${LIBGCC_FILES[@]}"
 
+# ==================
+# || Package glibc ||
+# ==================
+pushd "${GLIBC_ARTIFACTS}"
+
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/x86_64-linux-gnu-glibc-${GLIBC_VERSION}-${DATETIME}.tar.xz" \
+    usr/
+
+popd
+
 # =================
 # || Package gcc ||
 # =================
