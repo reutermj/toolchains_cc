@@ -2,31 +2,8 @@
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
-# Retry logic for flaky git clone on GitHub Actions runners
 # https://sourceware.org sometimes has connectivity issues
-MAX_RETRIES=5
-RETRY_DELAY=5
-
-for attempt in $(seq 1 $MAX_RETRIES); do
-    echo "Attempting to clone glibc (attempt ${attempt}/${MAX_RETRIES})..."
-
-    if git clone --depth 1 \
+retry_with_backoff "${GLIBC_SOURCE}" \
+    git clone --depth 1 \
         --branch "glibc-${GLIBC_VERSION}" \
-        https://sourceware.org/git/glibc.git "${GLIBC_SOURCE}"; then
-        echo "Successfully cloned glibc source"
-        exit 0
-    fi
-
-    # Clean up partial clone if it exists
-    rm -rf "${GLIBC_SOURCE}"
-
-    if [ $attempt -lt $MAX_RETRIES ]; then
-        # Exponential backoff
-        sleep_time=$((RETRY_DELAY ** attempt))
-        echo "Clone failed, retrying in ${sleep_time} seconds..."
-        sleep ${sleep_time}
-    fi
-done
-
-echo "Failed to clone glibc after ${MAX_RETRIES} attempts"
-exit 1
+        https://sourceware.org/git/glibc.git "${GLIBC_SOURCE}"
