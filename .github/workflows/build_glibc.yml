@@ -3,26 +3,29 @@ name: Build glibc
 on:
   workflow_dispatch:
     inputs:
-      glibc_version:
-        description: 'glibc version to build (e.g., 2.28, 2.39)'
+      glibc_versions:
+        description: 'JSON array of glibc versions (e.g., ["2.28", "2.39", "2.40"])'
         required: true
+        default: '["2.39"]'
         type: string
-      target:
-        description: 'Target triple (e.g., x86_64-linux-gnu)'
-        required: false
-        type: string
-        default: 'x86_64-linux-gnu'
 
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_glibc
-  GLIBC_VERSION: ${{ inputs.glibc_version }}
-  TARGET: ${{ inputs.target }}
+  TARGET: x86_64-linux-gnu
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        glibc_version: ${{ fromJson(github.event.inputs.glibc_versions) }}
+      fail-fast: false
+
     permissions:
       contents: write
+
+    env:
+      GLIBC_VERSION: ${{ matrix.glibc_version }}
 
     steps:
       - name: Checkout repository
