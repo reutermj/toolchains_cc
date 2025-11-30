@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+# Download Linux kernel headers
+# Using 6.12 as a stable recent version
+LINUX_VERSION="6.12"
+git clone --depth 1 \
+    --branch "v${LINUX_VERSION}" \
+    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git "${LINUX_SOURCE}"

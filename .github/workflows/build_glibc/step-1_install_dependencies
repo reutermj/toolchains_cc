@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euox pipefail
+
+sudo apt update
+DEBIAN_FRONTEND=noninteractive sudo apt install -y \
+    build-essential \
+    bison \
+    gawk \
+    python3 \
+    wget \
+    git \
+    rsync
