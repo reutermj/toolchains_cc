@@ -30,3 +30,35 @@ mkdir -p "${GLIBC_ARTIFACTS}"
 if [ -n "${GITHUB_ENV:-}" ]; then
     echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> "${GITHUB_ENV}"
 fi
+
+# Retry function with exponential backoff for flaky network operations
+# Usage: retry_with_backoff <cleanup_path> <command> [args...]
+retry_with_backoff() {
+    local cleanup_path="$1"
+    shift
+    local max_retries=5
+    local retry_delay=
+
+    for attempt in $(seq 1 $max_retries); do
+        echo "Attempt ${attempt}/${max_retries}: $@"
+
+        if "$@"; then
+            echo "Success: $@"
+            return 0
+        fi
+
+        # Clean up partial state if path provided
+        if [ -n "$cleanup_path" ] && [ -e "$cleanup_path" ]; then
+            rm -rf "$cleanup_path"
+        fi
+
+        if [ $attempt -lt $max_retries ]; then
+            local sleep_time=$((retry_delay ** attempt))
+            echo "Failed, retrying in ${sleep_time} seconds..."
+            sleep ${sleep_time}
+        fi
+    done
+
+    echo "Failed after ${max_retries} attempts: $@"
+    return 1
+}
