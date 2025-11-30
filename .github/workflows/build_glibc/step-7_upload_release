@@ -15,6 +15,7 @@ echo "Creating release ${RELEASE_NAME}"
 gh release create "${RELEASE_NAME}" \
     ${ARTIFACTS_DIR}/*.tar.xz \
     --title "${RELEASE_NAME}" \
-    --notes "glibc ${GLIBC_VERSION} build for ${TARGET}"
+    --notes "glibc ${GLIBC_VERSION} build for ${TARGET}" \
+    --latest=false
 
 echo "Successfully created release ${RELEASE_NAME}"
