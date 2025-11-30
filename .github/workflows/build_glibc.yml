@@ -1,0 +1,55 @@
+name: Build glibc
+
+on:
+  workflow_dispatch:
+    inputs:
+      glibc_version:
+        description: 'glibc version to build (e.g., 2.28, 2.39)'
+        required: true
+        type: string
+      target:
+        description: 'Target triple (e.g., x86_64-linux-gnu)'
+        required: false
+        type: string
+        default: 'x86_64-linux-gnu'
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_glibc
+  GLIBC_VERSION: ${{ inputs.glibc_version }}
+  TARGET: ${{ inputs.target }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.0
+
+      - name: Install dependencies
+        run: ${{ env.SCRIPTS_DIR }}/step-1_install_dependencies
+
+      - name: Set up environment
+        run: ${{ env.SCRIPTS_DIR }}/environment
+
+      - name: Download glibc source
+        run: ${{ env.SCRIPTS_DIR }}/step-2_download_glibc_source
+
+      - name: Download Linux kernel headers source
+        run: ${{ env.SCRIPTS_DIR }}/step-3_download_linux_source
+
+      - name: Install Linux kernel headers
+        run: ${{ env.SCRIPTS_DIR }}/step-4_install_linux_headers
+
+      - name: Build glibc
+        run: ${{ env.SCRIPTS_DIR }}/step-5_build_glibc
+
+      - name: Package glibc
+        run: ${{ env.SCRIPTS_DIR }}/step-6_package_glibc
+
+      - name: Upload to GitHub Releases
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ${{ env.SCRIPTS_DIR }}/step-7_upload_release

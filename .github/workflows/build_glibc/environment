@@ -1,0 +1,32 @@
+#!/bin/bash
+set -euox pipefail
+
+# Build parameters from workflow
+export GLIBC_VERSION="${GLIBC_VERSION}"
+export TARGET="${TARGET:-x86_64-linux-gnu}"
+
+# Directory structure
+export OUTPUT_DIR="/tmp/output"
+export SYSROOT_DIR="${OUTPUT_DIR}/${TARGET}/sysroot"
+export ARTIFACTS_DIR="/tmp/artifacts"
+
+# Source directories
+export GLIBC_SOURCE="/tmp/glibc-source"
+export LINUX_SOURCE="/tmp/linux-source"
+export GLIBC_ARTIFACTS="/tmp/glibc-artifacts"
+
+# Create directory structure
+mkdir -p "${OUTPUT_DIR}"
+mkdir -p "${SYSROOT_DIR}"
+mkdir -p "${SYSROOT_DIR}/usr/include"
+mkdir -p "${SYSROOT_DIR}/lib"
+mkdir -p "${SYSROOT_DIR}/usr/lib"
+mkdir -p "${ARTIFACTS_DIR}"
+mkdir -p "${GLIBC_SOURCE}"
+mkdir -p "${LINUX_SOURCE}"
+mkdir -p "${GLIBC_ARTIFACTS}"
+
+# Export to GitHub Actions environment if running in CI
+if [ -n "${GITHUB_ENV:-}" ]; then
+    echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> "${GITHUB_ENV}"
+fi

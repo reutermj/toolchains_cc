@@ -1,0 +1,58 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+GLIBC_BUILD_DIR="/tmp/glibc-build"
+mkdir -p "${GLIBC_BUILD_DIR}"
+
+pushd "${GLIBC_BUILD_DIR}"
+
+# Build glibc using host GCC
+# Unlike the bootstrap approach, we use the system GCC directly
+env BUILD_CC=gcc \
+    CC="gcc -g -O2 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int -fcf-protection=none" \
+    CFLAGS="-fcf-protection=none" \
+    AR=ar \
+    RANLIB=ranlib \
+    ${GLIBC_SOURCE}/configure \
+        --prefix=/usr \
+        --host=${TARGET} \
+        --without-cvs \
+        --disable-profile \
+        --without-gd \
+        --with-headers=${SYSROOT_DIR}/usr/include \
+        --disable-debug \
+        --disable-cet \
+        --disable-sanity-checks \
+        --enable-obsolete-rpc \
+        --enable-kernel="" \
+        --with-__thread \
+        --with-tls \
+        --enable-shared \
+        --enable-add-ons=no \
+        --disable-werror
+
+make -j$(nproc) -l \
+    CXX="" \
+    LDFLAGS="" \
+    default_cflags="" \
+    BUILD_CFLAGS="-O2 -g" \
+    BUILD_CPPFLAGS="" \
+    BUILD_LDFLAGS="" \
+    all
+
+# Install to GLIBC_ARTIFACTS for packaging
+make -j$(nproc) -l \
+    CXX="" \
+    default_cflags="" \
+    BUILD_CFLAGS="-O2 -g" \
+    BUILD_CPPFLAGS="" \
+    BUILD_LDFLAGS="" \
+    install_root="${GLIBC_ARTIFACTS}" \
+    install
+
+popd
+
+# Disable CET (Control-flow Enforcement Technology) to avoid linker errors
+# with older glibc versions that don't fully support it.
+# See build_gcc_standalone/step-14_build_glibc for details on the specific error.
