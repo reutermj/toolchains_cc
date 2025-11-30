@@ -36,8 +36,8 @@ fi
 retry_with_backoff() {
     local cleanup_path="$1"
     shift
-    local max_retries=5
-    local retry_delay=
+    local max_retries=8
+    local retry_delay=2
 
     for attempt in $(seq 1 $max_retries); do
         echo "Attempt ${attempt}/${max_retries}: $@"
