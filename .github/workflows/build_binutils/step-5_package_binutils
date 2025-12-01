@@ -1,0 +1,34 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd "${BINUTILS_ARTIFACTS}"
+
+# Host architecture - hardcoded for now, will be passed as argument in future
+# Since binaries are statically linked, they work on any x86_64 Linux system
+HOST="x86_64-linux"
+
+# Package format: <host>-<target>-binutils-<version>-<datetime>.tar.xz
+# Example: x86_64-linux-x86_64-linux-gnu-binutils-2.43-20241201.tar.xz
+#
+# Why include host in the package name?
+# In future tasks, we will build cross-compiling toolchains (e.g., binutils
+# running on x86_64 but targeting aarch64). The host architecture identifies
+# where the toolchain binaries will run. Since binaries are statically linked,
+# we use a simplified format (x86_64-linux) that works across any Linux distro.
+#
+# Why include datetime in release names?
+# toolchains_cc must preserve functionality of previous releases, which means
+# using the same version of toolchain binaries that were used in those releases.
+# Adding datetime allows us to update/rebuild toolchain artifacts while
+# maintaining existing artifacts for backward compatibility.
+DATETIME=$(date +%Y%m%d)
+PACKAGE_NAME="${HOST}-${TARGET}-binutils-${BINUTILS_VERSION}-${DATETIME}.tar.xz"
+RELEASE_NAME="binutils-${BINUTILS_VERSION}-${DATETIME}"
+
+# Save release name for upload step
+echo "${RELEASE_NAME}" > "${ARTIFACTS_DIR}/release_name"
+
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${PACKAGE_NAME}" .
+
+popd
