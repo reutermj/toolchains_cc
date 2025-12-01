@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+    echo "GITHUB_TOKEN is not set, exiting"
+    exit 0
+fi
+
+# Release name format: binutils-<version>-<datetime>
+# Example: binutils-2.43-20241201
+RELEASE_NAME=$(cat "${ARTIFACTS_DIR}/release_name")
+
+echo "Creating release ${RELEASE_NAME}"
+gh release create "${RELEASE_NAME}" \
+    ${ARTIFACTS_DIR}/*.tar.xz \
+    --title "${RELEASE_NAME}" \
+    --notes "binutils ${BINUTILS_VERSION} build for ${TARGET}" \
+    --latest=false
+
+echo "Successfully created release ${RELEASE_NAME}"

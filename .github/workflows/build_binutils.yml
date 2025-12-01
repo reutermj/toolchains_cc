@@ -1,0 +1,65 @@
+name: Build binutils
+
+on:
+  workflow_dispatch:
+    inputs:
+      binutils_versions:
+        description: 'JSON array of binutils versions (e.g., ["2.41", "2.42", "2.43"])'
+        required: true
+        default: '["2.43"]'
+        type: string
+
+permissions:
+  # Required for uploading GitHub releases
+  contents: write
+  # Required for build provenance attestation
+  id-token: write
+  attestations: write
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_binutils
+  TARGET: x86_64-linux-gnu
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        binutils_version: ${{ fromJson(github.event.inputs.binutils_versions) }}
+      fail-fast: false
+
+    env:
+      BINUTILS_VERSION: ${{ matrix.binutils_version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.0
+
+      - name: Install dependencies
+        run: $SCRIPTS_DIR/step-1_install_dependencies
+
+      - name: Set up environment
+        run: $SCRIPTS_DIR/environment
+
+      - name: Download sources
+        run: $SCRIPTS_DIR/step-2_download_sources
+
+      - name: Build zlib
+        run: $SCRIPTS_DIR/step-3_build_zlib
+
+      - name: Build binutils
+        run: $SCRIPTS_DIR/step-4_build_binutils
+
+      - name: Package binutils
+        run: $SCRIPTS_DIR/step-5_package_binutils
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v3.0.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: $SCRIPTS_DIR/step-6_upload_release
