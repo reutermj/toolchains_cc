@@ -4,6 +4,14 @@ source ${SCRIPTS_DIR}/environment
 
 pushd "${BINUTILS_SOURCE}"
 
+# --disable-gdbserver is required in addition to --disable-gdb
+# Without it, binutils-gdb still builds gdbserver by default, causing
+# linker errors with the -all-static flag (unrecognized by gcc/g++)
+
+# --with-sysroot=/: enables runtime --sysroot flag in ld without hardcoding
+# a specific path. Without this, ld rejects --sysroot with error "this linker
+# was not configured to use sysroots"
+# https://sourceware.org/binutils/docs-2.40/ld/Options.html
 env CC_FOR_BUILD=gcc \
     CFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include" \
     CXXFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include" \
@@ -13,6 +21,7 @@ env CC_FOR_BUILD=gcc \
     ./configure \
         --target=${TARGET} \
         --prefix="${BINUTILS_ARTIFACTS}" \
+        --with-sysroot=/ \
         --disable-werror \
         --enable-ld=yes \
         --enable-gold=no \
@@ -21,6 +30,7 @@ env CC_FOR_BUILD=gcc \
         --disable-gprofng \
         --disable-sim \
         --disable-gdb \
+        --disable-gdbserver \
         --without-debuginfod \
         --disable-nls \
         --without-zstd
