@@ -4,14 +4,16 @@ source ${SCRIPTS_DIR}/environment
 
 pushd "${BINUTILS_SOURCE}"
 
-# --disable-gdbserver is required in addition to --disable-gdb
-# Without it, binutils-gdb still builds gdbserver by default, causing
-# linker errors with the -all-static flag (unrecognized by gcc/g++)
-
 # --with-sysroot=/: enables runtime --sysroot flag in ld without hardcoding
 # a specific path. Without this, ld rejects --sysroot with error "this linker
 # was not configured to use sysroots"
 # https://sourceware.org/binutils/docs-2.40/ld/Options.html
+
+# --disable-inprocess-agent: prevents building libinproctrace.so for gdbserver.
+# libinproctrace.so is a shared library for fast tracepoints that conflicts with
+# static linking because gdbserver uses g++ directly (not libtool) which doesn't
+# recognize the libtool-specific -all-static flag.
+# https://sourceware.org/pipermail/gdb-patches/2022-February/185721.html
 env CC_FOR_BUILD=gcc \
     CFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include" \
     CXXFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include" \
@@ -30,13 +32,31 @@ env CC_FOR_BUILD=gcc \
         --disable-gprofng \
         --disable-sim \
         --disable-gdb \
-        --disable-gdbserver \
+        --disable-inprocess-agent \
         --without-debuginfod \
         --disable-nls \
         --without-zstd
 
 make -j$(nproc) -l configure-host
-make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc) -l
+
+# Build everything except gdbserver with -all-static (libtool flag)
+# gdbserver must be built separately because it uses g++ directly (not libtool),
+# which doesn't recognize -all-static and requires -static instead
+make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc) -l \
+    all-binutils \
+    all-gas \
+    all-ld \
+    all-libctf \
+    all-zlib \
+    all-bfd \
+    all-opcodes \
+    all-libiberty \
+    all-libsframe \
+    all-gdbsupport
+
+# Build gdbserver with -static (gcc/g++ flag)
+make -C gdbserver LDFLAGS="-L${BUILD_TOOLS}/lib -static" -j$(nproc) -l
+
 make install
 
 popd
