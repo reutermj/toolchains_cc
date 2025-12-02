@@ -1,0 +1,54 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd "${GCC_ARTIFACTS}"
+GCC_FULL_VERSION=$("bin/${TARGET}-gcc" --version | head -n1 | awk '{print $NF}')
+DATETIME=$(date +%Y%m%d)
+RELEASE_NAME="${HOST}-${TARGET}-glibc-${GLIBC_VERSION}-gcc-${GCC_FULL_VERSION}-${DATETIME}"
+echo $RELEASE_NAME > release_name
+
+# =======================
+# || Package libstdc++ ||
+# =======================
+cp -r share share-libstdcxx
+
+LIBSTDCXX_FILES=()
+LIBSTDCXX_FILES+=(share-libstdcxx)
+LIBSTDCXX_FILES+=("${TARGET}/include/c++/")
+LIBSTDCXX_FILES+=("${TARGET}/lib64/libitm"*)
+LIBSTDCXX_FILES+=("${TARGET}/lib64/libstdc++"*)
+LIBSTDCXX_FILES+=("${TARGET}/lib64/libsupc++"*)
+
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${TARGET}-glibc-${GLIBC_VERSION}-libstdcxx-${GCC_FULL_VERSION}-${DATETIME}.tar.xz" \
+    "${LIBSTDCXX_FILES[@]}"
+
+rm -rf "${LIBSTDCXX_FILES[@]}"
+
+# =======================================
+# || Package gcc compiler runtime libs ||
+# =======================================
+cp -r share share-libgcc
+
+LIBGCC_FILES=()
+LIBGCC_FILES+=(share-libgcc)
+LIBGCC_FILES+=(lib/gcc)
+LIBGCC_FILES+=("${TARGET}/lib64/libgcc"*)
+LIBGCC_FILES+=("${TARGET}/lib64/libatomic"*)
+
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${TARGET}-glibc-${GLIBC_VERSION}-libgcc-${GCC_FULL_VERSION}-${DATETIME}.tar.xz" \
+    "${LIBGCC_FILES[@]}"
+
+rm -rf "${LIBGCC_FILES[@]}"
+
+# =================
+# || Package gcc ||
+# =================
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${RELEASE_NAME}.tar.xz" \
+    bin/ \
+    lib/ \
+    libexec/ \
+    share/ \
+    "${TARGET}"
+
+popd

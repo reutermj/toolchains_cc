@@ -1,0 +1,39 @@
+#!/bin/bash
+set -euox pipefail
+
+# Matrix variables from workflow
+export GCC_VERSION="${GCC_VERSION}"
+export GLIBC_VERSION="${GLIBC_VERSION}"
+
+# Hard-coded host and target (for now)
+export HOST="x86_64-linux"
+export TARGET="x86_64-linux-gnu"
+
+export SYSROOT_DIR="/tmp/sysroot"
+export BUILD_TOOLS="/tmp/buildtools"
+
+mkdir -p ${SYSROOT_DIR}
+mkdir -p ${BUILD_TOOLS}
+
+# ==============================
+# || Setup Source Directories ||
+# ==============================
+export ARTIFACTS_DIR="/tmp/artifacts"
+export GCC_ARTIFACTS="/tmp/gcc-artifacts"
+export GCC_SOURCE="/tmp/gcc-source"
+export GMP_SOURCE="/tmp/gmp-source"
+export ISL_SOURCE="/tmp/isl-source"
+export MPC_SOURCE="/tmp/mpc-source"
+export MPFR_SOURCE="/tmp/mpfr-source"
+
+mkdir -p ${ARTIFACTS_DIR}
+mkdir -p ${GCC_ARTIFACTS}
+mkdir -p ${GCC_SOURCE}
+mkdir -p ${GMP_SOURCE}
+mkdir -p ${ISL_SOURCE}
+mkdir -p ${MPC_SOURCE}
+mkdir -p ${MPFR_SOURCE}
+
+if [ -n "${GITHUB_ENV:-}" ]; then
+    echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> "${GITHUB_ENV}"
+fi

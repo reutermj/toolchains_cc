@@ -1,0 +1,50 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+TARBALLS="/tmp/tarballs"
+mkdir -p ${TARBALLS}
+
+# =========
+# || gcc ||
+# =========
+GCC_VERSION_UNDERSCORES="${GCC_VERSION//./_}"
+git clone --depth 1 \
+    --branch "releases/gcc-${GCC_VERSION}" \
+    git://gcc.gnu.org/git/gcc.git "${GCC_SOURCE}"
+
+# =========
+# || gmp ||
+# =========
+# gmplib.org is unreliable when running on GitHub Actions runners.
+# Downloading from our vendored dependencies release instead.
+# See: https://github.com/reutermj/toolchains_cc/releases/tag/dependencies-v1
+GMP_TARBALL="${TARBALLS}/gmp.tar.xz"
+GMP_VERSION="6.3.0"
+GMP_URL="https://github.com/reutermj/toolchains_cc/releases/download/dependencies-v1/gmp-${GMP_VERSION}.tar.xz"
+wget -O "${GMP_TARBALL}" "${GMP_URL}"
+tar xvf "${GMP_TARBALL}" -C "${GMP_SOURCE}" --strip-components=1
+
+# =========
+# || isl ||
+# =========
+ISL_VERSION="0.27"
+git clone --depth 1 \
+    --branch "isl-${ISL_VERSION}" \
+    https://repo.or.cz/isl.git "${ISL_SOURCE}"
+
+# =========
+# || mpc ||
+# =========
+MPC_VERSION="1.3.1"
+git clone --depth 1 \
+    --branch "${MPC_VERSION}" \
+    https://gitlab.inria.fr/mpc/mpc.git "${MPC_SOURCE}"
+
+# ==========
+# || mpfr ||
+# ==========
+MPFR_VERSION="4.2.2"
+git clone --depth 1 \
+    --branch "${MPFR_VERSION}" \
+    https://gitlab.inria.fr/mpfr/mpfr.git "${MPFR_SOURCE}"

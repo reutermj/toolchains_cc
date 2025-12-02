@@ -1,0 +1,56 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+GCC_BUILD_DIR=/tmp/gcc-build/
+mkdir -p ${GCC_BUILD_DIR}
+
+pushd "${GCC_BUILD_DIR}"
+
+# Build GCC using the prebuilt sysroot containing binutils and glibc
+# --with-build-sysroot allows using a sysroot at build time without hardcoding the path
+# At runtime, users can specify --sysroot to use a different location
+env CC_FOR_BUILD="gcc" \
+    CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    CFLAGS_FOR_BUILD="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS_FOR_BUILD="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib -static" \
+    CFLAGS_FOR_TARGET="-g -O2" \
+    CXXFLAGS_FOR_TARGET="-g -O2" \
+    LDFLAGS_FOR_TARGET="" \
+    ${GCC_SOURCE}/configure \
+        --build=x86_64-build_pc-linux-gnu \
+        --host=x86_64-build_pc-linux-gnu \
+        --target=${TARGET} \
+        --with-sysroot="${SYSROOT_DIR}" \
+        --with-native-system-header-dir=/usr/include \
+        --enable-languages=c,c++ \
+        --enable-__cxa_atexit \
+        --disable-libmudflap \
+        --disable-libgomp \
+        --disable-libssp \
+        --disable-libquadmath \
+        --disable-libquadmath-support \
+        --disable-libsanitizer \
+        --enable-libmpx \
+        --with-gmp="${BUILD_TOOLS}" \
+        --with-mpfr="${BUILD_TOOLS}" \
+        --with-mpc="${BUILD_TOOLS}" \
+        --with-isl="${BUILD_TOOLS}" \
+        --enable-lto \
+        --enable-threads=posix \
+        --enable-target-optspace \
+        --with-linker-hash-style=both \
+        --disable-plugin \
+        --disable-nls \
+        --disable-multilib \
+        --enable-long-long
+
+make -j$(nproc) -l all
+make install prefix="${GCC_ARTIFACTS}" exec_prefix="${GCC_ARTIFACTS}"
+
+MESSAGE="See https://github.com/reutermj/toolchains_cc/blob/main/docs/lore/gcc/load_bearing_directories.md"
+echo ${MESSAGE} > ${GCC_ARTIFACTS}/lib/keep_load_bearing_directory
+
+popd

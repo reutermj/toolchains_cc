@@ -1,0 +1,78 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+DOWNLOAD_DIR="/tmp/downloads"
+mkdir -p ${DOWNLOAD_DIR}
+
+# ===================
+# || Find Binutils ||
+# ===================
+# Release name format: {host}-{target}-binutils-{version}-{date}
+# Tag name format: binutils-{version}-{date}
+# Artifact format: {host}-{target}-binutils-{version}-{date}.tar.xz
+
+# Find the latest binutils release for our host and target
+# We filter by release name but extract the tagName for downloading
+BINUTILS_INFO=$(gh release list \
+    --repo reutermj/toolchains_cc \
+    --limit 1000 \
+    --json tagName,name,createdAt \
+    | jq -r '.[] | select(.name | startswith("'${HOST}'-'${TARGET}'-binutils-")) | {tagName, name}' \
+    | jq -s 'sort_by(.name) | last')
+
+BINUTILS_TAG=$(echo "$BINUTILS_INFO" | jq -r '.tagName')
+BINUTILS_NAME=$(echo "$BINUTILS_INFO" | jq -r '.name')
+
+if [ -z "$BINUTILS_TAG" ] || [ "$BINUTILS_TAG" == "null" ]; then
+    echo "ERROR: No binutils release found for ${HOST}-${TARGET}"
+    exit 1
+fi
+
+echo "Found binutils release: ${BINUTILS_NAME} (tag: ${BINUTILS_TAG})"
+
+# Download binutils artifact
+gh release download "${BINUTILS_TAG}" \
+    --repo reutermj/toolchains_cc \
+    --pattern "${BINUTILS_NAME}.tar.xz" \
+    --dir "${DOWNLOAD_DIR}"
+
+# Extract binutils into sysroot
+tar xf "${DOWNLOAD_DIR}/${BINUTILS_NAME}.tar.xz" -C "${SYSROOT_DIR}"
+
+# ================
+# || Find glibc ||
+# ================
+# Release tag format: glibc-{version}-{date}
+# Artifact format: {target}-glibc-{version}-{date}.tar.xz
+
+# Find the latest glibc release matching the glibc version
+GLIBC_TAG=$(gh release list \
+    --repo reutermj/toolchains_cc \
+    --limit 1000 \
+    --json tagName,createdAt \
+    | jq -r '.[] | select(.tagName | startswith("glibc-'${GLIBC_VERSION}'-")) | .tagName' \
+    | sort -V \
+    | tail -n 1)
+
+if [ -z "$GLIBC_TAG" ]; then
+    echo "ERROR: No glibc release found for version ${GLIBC_VERSION}"
+    exit 1
+fi
+
+echo "Found glibc release: ${GLIBC_TAG}"
+
+# The artifact name includes the target
+GLIBC_ARTIFACT="${TARGET}-${GLIBC_TAG}.tar.xz"
+
+# Download glibc artifact
+gh release download "${GLIBC_TAG}" \
+    --repo reutermj/toolchains_cc \
+    --pattern "${GLIBC_ARTIFACT}" \
+    --dir "${DOWNLOAD_DIR}"
+
+# Extract glibc into sysroot
+tar xf "${DOWNLOAD_DIR}/${GLIBC_ARTIFACT}" -C "${SYSROOT_DIR}"
+
+echo "Sysroot prepared at ${SYSROOT_DIR}"
+ls -la "${SYSROOT_DIR}"
