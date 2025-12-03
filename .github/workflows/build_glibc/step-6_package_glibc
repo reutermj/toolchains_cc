@@ -13,6 +13,6 @@ RELEASE_NAME="glibc-${GLIBC_VERSION}-${DATETIME}"
 # Save release name for upload step
 echo "${RELEASE_NAME}" > "${ARTIFACTS_DIR}/release_name"
 
-XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${PACKAGE_NAME}" usr/
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${PACKAGE_NAME}" *
 
 popd
