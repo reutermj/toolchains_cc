@@ -1,9 +1,0 @@
-#!/bin/bash
-set -euox pipefail
-source ${SCRIPTS_DIR}/environment
-
-# https://sourceware.org sometimes has connectivity issues
-retry_with_backoff "${GLIBC_SOURCE}" \
-    git clone --depth 1 \
-        --branch "glibc-${GLIBC_VERSION}" \
-        https://sourceware.org/git/glibc.git "${GLIBC_SOURCE}"

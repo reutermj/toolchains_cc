@@ -7,11 +7,6 @@ if [[ -z "${GITHUB_TOKEN:-}" ]]; then
     exit 0
 fi
 
-RELEASE_TAG="binaries"
-
-echo "Uploading artifacts to release ${RELEASE_TAG}"
-gh release upload "${RELEASE_TAG}" \
+gh release upload binaries \
     ${ARTIFACTS_DIR}/*.tar.xz \
     --clobber
-
-echo "Successfully uploaded artifacts to release ${RELEASE_TAG}"

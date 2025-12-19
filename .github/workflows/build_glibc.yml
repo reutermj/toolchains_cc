@@ -12,7 +12,8 @@ on:
 
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_glibc
-  TARGET: x86_64-linux-gnu
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  LINUX_VERSION: 6.18
 
 jobs:
   build:
@@ -24,6 +25,8 @@ jobs:
 
     permissions:
       contents: write
+      id-token: write
+      attestations: write
 
     env:
       GLIBC_VERSION: ${{ matrix.glibc_version }}
@@ -39,21 +42,27 @@ jobs:
         run: ${{ env.SCRIPTS_DIR }}/environment
 
       - name: Download glibc source
-        run: ${{ env.SCRIPTS_DIR }}/step-2_download_glibc_source
+        run: ${{ env.SCRIPTS_DIR }}/step-2.1_download_glibc_source
 
       - name: Download Linux kernel headers source
-        run: ${{ env.SCRIPTS_DIR }}/step-3_download_linux_source
+        run: ${{ env.SCRIPTS_DIR }}/step-2.2_download_linux_source
 
       - name: Install Linux kernel headers
-        run: ${{ env.SCRIPTS_DIR }}/step-4_install_linux_headers
+        run: ${{ env.SCRIPTS_DIR }}/step-3_install_linux_headers
 
       - name: Build glibc
-        run: ${{ env.SCRIPTS_DIR }}/step-5_build_glibc
+        run: ${{ env.SCRIPTS_DIR }}/step-4_build_glibc
 
       - name: Package glibc
-        run: ${{ env.SCRIPTS_DIR }}/step-6_package_glibc
+        run: ${{ env.SCRIPTS_DIR }}/step-5_package_glibc
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v3.1.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
 
       - name: Upload to GitHub Releases
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: ${{ env.SCRIPTS_DIR }}/step-7_upload_release
+        run: ${{ env.SCRIPTS_DIR }}/step-6_upload_release

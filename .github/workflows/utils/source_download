@@ -1,0 +1,33 @@
+#!/bin/bash
+set -euox pipefail
+
+# Utility script for downloading and verifying source tarballs from the sources release
+#
+# Usage: source_download <tarball_name> <extract_dir>
+#
+# Environment variables:
+#   TARBALL_NAME - Name of the tarball to download (e.g., "glibc-2.28.tar.xz")
+#   EXTRACT_DIR  - Directory to extract the tarball into
+#
+# The tarball will be downloaded to /tmp/${TARBALL_NAME}
+
+if [[ $# -ne 2 ]]; then
+    echo "Usage: source_download <tarball_name> <extract_dir>"
+    echo "Example: source_download glibc-2.28.tar.xz /tmp/glibc-source"
+    exit 1
+fi
+
+TARBALL_NAME="$1"
+EXTRACT_DIR="$2"
+TARBALL_PATH="/tmp/${TARBALL_NAME}"
+
+gh release download sources \
+    --repo reutermj/toolchains_cc \
+    --pattern "${TARBALL_NAME}" \
+    --output "${TARBALL_PATH}"
+
+gh attestation verify "${TARBALL_PATH}" --owner reutermj
+
+mkdir -p "${EXTRACT_DIR}"
+tar -xf "${TARBALL_PATH}" -C "${EXTRACT_DIR}"
+

@@ -1,8 +1,7 @@
 FROM ubuntu:latest
 
-# Build arguments for parameterizing glibc version and target
 ARG GLIBC_VERSION=2.28
-ARG TARGET=x86_64-linux-gnu
+ARG LINUX_VERSION=6.18
 
 # =================
 # || Create User ||
@@ -19,31 +18,39 @@ WORKDIR /home/builder
 # || Environment ||
 # =================
 ENV SCRIPTS_DIR="/tmp/scripts"
-COPY environment $SCRIPTS_DIR/environment
-
-ENV GLIBC_VERSION=${GLIBC_VERSION}
-ENV TARGET=${TARGET}
+ENV UTILS_DIR="/tmp/scripts"
+COPY .github/workflows/build_glibc/environment $SCRIPTS_DIR/environment
+COPY .github/workflows/utils/source_download $UTILS_DIR/source_download
 
 # =====================
 # || Build glibc     ||
 # =====================
-COPY step-1_install_dependencies $SCRIPTS_DIR/step-1_install_dependencies
+COPY .github/workflows/build_glibc/step-1_install_dependencies $SCRIPTS_DIR/step-1_install_dependencies
 RUN $SCRIPTS_DIR/step-1_install_dependencies
 
-COPY step-2_download_glibc_source $SCRIPTS_DIR/step-2_download_glibc_source
-RUN $SCRIPTS_DIR/step-2_download_glibc_source
+# Install newer GitHub CLI for attestation support (requires v2.47.0+)
+# Ubuntu package version is too old, so install from GitHub releases
+# We can assume the actions runner has a good enough version of gh so we only need it in the dockerfile
+ARG GH_VERSION="2.63.2"
+RUN wget "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" && \
+    tar -xzf "gh_${GH_VERSION}_linux_amd64.tar.gz" && \
+    sudo install "gh_${GH_VERSION}_linux_amd64/bin/gh" /usr/local/bin/gh
 
-COPY step-3_download_linux_source $SCRIPTS_DIR/step-3_download_linux_source
-RUN $SCRIPTS_DIR/step-3_download_linux_source
+ARG GH_TOKEN
+COPY .github/workflows/build_glibc/step-2.1_download_glibc_source $SCRIPTS_DIR/step-2.1_download_glibc_source
+RUN $SCRIPTS_DIR/step-2.1_download_glibc_source
 
-COPY step-4_install_linux_headers $SCRIPTS_DIR/step-4_install_linux_headers
-RUN $SCRIPTS_DIR/step-4_install_linux_headers
+COPY .github/workflows/build_glibc/step-2.2_download_linux_source $SCRIPTS_DIR/step-2.2_download_linux_source
+RUN $SCRIPTS_DIR/step-2.2_download_linux_source
 
-COPY step-5_build_glibc $SCRIPTS_DIR/step-5_build_glibc
-RUN $SCRIPTS_DIR/step-5_build_glibc
+COPY .github/workflows/build_glibc/step-3_install_linux_headers $SCRIPTS_DIR/step-3_install_linux_headers
+RUN $SCRIPTS_DIR/step-3_install_linux_headers
 
-COPY step-6_package_glibc $SCRIPTS_DIR/step-6_package_glibc
-RUN $SCRIPTS_DIR/step-6_package_glibc
+COPY .github/workflows/build_glibc/step-4_build_glibc $SCRIPTS_DIR/step-4_build_glibc
+RUN $SCRIPTS_DIR/step-4_build_glibc
+
+COPY .github/workflows/build_glibc/step-5_package_glibc $SCRIPTS_DIR/step-5_package_glibc
+RUN $SCRIPTS_DIR/step-5_package_glibc
 
 # The artifact will be in /tmp/artifacts/
 # You can extract it with: docker cp <container>:/tmp/artifacts/ .
