@@ -1,0 +1,86 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+case "${COMPONENT}" in
+    binutils)
+        VERSION_UNDERSCORES="${VERSION//./_}"
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "binutils-${VERSION_UNDERSCORES}-branch" \
+                git://sourceware.org/git/binutils-gdb.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
+    zlib)
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "v${VERSION}" \
+                https://github.com/madler/zlib.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
+    glibc)
+        # https://sourceware.org sometimes has connectivity issues
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "glibc-${VERSION}" \
+                https://sourceware.org/git/glibc.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
+    linux)
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "v${VERSION}" \
+                https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
+    gmp)
+        # Download from GNU mirror (more reliable than gmplib.org)
+        TARBALL="/tmp/gmp-${VERSION}.tar.xz"
+        retry_with_backoff "${TARBALL}" \
+            wget -O "${TARBALL}" "https://ftp.gnu.org/gnu/gmp/gmp-${VERSION}.tar.xz"
+        tar xf "${TARBALL}" -C "${SOURCE_DIR}" --strip-components=1
+        rm "${TARBALL}"
+        ;;
+
+    mpfr)
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "${VERSION}" \
+                https://gitlab.inria.fr/mpfr/mpfr.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
+    isl)
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "isl-${VERSION}" \
+                https://repo.or.cz/isl.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
+    mpc)
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "${VERSION}" \
+                https://gitlab.inria.fr/mpc/mpc.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
+    gcc)
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "releases/gcc-${VERSION}" \
+                git://gcc.gnu.org/git/gcc.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
+    *)
+        echo "ERROR: Unknown component '${COMPONENT}'"
+        echo "Valid components: binutils, zlib, glibc, linux, gmp, mpfr, isl, mpc, gcc"
+        exit 1
+        ;;
+esac

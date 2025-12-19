@@ -1,0 +1,66 @@
+name: Create Source Tarballs
+
+on:
+  workflow_dispatch:
+    inputs:
+      component:
+        description: 'Component to download (binutils, zlib, glibc, linux, gmp, mpfr, isl, mpc, gcc)'
+        required: true
+        type: choice
+        options:
+          - binutils
+          - zlib
+          - glibc
+          - linux
+          - gmp
+          - mpfr
+          - isl
+          - mpc
+          - gcc
+      version:
+        description: 'Version to download (e.g., 2.43.1 for binutils, 15.2.0 for gcc)'
+        required: true
+        type: string
+
+permissions:
+  # Required for uploading GitHub releases
+  contents: write
+  # Required for build provenance attestation
+  id-token: write
+  attestations: write
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/create_source_tarballs
+  COMPONENT: ${{ github.event.inputs.component }}
+  VERSION: ${{ github.event.inputs.version }}
+
+jobs:
+  create-source-tarballs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+
+      - name: Install dependencies
+        run: $SCRIPTS_DIR/step-1_install_dependencies
+
+      - name: Set up environment
+        run: $SCRIPTS_DIR/environment
+
+      - name: Download source
+        run: $SCRIPTS_DIR/step-2_download_source
+
+      - name: Create source tarball
+        run: $SCRIPTS_DIR/step-3_create_tarball
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v3.1.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: $SCRIPTS_DIR/step-4_upload_release
