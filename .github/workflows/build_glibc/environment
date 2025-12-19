@@ -1,26 +1,13 @@
 #!/bin/bash
 set -euox pipefail
 
-# Build parameters from workflow
-export GLIBC_VERSION="${GLIBC_VERSION}"
-export TARGET="${TARGET:-x86_64-linux-gnu}"
-
-# Directory structure
-export OUTPUT_DIR="/tmp/output"
-export SYSROOT_DIR="${OUTPUT_DIR}/${TARGET}/sysroot"
+export SYSROOT_DIR="/tmp/sysroot"
 export ARTIFACTS_DIR="/tmp/artifacts"
-
-# Source directories
 export GLIBC_SOURCE="/tmp/glibc-source"
 export LINUX_SOURCE="/tmp/linux-source"
 export GLIBC_ARTIFACTS="/tmp/glibc-artifacts"
 
-# Create directory structure
-mkdir -p "${OUTPUT_DIR}"
 mkdir -p "${SYSROOT_DIR}"
-mkdir -p "${SYSROOT_DIR}/usr/include"
-mkdir -p "${SYSROOT_DIR}/lib"
-mkdir -p "${SYSROOT_DIR}/usr/lib"
 mkdir -p "${ARTIFACTS_DIR}"
 mkdir -p "${GLIBC_SOURCE}"
 mkdir -p "${LINUX_SOURCE}"
@@ -30,35 +17,3 @@ mkdir -p "${GLIBC_ARTIFACTS}"
 if [ -n "${GITHUB_ENV:-}" ]; then
     echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> "${GITHUB_ENV}"
 fi
-
-# Retry function with exponential backoff for flaky network operations
-# Usage: retry_with_backoff <cleanup_path> <command> [args...]
-retry_with_backoff() {
-    local cleanup_path="$1"
-    shift
-    local max_retries=8
-    local retry_delay=2
-
-    for attempt in $(seq 1 $max_retries); do
-        echo "Attempt ${attempt}/${max_retries}: $@"
-
-        if "$@"; then
-            echo "Success: $@"
-            return 0
-        fi
-
-        # Clean up partial state if path provided
-        if [ -n "$cleanup_path" ] && [ -e "$cleanup_path" ]; then
-            rm -rf "$cleanup_path"
-        fi
-
-        if [ $attempt -lt $max_retries ]; then
-            local sleep_time=$((retry_delay ** attempt))
-            echo "Failed, retrying in ${sleep_time} seconds..."
-            sleep ${sleep_time}
-        fi
-    done
-
-    echo "Failed after ${max_retries} attempts: $@"
-    return 1
-}

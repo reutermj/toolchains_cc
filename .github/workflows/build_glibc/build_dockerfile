@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker build \
+    -f .github/workflows/build_glibc/Dockerfile \
+    --build-arg GH_TOKEN=$1 \
+    -t glibc \
+    .

@@ -16,7 +16,7 @@ env BUILD_CC=gcc \
     RANLIB=ranlib \
     ${GLIBC_SOURCE}/configure \
         --prefix=/usr \
-        --host=${TARGET} \
+        --host=x86_64-linux-gnu \
         --without-cvs \
         --disable-profile \
         --without-gd \

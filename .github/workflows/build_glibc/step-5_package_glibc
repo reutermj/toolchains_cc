@@ -14,7 +14,7 @@ echo ${MESSAGE} > usr/lib/keep_load_bearing_directory
 # Package format: <target>-glibc-<version>-<datetime>.tar.xz
 # Example: x86_64-linux-gnu-glibc-2.28-20241130.tar.xz
 DATETIME=$(date +%Y%m%d)
-PACKAGE_NAME="${TARGET}-glibc-${GLIBC_VERSION}-${DATETIME}.tar.xz"
+PACKAGE_NAME="x86_64-linux-gnu-glibc-${GLIBC_VERSION}-${DATETIME}.tar.xz"
 RELEASE_NAME="glibc-${GLIBC_VERSION}-${DATETIME}"
 
 # Save release name for upload step
