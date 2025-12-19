@@ -43,9 +43,13 @@ jobs:
 
       - name: Download glibc source
         run: ${{ env.SCRIPTS_DIR }}/step-2.1_download_glibc_source
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Linux kernel headers source
         run: ${{ env.SCRIPTS_DIR }}/step-2.2_download_linux_source
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Linux kernel headers
         run: ${{ env.SCRIPTS_DIR }}/step-3_install_linux_headers
