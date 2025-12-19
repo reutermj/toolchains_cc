@@ -47,7 +47,7 @@ jobs:
         run: $SCRIPTS_DIR/step-4_package_toolchain
       
       - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v3.0.0
+        uses: actions/attest-build-provenance@v3.1.0
         with:
           # This is ok: ARTIFACTS_DIR gets set by the environment script
           subject-path: ${{ env.ARTIFACTS_DIR }}/*.tar.xz

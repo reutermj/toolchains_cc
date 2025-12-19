@@ -62,7 +62,7 @@ jobs:
         run: $SCRIPTS_DIR/step-5_package_toolchain
       
       - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v3.0.0
+        uses: actions/attest-build-provenance@v3.1.0
         with:
           subject-path: |
             ${{ env.ARTIFACTS_DIR }}/*.tar.xz
