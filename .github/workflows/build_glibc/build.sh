@@ -13,5 +13,5 @@ docker build \
     .
 
 CONTAINER_ID=$(docker create glibc)
-docker cp "${CONTAINER_ID}:/tmp/artifacts/." ./artifacts/
+docker cp "${CONTAINER_ID}:/tmp/artifacts/." .
 docker rm "${CONTAINER_ID}"

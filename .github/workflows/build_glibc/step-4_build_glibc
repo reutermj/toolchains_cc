@@ -11,7 +11,7 @@ pushd "${GLIBC_BUILD_DIR}"
 # || Configure ||
 # ===============
 env BUILD_CC=gcc \
-    CC="gcc -g -O2 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int -fcf-protection=none" \
+    CC="gcc -O3 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int -fcf-protection=none" \
     CFLAGS="-fcf-protection=none" \
     AR=ar \
     RANLIB=ranlib \
