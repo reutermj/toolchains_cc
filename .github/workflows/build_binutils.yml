@@ -8,6 +8,14 @@ on:
         required: true
         default: '["2.45"]'
         type: string
+      target:
+        description: 'Target triplet'
+        required: true
+        default: 'x86_64-linux-gnu'
+        type: choice
+        options:
+          - x86_64-linux-gnu
+          - x86_64-linux-musl
 
 permissions:
   # Required for uploading GitHub releases
@@ -19,6 +27,7 @@ permissions:
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_binutils
   UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  TARGET: ${{ github.event.inputs.target }}
 
 jobs:
   build:

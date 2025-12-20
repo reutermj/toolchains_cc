@@ -19,7 +19,7 @@ pushd "${BINUTILS_ARTIFACTS}"
 # Adding datetime allows us to update/rebuild toolchain artifacts while
 # maintaining existing artifacts for backward compatibility.
 DATE=$(date +%Y%m%d)
-PACKAGE_NAME="x86_64-linux-x86_64-linux-gnu-binutils-${BINUTILS_VERSION}-${DATE}.tar.xz"
+PACKAGE_NAME="x86_64-linux-${TARGET}-binutils-${BINUTILS_VERSION}-${DATE}.tar.xz"
 
 XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${PACKAGE_NAME}" .
 

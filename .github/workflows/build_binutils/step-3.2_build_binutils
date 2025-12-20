@@ -21,7 +21,7 @@ env CC_FOR_BUILD=gcc \
     CXXFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     LDFLAGS="-L${BUILD_TOOLS}/lib" \
     ./configure \
-        --target=x86_64-linux-gnu \
+        --target=${TARGET} \
         --prefix="${BINUTILS_ARTIFACTS}" \
         --with-sysroot=/ \
         --disable-werror \
@@ -55,7 +55,8 @@ make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc) -l \
     all-gdbsupport
 
 # Build gdbserver with -static (gcc/g++ flag)
-make -C gdbserver LDFLAGS="-L${BUILD_TOOLS}/lib -static" -j$(nproc) -l
+# Does not work with musl-libc. TODO: fix
+# make -C gdbserver LDFLAGS="-L${BUILD_TOOLS}/lib -static" -j$(nproc) -l
 
 make install
 
