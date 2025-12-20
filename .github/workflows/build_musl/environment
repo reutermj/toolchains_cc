@@ -1,0 +1,40 @@
+#!/bin/bash
+set -euox pipefail
+
+# ==============================
+# || Setup Source Directories ||
+# ==============================
+export GMP_SOURCE="/tmp/gmp-source"
+export MPFR_SOURCE="/tmp/mpfr-source"
+export ISL_SOURCE="/tmp/isl-source"
+export MPC_SOURCE="/tmp/mpc-source"
+export GCC_SOURCE="/tmp/gcc-source"
+export LINUX_SOURCE="/tmp/linux-source"
+export MUSL_SOURCE="/tmp/musl-source"
+
+mkdir -p ${GMP_SOURCE}
+mkdir -p ${MPFR_SOURCE}
+mkdir -p ${ISL_SOURCE}
+mkdir -p ${MPC_SOURCE}
+mkdir -p ${GCC_SOURCE}
+mkdir -p ${LINUX_SOURCE}
+mkdir -p ${MUSL_SOURCE}
+
+# ==============================
+# || Setup Output Directories ||
+# ==============================
+export BUILD_TOOLS="/tmp/buildtools"         # For core GCC + binutils + dependencies
+export SYSROOT_DIR="/tmp/sysroot"            # For musl + kernel headers
+export MUSL_ARTIFACTS="/tmp/musl-artifacts"  # For packaging
+export ARTIFACTS_DIR="/tmp/artifacts"        # For tarballs
+
+mkdir -p ${BUILD_TOOLS}
+mkdir -p ${SYSROOT_DIR}
+mkdir -p ${MUSL_ARTIFACTS}
+mkdir -p ${ARTIFACTS_DIR}
+
+# Ensures that ARTIFACTS_DIR is available to provenance attestation in
+# the github actions workflow.
+if [ -n "${GITHUB_ENV:-}" ]; then
+    echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> "${GITHUB_ENV}"
+fi

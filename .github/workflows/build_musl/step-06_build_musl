@@ -1,0 +1,56 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+##################################################################################
+# musl libc Build Configuration                                                  #
+##################################################################################
+#                                                                                #
+# This builds musl libc using the core GCC from Stage 1.                         #
+#                                                                                #
+# BUILD ENVIRONMENT                                                              #
+# ============================================================================== #
+#                                                                                #
+# * `CC`: Path to the C compiler (core GCC built in step-05)                    #
+# * `AR`, `RANLIB`: Binutils tools for creating archives                        #
+#                                                                                #
+# CONFIGURE OPTIONS                                                              #
+# ============================================================================== #
+#                                                                                #
+# * `--prefix=/usr`: Install to /usr (within DESTDIR)                            #
+#   - Standard location for C library                                            #
+#                                                                                #
+# * `--syslibdir=/usr/lib`: Library directory                                    #
+#   - Where libc.so and other libraries will be installed                        #
+#                                                                                #
+# * `--enable-shared`: Build shared libraries                                    #
+#   - Creates libc.so for dynamic linking                                        #
+#                                                                                #
+# * `--enable-static`: Build static libraries                                    #
+#   - Creates libc.a for static linking                                          #
+#                                                                                #
+# * `--enable-optimize=auto`: Let musl choose optimization level                 #
+#   - musl has sensible defaults for optimization                                #
+#                                                                                #
+##################################################################################
+
+MUSL_BUILD_DIR="/tmp/musl-build"
+mkdir -p "${MUSL_BUILD_DIR}"
+
+pushd "${MUSL_BUILD_DIR}"
+
+env CC="${BUILD_TOOLS}/bin/x86_64-linux-musl-gcc" \
+    AR="${BUILD_TOOLS}/bin/x86_64-linux-musl-ar" \
+    RANLIB="${BUILD_TOOLS}/bin/x86_64-linux-musl-ranlib" \
+    ${MUSL_SOURCE}/configure \
+        --prefix=/usr \
+        --syslibdir=/usr/lib \
+        --enable-shared \
+        --enable-static \
+        --enable-optimize=auto
+
+make -j$(nproc)
+
+make DESTDIR="${MUSL_ARTIFACTS}" install
+
+popd

@@ -1,0 +1,104 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+##################################################################################
+# Core GCC Build Configuration                                                   #
+##################################################################################
+#                                                                                #
+# This builds a minimal C-only GCC for bootstrapping musl libc.                 #
+# This compiler cannot link against musl (musl doesn't exist yet), but it can   #
+# compile musl's source code.                                                   #
+#                                                                                #
+# KEY BOOTSTRAP FLAGS                                                            #
+# ============================================================================== #
+#                                                                                #
+# * `--target=x86_64-linux-musl`: Target musl-based system                      #
+#   - Tells GCC to generate code for musl target                                #
+#                                                                                #
+# * `--with-newlib`: Pretend we're using newlib (embedded libc)                 #
+#   - Critical flag that tells GCC "no full C library exists yet"               #
+#   - Prevents GCC from expecting libc functions during libgcc build            #
+#   - Configures libgcc to work in freestanding environment                     #
+#                                                                                #
+# * `--enable-threads=no`: Disable threading support                            #
+#   - Threading requires libc functions (pthread_create, etc.)                  #
+#   - We don't have musl yet, so no threading                                   #
+#                                                                                #
+# * `--disable-shared`: Only build static libraries                             #
+#   - Shared libraries require dynamic linker from libc                         #
+#   - We don't have musl yet, so only static                                    #
+#                                                                                #
+# * `--enable-languages=c`: C language only                                     #
+#   - No C++ (libstdc++ requires full libc)                                     #
+#   - No other languages                                                        #
+#                                                                                #
+# * `--disable-libstdcxx`: Don't build C++ standard library                     #
+#   - Reinforces that we're not building C++ support                            #
+#                                                                                #
+# WHAT THIS COMPILER CAN DO                                                     #
+# ============================================================================== #
+# - Compile C source code to object files                                       #
+# - Use Linux kernel syscalls directly (headers are installed)                  #
+# - Build musl libc from source                                                 #
+#                                                                                #
+# WHAT THIS COMPILER CANNOT DO                                                  #
+# ============================================================================== #
+# - Compile C++ code (no g++, no libstdc++)                                     #
+# - Link against musl (musl doesn't exist yet!)                                 #
+# - Create multithreaded programs                                               #
+# - Create dynamically linked binaries                                          #
+#                                                                                #
+##################################################################################
+
+CORE_GCC_BUILD_DIR="/tmp/core-gcc-build"
+mkdir -p "${CORE_GCC_BUILD_DIR}"
+
+pushd "${CORE_GCC_BUILD_DIR}"
+
+env CFLAGS="-O2 -I${BUILD_TOOLS}/include" \
+    CFLAGS_FOR_BUILD="-O2 -I${BUILD_TOOLS}/include" \
+    CXXFLAGS="-O2 -I${BUILD_TOOLS}/include" \
+    CXXFLAGS_FOR_BUILD="-O2 -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    CFLAGS_FOR_TARGET="-O2" \
+    CXXFLAGS_FOR_TARGET="-O2" \
+    LDFLAGS_FOR_TARGET="" \
+    ${GCC_SOURCE}/configure \
+        --build=x86_64-pc-linux-gnu \
+        --host=x86_64-pc-linux-gnu \
+        --target=x86_64-linux-musl \
+        --prefix=${BUILD_TOOLS} \
+        --with-sysroot=${SYSROOT_DIR} \
+        --with-local-prefix=${SYSROOT_DIR} \
+        \
+        --with-newlib \
+        --enable-threads=no \
+        --disable-shared \
+        --disable-libstdcxx \
+        \
+        --enable-languages=c \
+        \
+        --disable-libgomp \
+        --disable-libssp \
+        --disable-libquadmath \
+        --disable-libquadmath-support \
+        --disable-libsanitizer \
+        \
+        --with-gmp=${BUILD_TOOLS} \
+        --with-mpfr=${BUILD_TOOLS} \
+        --with-mpc=${BUILD_TOOLS} \
+        --with-isl=${BUILD_TOOLS} \
+        \
+        --disable-multilib \
+        --disable-nls \
+        --enable-lto
+
+# Build only what we need for bootstrapping
+make -j$(nproc) all-gcc all-target-libgcc
+
+# Install only gcc and libgcc
+make install-gcc install-target-libgcc
+
+popd
+

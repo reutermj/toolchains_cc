@@ -1,0 +1,64 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd "${GMP_SOURCE}"
+
+##################################################################################
+# GMP Build Configuration                                                        #
+##################################################################################
+#                                                                                #
+# GMP (GNU Multiple Precision Arithmetic Library) provides arbitrary precision   #
+# arithmetic used by GCC for compile-time constant folding and optimization.     #
+# This library will be statically linked into GCC binaries.                      #
+#                                                                                #
+# COMPILER FLAGS                                                                 #
+# ============================================================================== #
+# * `-O3`: Aggressive optimization for GCC's compile-time performance            #
+# * `-pipe`: Use pipes instead of temp files (faster compilation)                #
+#                                                                                #
+# CONFIGURE FLAGS                                                                #
+# ============================================================================== #
+# * `--build=x86_64-pc-linux-gnu`: Build system triplet (where GMP is built)     #
+# * `--host=x86_64-pc-linux-gnu`: Host system triplet (where GMP will run)       #
+#   - See "Portability Requirements" section in README.md for why these are      #
+#     required to ensure the toolchain runs on any x86_64 Linux system           #
+#                                                                                #
+# * `--prefix="${BUILD_TOOLS}"`: Install location                                #
+#   - Headers: ${BUILD_TOOLS}/include/                                           #
+#   - Libraries: ${BUILD_TOOLS}/lib/                                             #
+#   - Makes GMP available for building MPFR, MPC, ISL, and GCC                   #
+#                                                                                #
+# * `--enable-fft`: Enable FFT multiplication for large numbers                  #
+#   - Faster multiplication for very large numbers                               #
+#   - Used by GCC for compile-time arithmetic optimizations                      #
+#   - Default is "yes" but we specify explicitly for clarity                     #
+#                                                                                #
+# * `--enable-cxx`: Build C++ interface (libgmpxx)                               #
+#   - Required dependency for ISL (Integer Set Library)                          #
+#   - ISL uses C++ bindings to GMP for exact integer arithmetic                  #
+#   - Default is "no" so we must enable explicitly                               #
+#   - Produces libgmpxx.a and gmpxx.h                                            #
+#                                                                                #
+# * `--disable-shared`: Don't build shared libraries                             #
+#   - GMP will be statically linked into GCC binaries                            #
+#                                                                                #
+# * `--enable-static`: Build static libraries for static linking into GCC        #
+#   - Combined with --disable-shared ensures static-only build                   #
+#                                                                                #
+##################################################################################
+
+env CFLAGS="-O3 -pipe" \
+    ./configure \
+        --build=x86_64-pc-linux-gnu \
+        --host=x86_64-pc-linux-gnu \
+        --prefix="${BUILD_TOOLS}" \
+        --enable-fft \
+        --enable-cxx \
+        --disable-shared \
+        --enable-static
+
+make -j$(nproc) -l
+make install
+
+popd
