@@ -1,0 +1,265 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+GCC_BUILD_DIR="/tmp/gcc-build"
+mkdir -p "${GCC_BUILD_DIR}"
+
+pushd "${GCC_BUILD_DIR}"
+
+##################################################################################
+# GCC Build Configuration                                                        #
+##################################################################################
+#                                                                                #
+# This builds GCC (GNU Compiler Collection) with C and C++ support.              #
+# The compiler will be statically linked and portable across x86_64 Linux hosts. #
+#                                                                                #
+# BUILD ENVIRONMENT VARIABLES                                                    #
+# ============================================================================== #
+#                                                                                #
+# COMPILER FLAGS FOR HOST (the GCC binaries themselves)                          #
+# ------------------------------------------------------------------------------ #
+# * `CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include"`: C compiler flags              #
+#   - `-O3`: Aggressive optimization for faster GCC compilation                  #
+#   - `-pipe`: Use pipes instead of temp files (faster compilation)              #
+#   - `-I${BUILD_TOOLS}/include`: Find GMP, MPFR, MPC, ISL headers               #
+#                                                                                #
+# * `CFLAGS_FOR_BUILD`: C flags for build-time tools                             #
+#   - Same as CFLAGS (build == host in our case)                                 #
+#                                                                                #
+# * `CXXFLAGS`: C++ compiler flags for host                                      #
+#   - Same as CFLAGS, used for building GCC's C++ components                     #
+#                                                                                #
+# * `CXXFLAGS_FOR_BUILD`: C++ flags for build-time tools                         #
+#   - Same as CXXFLAGS (build == host in our case)                               #
+#                                                                                #
+# * `LDFLAGS="-L${BUILD_TOOLS}/lib -static"`: Linker flags for host              #
+#   - `-L${BUILD_TOOLS}/lib`: Find GMP, MPFR, MPC, ISL static libraries          #
+#   - `-static`: Link all libraries statically into GCC binaries                 #
+#   - Makes GCC portable - runs on any x86_64 Linux without dependencies         #
+#                                                                                #
+# COMPILER FLAGS FOR TARGET (libraries that run on target system)                #
+# ------------------------------------------------------------------------------ #
+# * `CFLAGS_FOR_TARGET="-O3"`: C flags for target runtime libraries              #
+#   - Optimize libgcc and other runtime libraries for performance                #
+#                                                                                #
+# * `CXXFLAGS_FOR_TARGET="-O3"`: C++ flags for target runtime libraries          #
+#   - Optimize libstdc++ and other C++ runtime libraries for performance         #
+#                                                                                #
+# * `LDFLAGS_FOR_TARGET=""`: Linker flags for target libraries                   #
+#   - Empty: target libraries shouldn't link against build-time dependencies     #
+#   - Target code runs on the target system, not the build system                #
+#                                                                                #
+# CONFIGURE OPTIONS                                                              #
+# ============================================================================== #
+#                                                                                #
+# SYSTEM TRIPLETS                                                                #
+# ------------------------------------------------------------------------------ #
+# * `--build=x86_64-pc-linux-gnu`: Build system (where GCC is compiled)          #
+#   - Standard triplet ensures baseline x86_64 assembly in dependencies          #
+#   - Using system GCC for compilation                                           #
+#                                                                                #
+# * `--host=x86_64-pc-linux-gnu`: Host system (where GCC will run)               #
+#   - Same as build (native compilation)                                         #
+#                                                                                #
+# * `--target=x86_64-linux-gnu`: Target system (what GCC generates code for)     #
+#   - Standard GNU triplet for x86_64 Linux with glibc                           #
+#   - This is a cross-compiler (even though build==host)                         #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# * `--with-sysroot="${SYSROOT_DIR}"`: Sysroot for target runtime libraries      #
+#   - Points to glibc 2.28 installation (downloaded in step-06.5)                #
+#   - Ensures libgcc and libstdc++ are built against glibc 2.28                  #
+#   - Without this, GCC would use the host's glibc (2.35+) and libgcc would      #
+#     use functions like _dl_find_object that don't exist in glibc 2.28          #
+#   - Allows --sysroot flag to relocate headers/libraries at compile time        #
+#   - When --sysroot=/path used, searches /path/usr/include for headers          #
+#   - When --sysroot=/path used, searches /path/lib, /path/usr/lib for libs      #
+#   - Essential for portable toolchains and cross-compilation                    #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# * `--with-local-prefix="${SYSROOT_DIR}"`: Local include prefix for sysroot     #
+#   - Sets the local include directory prefix within the sysroot                 #
+#   - Complements --with-sysroot for proper header search paths                  #
+#   - Ensures GCC looks in sysroot for local headers first                       #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# DEPENDENCY LIBRARIES                                                           #
+# ------------------------------------------------------------------------------ #
+# * `--with-gmp="${BUILD_TOOLS}"`: Location of GMP installation                  #
+#   - GMP provides arbitrary precision integer arithmetic                        #
+#   - Required for GCC compile-time constant folding                             #
+#   - https://gcc.gnu.org/install/prerequisites.html                             #
+#                                                                                #
+# * `--with-mpfr="${BUILD_TOOLS}"`: Location of MPFR installation                #
+#   - MPFR provides arbitrary precision floating-point arithmetic                #
+#   - Required for GCC compile-time floating-point calculations                  #
+#   - https://gcc.gnu.org/install/prerequisites.html                             #
+#                                                                                #
+# * `--with-mpc="${BUILD_TOOLS}"`: Location of MPC installation                  #
+#   - MPC provides complex number arithmetic                                     #
+#   - Required for GCC compile-time complex number optimizations                 #
+#   - https://gcc.gnu.org/install/prerequisites.html                             #
+#                                                                                #
+# * `--with-isl="${BUILD_TOOLS}"`: Location of ISL installation                  #
+#   - ISL (Integer Set Library) enables Graphite loop optimizations              #
+#   - Required for advanced polyhedral loop transformations                      #
+#   - https://gcc.gnu.org/install/prerequisites.html                             #
+#                                                                                #
+# LANGUAGE SUPPORT                                                               #
+# ------------------------------------------------------------------------------ #
+# * `--enable-languages=c,c++`: Build C and C++ compilers                        #
+#   - Produces gcc, g++, and libstdc++                                           #
+#   - C++ is required for most modern software development                       #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# C++ RUNTIME FEATURES                                                           #
+# ------------------------------------------------------------------------------ #
+# * `--enable-__cxa_atexit`: Use __cxa_atexit for C++ destructors                #
+#   - Causes GCC to use __cxa_atexit instead of atexit for registering C++       #
+#     destructors for local statics and global objects                           #
+#   - Required for fully compliant C++ exception handling and destructor order   #
+#   - Standard for glibc-based systems (glibc provides __cxa_atexit)             #
+#   - Auto-detected since GCC 4.2 based on system features                       #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#   - https://wiki.openoffice.org/wiki/GCC_cxa_atexit                            #
+#                                                                                #
+# * `--enable-long-long`: Enable long long type support                          #
+#   - Enables 64-bit integer type (long long)                                    #
+#   - Standard in modern C (C99 and later)                                       #
+#   - Required by most modern codebases                                          #
+#                                                                                #
+# DISABLED RUNTIME LIBRARIES                                                     #
+# ------------------------------------------------------------------------------ #
+# * `--disable-libmudflap`: Don't build mudflap pointer checker library          #
+#   - Mudflap was a runtime bounds checker for pointers/arrays                   #
+#   - Deprecated and removed in GCC 4.9+                                         #
+#   - This flag is kept for compatibility with older GCC versions                #
+#                                                                                #
+# * `--disable-libgomp`: Don't build GNU OpenMP runtime library                  #
+#   - Disables OpenMP parallel programming support (-fopenmp flag)               #
+#   - Reduces build time and complexity                                          #
+#   - OpenMP can be enabled later if needed                                      #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# * `--disable-libssp`: Don't build stack smashing protection library            #
+#   - Disables runtime library for -fstack-protector flag                        #
+#   - Stack protection can still be used with glibc's implementation             #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# * `--disable-libquadmath`: Don't build quad-precision math library             #
+#   - Disables __float128 support for 128-bit floating-point                     #
+#   - Not commonly needed in most applications                                   #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# * `--disable-libquadmath-support`: Disable quad-precision in Fortran           #
+#   - Prevents Fortran front end from using libquadmath                          #
+#   - We're not building Fortran, so this has no effect                          #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# * `--disable-libsanitizer`: Don't build sanitizer runtime libraries            #
+#   - Disables AddressSanitizer, UBSan, ThreadSanitizer, LeakSanitizer           #
+#   - Sanitizers are debugging tools not needed in production                    #
+#   - Significantly reduces build time and binary size                           #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# * `--enable-libmpx`: Enable Intel Memory Protection Extensions                 #
+#   - Builds libmpx runtime for Intel MPX bounds checking                        #
+#   - NOTE: MPX was deprecated by Intel and removed from recent CPUs             #
+#   - Removed in GCC 9+ and Linux kernel 5.6+                                    #
+#   - This flag is kept for compatibility with GCC versions < 9                  #
+#                                                                                #
+# OPTIMIZATION AND LINKING                                                       #
+# ------------------------------------------------------------------------------ #
+# * `--enable-lto`: Enable Link-Time Optimization support                        #
+#   - Allows GCC to perform optimizations across translation units at link time  #
+#   - Standard modern optimization technique for better performance              #
+#   - Required by many modern build systems                                      #
+#   - Enabled by default in recent GCC versions                                  #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#   - https://gcc.gnu.org/onlinedocs/gccint/LTO-Overview.html                    #
+#                                                                                #
+# * `--enable-threads=posix`: Enable POSIX threads support                       #
+#   - Enables pthread support in generated code                                  #
+#   - Standard threading model for Linux (POSIX/Unix98 threads)                  #
+#   - Required for multithreaded programs                                        #
+#   - Affects C++ exception handling and Objective-C runtime                     #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# * `--enable-target-optspace`: Optimize target libraries for size               #
+#   - Target libraries (libgcc, libstdc++) are compiled with -Os                 #
+#   - Prioritizes smaller code size over speed                                   #
+#   - Reasonable tradeoff for general-purpose runtime libraries                  #
+#                                                                                #
+# * `--with-linker-hash-style=both`: Support both ELF hash table formats         #
+#   - GCC will pass --hash-style=both to the linker for all final links          #
+#   - Generates both GNU (.gnu.hash) and SysV (.hash) hash tables                #
+#   - GNU hash style: faster dynamic linking on modern systems                   #
+#   - SysV hash style: compatibility with older systems                          #
+#   - "both" ensures maximum compatibility                                       #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+# BUILD CONFIGURATION                                                            #
+# ------------------------------------------------------------------------------ #
+# * `--disable-plugin`: Disable GCC plugin support                               #
+#   - GCC plugins won't be loadable                                              #
+#   - Reduces complexity and build time                                          #
+#   - Static binaries can't load plugins anyway                                  #
+#                                                                                #
+# * `--disable-nls`: Disable Native Language Support (i18n)                      #
+#   - All GCC messages will be in English only                                   #
+#   - Reduces dependencies (no gettext needed)                                   #
+#   - Smaller binary size                                                        #
+#   - Standard practice for cross-compiler builds                                #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#   - https://www.linuxfromscratch.org/lfs/view/stable/chapter05/gcc-pass1.html  #
+#                                                                                #
+# * `--disable-multilib`: Don't build multiple library versions                  #
+#   - Only builds libraries for x86_64, not 32-bit x86                           #
+#   - Significantly reduces build time                                           #
+#   - Simpler toolchain focused on single target                                 #
+#   - https://gcc.gnu.org/install/configure.html                                 #
+#                                                                                #
+##################################################################################
+
+env CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
+    CFLAGS_FOR_BUILD="-O3 -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS_FOR_BUILD="-O3 -pipe -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib -static" \
+    CFLAGS_FOR_TARGET="-O3" \
+    CXXFLAGS_FOR_TARGET="-O3" \
+    LDFLAGS_FOR_TARGET="" \
+    ${GCC_SOURCE}/configure \
+        --build=x86_64-pc-linux-gnu \
+        --host=x86_64-pc-linux-gnu \
+        --target=x86_64-linux-gnu \
+        --with-sysroot="${SYSROOT_DIR}" \
+        --with-local-prefix="${SYSROOT_DIR}" \
+        --with-gmp="${BUILD_TOOLS}" \
+        --with-mpfr="${BUILD_TOOLS}" \
+        --with-mpc="${BUILD_TOOLS}" \
+        --with-isl="${BUILD_TOOLS}" \
+        --enable-languages=c,c++ \
+        --enable-__cxa_atexit \
+        --disable-libmudflap \
+        --disable-libgomp \
+        --disable-libssp \
+        --disable-libquadmath \
+        --disable-libquadmath-support \
+        --disable-libsanitizer \
+        --enable-libmpx \
+        --enable-lto \
+        --enable-threads=posix \
+        --enable-target-optspace \
+        --with-linker-hash-style=both \
+        --disable-plugin \
+        --disable-nls \
+        --disable-multilib \
+        --enable-long-long
+
+make -j$(nproc) -l all
+
+make install prefix="${GCC_BUILD}" exec_prefix="${GCC_BUILD}"
+
+popd

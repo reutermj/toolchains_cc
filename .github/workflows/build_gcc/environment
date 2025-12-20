@@ -1,0 +1,38 @@
+#!/bin/bash
+set -euox pipefail
+
+# ==============================
+# || Setup Source Directories ||
+# ==============================
+export GMP_SOURCE="/tmp/gmp-source"
+export MPFR_SOURCE="/tmp/mpfr-source"
+export ISL_SOURCE="/tmp/isl-source"
+export MPC_SOURCE="/tmp/mpc-source"
+export GCC_SOURCE="/tmp/gcc-source"
+export LINUX_SOURCE="/tmp/linux-source"
+
+mkdir -p ${GMP_SOURCE}
+mkdir -p ${MPFR_SOURCE}
+mkdir -p ${ISL_SOURCE}
+mkdir -p ${MPC_SOURCE}
+mkdir -p ${GCC_SOURCE}
+mkdir -p ${LINUX_SOURCE}
+
+# ==============================
+# || Setup Output Directories ||
+# ==============================
+export BUILD_TOOLS="/tmp/buildtools"
+export GCC_BUILD="/tmp/gcc-build-output"
+export ARTIFACTS_DIR="/tmp/artifacts"
+export SYSROOT_DIR="/tmp/sysroot"
+
+mkdir -p ${BUILD_TOOLS}
+mkdir -p ${GCC_BUILD}
+mkdir -p ${ARTIFACTS_DIR}
+mkdir -p ${SYSROOT_DIR}
+
+# Ensures that ARTIFACTS_DIR is available to provinance attestation in
+# the github actions workflow.
+if [ -n "${GITHUB_ENV:-}" ]; then
+    echo "ARTIFACTS_DIR=${ARTIFACTS_DIR}" >> "${GITHUB_ENV}"
+fi

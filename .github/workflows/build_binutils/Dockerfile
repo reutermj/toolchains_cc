@@ -20,7 +20,7 @@ WORKDIR /home/builder
 ENV SCRIPTS_DIR="/tmp/scripts"
 ENV UTILS_DIR="/tmp/scripts"
 COPY .github/workflows/build_binutils/environment $SCRIPTS_DIR/environment
-COPY .github/workflows/utils/source_download $UTILS_DIR/source_download
+COPY .github/workflows/utils/download_tarball $UTILS_DIR/download_tarball
 
 # ====================
 # || Build binutils ||

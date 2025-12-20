@@ -67,6 +67,6 @@ jobs:
             ${{ env.ARTIFACTS_DIR }}/*.tar.xz
 
       - name: Upload to GitHub Releases
+        run: $SCRIPTS_DIR/step-5_upload_release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: $SCRIPTS_DIR/step-5_upload_release
