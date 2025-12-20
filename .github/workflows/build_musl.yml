@@ -1,0 +1,129 @@
+name: Build musl libc
+
+on:
+  workflow_dispatch:
+    inputs:
+      gcc_version:
+        description: 'GCC version to use for bootstrap'
+        required: true
+        default: '15.2.0'
+        type: string
+      musl_version:
+        description: 'musl version to build'
+        required: true
+        default: '1.2.5'
+        type: string
+      linux_version:
+        description: 'Linux kernel version for headers'
+        required: true
+        default: '6.18'
+        type: string
+      binutils_version:
+        description: 'Binutils version to download'
+        required: true
+        default: '2.45'
+        type: string
+
+permissions:
+  # Required for uploading GitHub releases
+  contents: write
+  # Required for build provenance attestation
+  id-token: write
+  attestations: write
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_musl
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  GCC_VERSION: ${{ github.event.inputs.gcc_version }}
+  MUSL_VERSION: ${{ github.event.inputs.musl_version }}
+  LINUX_VERSION: ${{ github.event.inputs.linux_version }}
+  BINUTILS_VERSION: ${{ github.event.inputs.binutils_version }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+
+      - name: Install dependencies
+        run: $SCRIPTS_DIR/step-01_install_dependencies
+
+      - name: Set up environment
+        run: $SCRIPTS_DIR/environment
+
+      - name: Download GMP source
+        run: $SCRIPTS_DIR/step-02.1_download_gmp_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download MPFR source
+        run: $SCRIPTS_DIR/step-02.2_download_mpfr_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download ISL source
+        run: $SCRIPTS_DIR/step-02.3_download_isl_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download MPC source
+        run: $SCRIPTS_DIR/step-02.4_download_mpc_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download GCC source
+        run: $SCRIPTS_DIR/step-02.5_download_gcc_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download Linux kernel source
+        run: $SCRIPTS_DIR/step-02.6_download_linux_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download musl source
+        run: $SCRIPTS_DIR/step-02.7_download_musl_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download pre-built binutils
+        run: $SCRIPTS_DIR/step-02.8_download_binutils
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install Linux kernel headers
+        run: $SCRIPTS_DIR/step-03_install_linux_headers
+
+      - name: Build GMP
+        run: $SCRIPTS_DIR/step-04.1_build_gmp
+
+      - name: Build ISL
+        run: $SCRIPTS_DIR/step-04.2_build_isl
+
+      - name: Build MPFR
+        run: $SCRIPTS_DIR/step-04.3_build_mpfr
+
+      - name: Build MPC
+        run: $SCRIPTS_DIR/step-04.4_build_mpc
+
+      - name: Build core GCC (Stage 1)
+        run: $SCRIPTS_DIR/step-05_build_core_gcc
+
+      - name: Build musl libc (Stage 2)
+        run: $SCRIPTS_DIR/step-06_build_musl
+
+      - name: Package musl sysroot
+        run: $SCRIPTS_DIR/step-07_package_musl
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v3.1.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        run: $SCRIPTS_DIR/step-08_upload_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
