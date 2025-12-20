@@ -19,7 +19,7 @@ WORKDIR /home/builder
 # || Environment ||
 # =================
 ENV SCRIPTS_DIR="/tmp/scripts"
-COPY environment $SCRIPTS_DIR/environment
+COPY .github/workflows/create_source_tarballs/environment $SCRIPTS_DIR/environment
 
 ENV COMPONENT=${COMPONENT}
 ENV VERSION=${VERSION}
@@ -27,11 +27,11 @@ ENV VERSION=${VERSION}
 # ============================
 # || Create Source Tarballs ||
 # ============================
-COPY step-1_install_dependencies $SCRIPTS_DIR/step-1_install_dependencies
+COPY .github/workflows/create_source_tarballs/step-1_install_dependencies $SCRIPTS_DIR/step-1_install_dependencies
 RUN $SCRIPTS_DIR/step-1_install_dependencies
 
-COPY step-2_download_source $SCRIPTS_DIR/step-2_download_source
+COPY .github/workflows/create_source_tarballs/step-2_download_source $SCRIPTS_DIR/step-2_download_source
 RUN $SCRIPTS_DIR/step-2_download_source
 
-COPY step-3_create_tarball $SCRIPTS_DIR/step-3_create_tarball
+COPY .github/workflows/create_source_tarballs/step-3_create_tarball $SCRIPTS_DIR/step-3_create_tarball
 RUN $SCRIPTS_DIR/step-3_create_tarball

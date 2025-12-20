@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       component:
-        description: 'Component to download (binutils, zlib, glibc, linux, gmp, mpfr, isl, mpc, gcc)'
+        description: 'Component to download (binutils, zlib, glibc, linux, gmp, mpfr, isl, mpc, gcc, musl)'
         required: true
         type: choice
         options:
@@ -17,6 +17,7 @@ on:
           - isl
           - mpc
           - gcc
+          - musl
       version:
         description: 'Version to download (e.g., 2.43.1 for binutils, 15.2.0 for gcc)'
         required: true

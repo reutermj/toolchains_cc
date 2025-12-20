@@ -78,9 +78,18 @@ case "${COMPONENT}" in
         rm -rf "${SOURCE_DIR}/.git"
         ;;
 
+    musl)
+        # Download from official musl libc site
+        TARBALL="/tmp/musl-${VERSION}.tar.gz"
+        retry_with_backoff "${TARBALL}" \
+            wget -O "${TARBALL}" "https://musl.libc.org/releases/musl-${VERSION}.tar.gz"
+        tar xf "${TARBALL}" -C "${SOURCE_DIR}" --strip-components=1
+        rm "${TARBALL}"
+        ;;
+
     *)
         echo "ERROR: Unknown component '${COMPONENT}'"
-        echo "Valid components: binutils, zlib, glibc, linux, gmp, mpfr, isl, mpc, gcc"
+        echo "Valid components: binutils, zlib, glibc, linux, gmp, mpfr, isl, mpc, gcc, musl"
         exit 1
         ;;
 esac
