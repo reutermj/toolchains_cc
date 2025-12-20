@@ -7,8 +7,9 @@ mkdir -p "${GLIBC_BUILD_DIR}"
 
 pushd "${GLIBC_BUILD_DIR}"
 
-# Build glibc using host GCC
-# Unlike the bootstrap approach, we use the system GCC directly
+# ===============
+# || Configure ||
+# ===============
 env BUILD_CC=gcc \
     CC="gcc -g -O2 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int -fcf-protection=none" \
     CFLAGS="-fcf-protection=none" \
@@ -32,6 +33,9 @@ env BUILD_CC=gcc \
         --enable-add-ons=no \
         --disable-werror
 
+# ===========
+# || Build ||
+# ===========
 make -j$(nproc) -l \
     CXX="" \
     LDFLAGS="" \
@@ -41,7 +45,9 @@ make -j$(nproc) -l \
     BUILD_LDFLAGS="" \
     all
 
-# Install to GLIBC_ARTIFACTS for packaging
+# =============
+# || Install ||
+# =============
 make -j$(nproc) -l \
     CXX="" \
     default_cflags="" \
