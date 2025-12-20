@@ -1,16 +1,18 @@
 #!/bin/bash
 set -euox pipefail
 
-# Usage: Run from repo root with binutils version and GitHub token
-#   .github/workflows/build_binutils/build.sh <BINUTILS_VERSION> <GH_TOKEN>
-
-BINUTILS_VERSION="${1}"
-GH_TOKEN="${2}"
+# Usage: Run from repo root with binutils version, target, and GitHub token
+#   .github/workflows/build_binutils/build.sh <BINUTILS_VERSION> <TARGET> <GH_TOKEN>
+#
+# Examples:
+#   .github/workflows/build_binutils/build.sh 2.45 x86_64-linux-gnu <token>
+#   .github/workflows/build_binutils/build.sh 2.45 x86_64-linux-musl <token>
 
 docker build \
     -f .github/workflows/build_binutils/Dockerfile \
-    --build-arg BINUTILS_VERSION="${BINUTILS_VERSION}" \
-    --build-arg GH_TOKEN="${GH_TOKEN}" \
+    --build-arg BINUTILS_VERSION="${1}" \
+    --build-arg TARGET="${2}" \
+    --build-arg GH_TOKEN="${3}" \
     -t binutils \
     .
 

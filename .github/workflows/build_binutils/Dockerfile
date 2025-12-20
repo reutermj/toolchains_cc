@@ -1,6 +1,7 @@
 FROM ubuntu:latest
 
 ARG BINUTILS_VERSION=2.43
+ARG TARGET=x86_64-linux-gnu
 
 # =================
 # || Create User ||
