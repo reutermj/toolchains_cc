@@ -3,25 +3,10 @@ name: Build musl libc
 on:
   workflow_dispatch:
     inputs:
-      gcc_version:
-        description: 'GCC version to use for bootstrap'
-        required: true
-        default: '15.2.0'
-        type: string
       musl_version:
         description: 'musl version to build'
         required: true
         default: '1.2.5'
-        type: string
-      linux_version:
-        description: 'Linux kernel version for headers'
-        required: true
-        default: '6.18'
-        type: string
-      binutils_version:
-        description: 'Binutils version to download'
-        required: true
-        default: '2.45'
         type: string
 
 permissions:
@@ -34,10 +19,7 @@ permissions:
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_musl
   UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
-  GCC_VERSION: ${{ github.event.inputs.gcc_version }}
   MUSL_VERSION: ${{ github.event.inputs.musl_version }}
-  LINUX_VERSION: ${{ github.event.inputs.linux_version }}
-  BINUTILS_VERSION: ${{ github.event.inputs.binutils_version }}
 
 jobs:
   build:
