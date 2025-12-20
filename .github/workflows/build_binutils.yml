@@ -6,7 +6,7 @@ on:
       binutils_versions:
         description: 'JSON array of binutils versions (e.g., ["2.41", "2.42", "2.43"])'
         required: true
-        default: '["2.43"]'
+        default: '["2.45"]'
         type: string
 
 permissions:
@@ -18,7 +18,7 @@ permissions:
 
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_binutils
-  TARGET: x86_64-linux-gnu
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
 
 jobs:
   build:
@@ -41,17 +41,24 @@ jobs:
       - name: Set up environment
         run: $SCRIPTS_DIR/environment
 
-      - name: Download sources
-        run: $SCRIPTS_DIR/step-2_download_sources
+      - name: Download binutils source
+        run: $SCRIPTS_DIR/step-2.1_download_binutils_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download zlib source
+        run: $SCRIPTS_DIR/step-2.2_download_zlib_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Build zlib
-        run: $SCRIPTS_DIR/step-3_build_zlib
+        run: $SCRIPTS_DIR/step-3.1_build_zlib
 
       - name: Build binutils
-        run: $SCRIPTS_DIR/step-4_build_binutils
+        run: $SCRIPTS_DIR/step-3.2_build_binutils
 
       - name: Package binutils
-        run: $SCRIPTS_DIR/step-5_package_binutils
+        run: $SCRIPTS_DIR/step-4_package_binutils
 
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v3.1.0
@@ -62,4 +69,4 @@ jobs:
       - name: Upload to GitHub Releases
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: $SCRIPTS_DIR/step-6_upload_release
+        run: $SCRIPTS_DIR/step-5_upload_release

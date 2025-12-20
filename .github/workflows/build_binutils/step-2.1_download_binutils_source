@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+${UTILS_DIR}/source_download "binutils-${BINUTILS_VERSION}.tar.xz" "${BINUTILS_SOURCE}"
