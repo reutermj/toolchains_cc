@@ -51,6 +51,3 @@ RUN $SCRIPTS_DIR/step-4_build_glibc
 
 COPY .github/workflows/build_glibc/step-5_package_glibc $SCRIPTS_DIR/step-5_package_glibc
 RUN $SCRIPTS_DIR/step-5_package_glibc
-
-# The artifact will be in /tmp/artifacts/
-# You can extract it with: docker cp <container>:/tmp/artifacts/ .
