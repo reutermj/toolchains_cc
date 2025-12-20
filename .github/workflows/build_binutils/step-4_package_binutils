@@ -4,10 +4,6 @@ source ${SCRIPTS_DIR}/environment
 
 pushd "${BINUTILS_ARTIFACTS}"
 
-# Host architecture - hardcoded for now, will be passed as argument in future
-# Since binaries are statically linked, they work on any x86_64 Linux system
-HOST="x86_64-linux"
-
 # Package format: <host>-<target>-binutils-<version>-<datetime>.tar.xz
 # Example: x86_64-linux-x86_64-linux-gnu-binutils-2.43-20241201.tar.xz
 #
@@ -22,12 +18,8 @@ HOST="x86_64-linux"
 # using the same version of toolchain binaries that were used in those releases.
 # Adding datetime allows us to update/rebuild toolchain artifacts while
 # maintaining existing artifacts for backward compatibility.
-DATETIME=$(date +%Y%m%d)
-PACKAGE_NAME="${HOST}-${TARGET}-binutils-${BINUTILS_VERSION}-${DATETIME}.tar.xz"
-RELEASE_NAME="binutils-${BINUTILS_VERSION}-${DATETIME}"
-
-# Save release name for upload step
-echo "${RELEASE_NAME}" > "${ARTIFACTS_DIR}/release_name"
+DATE=$(date +%Y%m%d)
+PACKAGE_NAME="x86_64-linux-x86_64-linux-gnu-binutils-${BINUTILS_VERSION}-${DATE}.tar.xz"
 
 XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${PACKAGE_NAME}" .
 

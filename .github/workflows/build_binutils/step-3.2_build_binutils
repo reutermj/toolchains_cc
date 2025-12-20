@@ -15,13 +15,13 @@ pushd "${BINUTILS_SOURCE}"
 # recognize the libtool-specific -all-static flag.
 # https://sourceware.org/pipermail/gdb-patches/2022-February/185721.html
 env CC_FOR_BUILD=gcc \
-    CFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include" \
-    CXXFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include" \
-    CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
-    CXXFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    CFLAGS_FOR_BUILD="-O3 -I${BUILD_TOOLS}/include" \
+    CXXFLAGS_FOR_BUILD="-O3 -I${BUILD_TOOLS}/include" \
+    CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     LDFLAGS="-L${BUILD_TOOLS}/lib" \
     ./configure \
-        --target=${TARGET} \
+        --target=x86_64-linux-gnu \
         --prefix="${BINUTILS_ARTIFACTS}" \
         --with-sysroot=/ \
         --disable-werror \

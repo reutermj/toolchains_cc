@@ -4,7 +4,7 @@ source ${SCRIPTS_DIR}/environment
 
 pushd "${ZLIB_SOURCE}"
 
-env CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+env CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     LDFLAGS="-L${BUILD_TOOLS}/lib" \
     CHOST="x86_64-build_pc-linux-gnu" \
     ./configure \
