@@ -1,0 +1,11 @@
+#/bin/bash -e
+export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
+
+# [INFO ]  Checking dynamic linker symlinks
+mkdir -p '/tmp/work/.build/x86_64-linux-musl/build/build-libc-check-ldso'
+cd '/tmp/work/.build/x86_64-linux-musl/build/build-libc-check-ldso'
+'rm' '-rf' 'sysroot-check'
+'mkdir' '-p' 'sysroot-check'
+'touch' 'sysroot-check/seen' 'sysroot-check/unique'
+'x86_64-linux-musl-gcc' '-o' 'test-ldso' '../test-ldso.c'
+'ln' '-sfv' '../usr/lib/libc.so' '/tmp/output/x86_64-linux-musl/sysroot/lib/ld-musl-x86_64.so.1'

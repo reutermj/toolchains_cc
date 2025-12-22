@@ -1,0 +1,17 @@
+#/bin/bash -e
+export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
+
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/linux-4.20.17.tar.xz' 'https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.20.17.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/zlib-1.3.1.tar.xz' 'https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/zstd-1.5.7.tar.gz' 'https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-1.5.7.tar.gz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/gmp-6.3.0.tar.xz' 'https://gmplib.org/download/gmp/gmp-6.3.0.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/mpfr-4.2.2.tar.xz' 'https://www.mpfr.org/mpfr-4.2.2/mpfr-4.2.2.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/isl-0.27.tar.xz' 'https://libisl.sourceforge.io/isl-0.27.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/mpc-1.3.1.tar.gz' 'https://www.multiprecision.org/downloads/mpc-1.3.1.tar.gz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/expat-2.7.1.tar.xz' 'http://downloads.sourceforge.net/project/expat/expat/2.7.1/expat-2.7.1.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/expat-2.7.1.tar.xz' 'https://github.com/libexpat/libexpat/releases/download/R_2_7_1/expat-2.7.1.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/ncurses-6.5.tar.gz' 'https://invisible-mirror.net/archives/ncurses/ncurses-6.5.tar.gz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/binutils-2.45.tar.xz' 'https://ftpmirror.gnu.org/gnu/binutils/binutils-2.45.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/gcc-15.2.0.tar.xz' 'https://ftpmirror.gnu.org/gnu/gcc/gcc-15.2.0/gcc-15.2.0.tar.xz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/musl-1.2.5.tar.gz' 'https://www.musl-libc.org/releases/musl-1.2.5.tar.gz' || /bin/true
+'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/gdb-16.3.tar.xz' 'https://ftpmirror.gnu.org/gnu/gdb/gdb-16.3.tar.xz' || /bin/true

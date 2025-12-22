@@ -1,0 +1,9 @@
+#/bin/bash -e
+export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
+
+# [INFO ]  Installing GMP for host
+mkdir -p '/tmp/work/.build/x86_64-linux-musl/build/build-gmp-host-x86_64-build_pc-linux-gnu'
+cd '/tmp/work/.build/x86_64-linux-musl/build/build-gmp-host-x86_64-build_pc-linux-gnu'
+CC_FOR_BUILD='x86_64-build_pc-linux-gnu-gcc' CPP_FOR_BUILD='x86_64-build_pc-linux-gnu-cpp' CC='x86_64-build_pc-linux-gnu-gcc' CFLAGS='-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include   -std=gnu17 -fexceptions' LDFLAGS='-L/tmp/work/.build/x86_64-linux-musl/buildtools/lib  ' '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-musl/src/gmp/configure' '--build=x86_64-build_pc-linux-gnu' '--host=x86_64-build_pc-linux-gnu' '--prefix=/tmp/work/.build/x86_64-linux-musl/buildtools' '--enable-fft' '--enable-cxx' '--disable-shared' '--enable-static'
+'make' '-j33' '-l'
+'make' 'install' 'DESTDIR='
