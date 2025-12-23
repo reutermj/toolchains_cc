@@ -57,9 +57,6 @@ RUN $SCRIPTS_DIR/step-04_download_sources
 COPY step-05_extract_sources $SCRIPTS_DIR/step-05_extract_sources
 RUN $SCRIPTS_DIR/step-05_extract_sources
 
-COPY step-06.0_build $SCRIPTS_DIR/step-06.0_build
-RUN $SCRIPTS_DIR/step-06.0_build
-
 COPY step-06.1_build $SCRIPTS_DIR/step-06.1_build
 RUN $SCRIPTS_DIR/step-06.1_build
 
@@ -77,12 +74,6 @@ RUN $SCRIPTS_DIR/step-06.5_build
 
 COPY step-06.6_build $SCRIPTS_DIR/step-06.6_build
 RUN $SCRIPTS_DIR/step-06.6_build
-
-COPY step-06.7_build $SCRIPTS_DIR/step-06.7_build
-RUN $SCRIPTS_DIR/step-06.7_build
-
-COPY step-06.8_build $SCRIPTS_DIR/step-06.8_build
-RUN $SCRIPTS_DIR/step-06.8_build
 
 COPY step-06.9_build $SCRIPTS_DIR/step-06.9_build
 RUN $SCRIPTS_DIR/step-06.9_build

@@ -2,6 +2,9 @@
 export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
 
 # [INFO ]  Installing MPC for host
+cd /tmp/work/.build/x86_64-linux-musl/src/mpc/
+autoreconf -i
+
 mkdir -p '/tmp/work/.build/x86_64-linux-musl/build/build-mpc-host-x86_64-build_pc-linux-gnu'
 cd '/tmp/work/.build/x86_64-linux-musl/build/build-mpc-host-x86_64-build_pc-linux-gnu'
 CFLAGS='-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include  ' LDFLAGS='-L/tmp/work/.build/x86_64-linux-musl/buildtools/lib  ' '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-musl/src/mpc/configure' '--build=x86_64-build_pc-linux-gnu' '--host=x86_64-build_pc-linux-gnu' '--prefix=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-gmp=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-mpfr=/tmp/work/.build/x86_64-linux-musl/buildtools' '--disable-shared' '--enable-static'
