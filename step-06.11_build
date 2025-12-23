@@ -2,23 +2,64 @@
 export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
 
 # [INFO ]  Installing core C gcc compiler
-mkdir -p '/tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-core'
-cd '/tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-core'
-CC_FOR_BUILD='gcc' CFLAGS='-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include  ' CFLAGS_FOR_BUILD='-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include  ' CXXFLAGS='-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include   ' CXXFLAGS_FOR_BUILD='-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include   ' LDFLAGS='-L/tmp/work/.build/x86_64-linux-musl/buildtools/lib  ' CFLAGS_FOR_TARGET='-g -O2 ' CXXFLAGS_FOR_TARGET='-g -O2 ' LDFLAGS_FOR_TARGET='' '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-musl/src/gcc/configure' '--build=x86_64-build_pc-linux-gnu' '--host=x86_64-build_pc-linux-gnu' '--target=x86_64-linux-musl' '--prefix=/tmp/work/.build/x86_64-linux-musl/buildtools' '--exec_prefix=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-local-prefix=/tmp/output/x86_64-linux-musl/sysroot' '--with-sysroot=/tmp/output/x86_64-linux-musl/sysroot' '--with-newlib' '--enable-threads=no' '--disable-shared' '--with-pkgversion=crosstool-NG 1.28.0.3_a3fef85' '--enable-__cxa_atexit' '--disable-libgomp' '--disable-libmudflap' '--disable-libmpx' '--disable-libssp' '--disable-libquadmath' '--disable-libquadmath-support' '--disable-libstdcxx' '--with-gmp=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-mpfr=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-mpc=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-isl=/tmp/work/.build/x86_64-linux-musl/buildtools' '--enable-lto' '--enable-target-optspace' '--with-linker-hash-style=both' '--disable-plugin' '--disable-nls' '--disable-multilib' '--enable-languages=c'
-'make' '-j33' '-l' 'configure-gcc' 'configure-libcpp' 'configure-build-libiberty'
-'make' '-j33' '-l' 'all-libcpp' 'all-build-libcpp' 'all-build-libiberty'
-'make' '-j33' '-l' 'configure-libdecnumber'
-'make' '-j33' '-l' '-C' 'libdecnumber' 'libdecnumber.a'
-'make' '-j33' '-l' 'configure-libbacktrace'
-'make' '-j33' '-l' '-C' 'libbacktrace'
-'make' '-j33' '-l' '-C' 'gcc' 'libgcc.mvars'
-'make' '-j33' '-l' 'all-gcc' 'all-target-libgcc'
-'make' 'install-gcc' 'install-target-libgcc'
-mkdir -p '/tmp/work/.build/x86_64-linux-musl/buildtools'
-cd '/tmp/work/.build/x86_64-linux-musl/buildtools'
-'ln' '-sfv' 'x86_64-linux-musl-gcc' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-cc'
-'rm' '-rf' 'sysroot-check'
-'mkdir' '-p' 'sysroot-check'
-'touch' 'sysroot-check/seen' 'sysroot-check/unique'
-'ln' '-sfv' 'lib' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'ln' '-sfv' 'lib' '/tmp/output/x86_64-linux-musl/sysroot/usr/lib64'
+mkdir -p /tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-core
+cd /tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-core
+
+env CC_FOR_BUILD=gcc \
+    CFLAGS="-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include" \
+    CFLAGS_FOR_BUILD="-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include" \
+    CXXFLAGS="-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include" \
+    CXXFLAGS_FOR_BUILD="-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include" \
+    LDFLAGS="-L/tmp/work/.build/x86_64-linux-musl/buildtools/lib" \
+    CFLAGS_FOR_TARGET="-g -O2" \
+    CXXFLAGS_FOR_TARGET="-g -O2" \
+    LDFLAGS_FOR_TARGET="" \
+        /tmp/work/.build/x86_64-linux-musl/src/gcc/configure \
+        --build=x86_64-linux-gnu \
+        --host=x86_64-linux-gnu \
+        --target=x86_64-linux-musl \
+        --prefix=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --exec_prefix=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --with-local-prefix=/tmp/output/x86_64-linux-musl/sysroot \
+        --with-sysroot=/tmp/output/x86_64-linux-musl/sysroot \
+        --with-newlib \
+        --enable-threads=no \
+        --disable-shared \
+        --enable-__cxa_atexit \
+        --disable-libgomp \
+        --disable-libmudflap \
+        --disable-libmpx \
+        --disable-libssp \
+        --disable-libquadmath \
+        --disable-libquadmath-support \
+        --disable-libstdcxx \
+        --with-gmp=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --with-mpfr=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --with-mpc=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --with-isl=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --enable-lto --enable-target-optspace \
+        --with-linker-hash-style=both \
+        --disable-plugin \
+        --disable-nls \
+        --disable-multilib \
+        --enable-languages=c
+
+
+make -j33 -l configure-gcc configure-libcpp configure-build-libiberty
+make -j33 -l all-libcpp all-build-libcpp all-build-libiberty
+make -j33 -l configure-libdecnumber
+make -j33 -l -C libdecnumber libdecnumber.a
+make -j33 -l configure-libbacktrace
+make -j33 -l -C libbacktrace
+make -j33 -l -C gcc libgcc.mvars
+make -j33 -l all-gcc all-target-libgcc
+make install-gcc install-target-libgcc
+
+mkdir -p /tmp/work/.build/x86_64-linux-musl/buildtools
+cd /tmp/work/.build/x86_64-linux-musl/buildtools
+ln -sfv x86_64-linux-musl-gcc /tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-cc
+rm -rf sysroot-check
+mkdir -p sysroot-check
+touch sysroot-check/seen sysroot-check/unique
+ln -sfv lib /tmp/output/x86_64-linux-musl/sysroot/lib64
+ln -sfv lib /tmp/output/x86_64-linux-musl/sysroot/usr/lib64

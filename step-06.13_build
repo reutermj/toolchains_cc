@@ -2,80 +2,46 @@
 export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
 
 # [INFO ]  Installing final gcc compiler
-mkdir -p '/tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-final'
-cd '/tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-final'
-CC_FOR_BUILD='gcc' CFLAGS='-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include  ' CFLAGS_FOR_BUILD='-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include  ' CXXFLAGS='-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include   ' CXXFLAGS_FOR_BUILD='-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include   ' LDFLAGS='-L/tmp/work/.build/x86_64-linux-musl/buildtools/lib   -static' CFLAGS_FOR_TARGET='-g -O2 ' CXXFLAGS_FOR_TARGET='-g -O2 ' LDFLAGS_FOR_TARGET='' '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-musl/src/gcc/configure' '--build=x86_64-build_pc-linux-gnu' '--host=x86_64-build_pc-linux-gnu' '--target=x86_64-linux-musl' '--prefix=/tmp/output' '--exec_prefix=/tmp/output' '--with-sysroot=/tmp/output/x86_64-linux-musl/sysroot' '--enable-languages=c,c++' '--with-pkgversion=crosstool-NG 1.28.0.3_a3fef85' '--enable-__cxa_atexit' '--disable-libmudflap' '--disable-libgomp' '--disable-libssp' '--disable-libquadmath' '--disable-libquadmath-support' '--disable-libsanitizer' '--disable-libmpx' '--with-gmp=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-mpfr=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-mpc=/tmp/work/.build/x86_64-linux-musl/buildtools' '--with-isl=/tmp/work/.build/x86_64-linux-musl/buildtools' '--enable-lto' '--enable-threads=posix' '--enable-target-optspace' '--with-linker-hash-style=both' '--disable-plugin' '--disable-nls' '--disable-multilib' '--with-local-prefix=/tmp/output/x86_64-linux-musl/sysroot' '--enable-long-long'
-'make' '-j33' '-l' 'all'
-'make' 'install'
-mkdir -p '/tmp/output'
-cd '/tmp/output'
-'ln' '-sfv' 'x86_64-linux-musl-gcc' '/tmp/output/bin/x86_64-linux-musl-cc'
-'rm' '-rf' 'sysroot-check'
-'mkdir' '-p' 'sysroot-check'
-'touch' 'sysroot-check/seen' 'sysroot-check/unique'
-'ln' '-sfv' '../../libexec/gcc/x86_64-linux-musl/15.2.0/liblto_plugin.a' '/tmp/output/lib/bfd-plugins/liblto_plugin.a'
-mkdir -p '/tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-final-movelibs'
-cd '/tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-final-movelibs'
-'rm' '-rf' 'sysroot-check'
-'mkdir' '-p' 'sysroot-check'
-'touch' 'sysroot-check/seen' 'sysroot-check/unique'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libatomic.a' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libatomic.a'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libatomic.a' '/tmp/output/x86_64-linux-musl/lib64/libatomic.a'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libatomic.so' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libatomic.so'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libatomic.so' '/tmp/output/x86_64-linux-musl/lib64/libatomic.so'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libatomic.so.1' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libatomic.so.1'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libatomic.so.1' '/tmp/output/x86_64-linux-musl/lib64/libatomic.so.1'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libatomic.so.1.2.0' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libatomic.so.1.2.0'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libatomic.so.1.2.0' '/tmp/output/x86_64-linux-musl/lib64/libatomic.so.1.2.0'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libgcc_s.so' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libgcc_s.so'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libgcc_s.so' '/tmp/output/x86_64-linux-musl/lib64/libgcc_s.so'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libgcc_s.so.1' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libgcc_s.so.1'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libgcc_s.so.1' '/tmp/output/x86_64-linux-musl/lib64/libgcc_s.so.1'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libitm.a' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libitm.a'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libitm.a' '/tmp/output/x86_64-linux-musl/lib64/libitm.a'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libitm.so' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libitm.so'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libitm.so' '/tmp/output/x86_64-linux-musl/lib64/libitm.so'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libitm.so.1' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libitm.so.1'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libitm.so.1' '/tmp/output/x86_64-linux-musl/lib64/libitm.so.1'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libitm.so.1.0.0' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libitm.so.1.0.0'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libitm.so.1.0.0' '/tmp/output/x86_64-linux-musl/lib64/libitm.so.1.0.0'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libitm.spec' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libitm.spec'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libitm.spec' '/tmp/output/x86_64-linux-musl/lib64/libitm.spec'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.a' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libstdc++.a'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libstdc++.a' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.a'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.modules.json' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libstdc++.modules.json'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libstdc++.modules.json' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.modules.json'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.so' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libstdc++.so'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libstdc++.so' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.so'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.so.6' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libstdc++.so.6'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libstdc++.so.6' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.so.6'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.so.6.0.34' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libstdc++.so.6.0.34'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libstdc++.so.6.0.34' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.so.6.0.34'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.so.6.0.34-gdb.py' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libstdc++.so.6.0.34-gdb.py'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libstdc++.so.6.0.34-gdb.py' '/tmp/output/x86_64-linux-musl/lib64/libstdc++.so.6.0.34-gdb.py'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libstdc++exp.a' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libstdc++exp.a'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libstdc++exp.a' '/tmp/output/x86_64-linux-musl/lib64/libstdc++exp.a'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libstdc++fs.a' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libstdc++fs.a'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libstdc++fs.a' '/tmp/output/x86_64-linux-musl/lib64/libstdc++fs.a'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/lib64'
-'mv' '/tmp/output/x86_64-linux-musl/lib64/libsupc++.a' '/tmp/output/x86_64-linux-musl/sysroot/lib64/libsupc++.a'
-'ln' '-sf' '../../x86_64-linux-musl/sysroot/lib64/libsupc++.a' '/tmp/output/x86_64-linux-musl/lib64/libsupc++.a'
+mkdir -p /tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-final
+cd /tmp/work/.build/x86_64-linux-musl/build/build-cc-gcc-final
+
+env CC_FOR_BUILD=gcc \
+    CFLAGS="-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include" \
+    CFLAGS_FOR_BUILD="-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include" \
+    CXXFLAGS="-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include" \
+    CXXFLAGS_FOR_BUILD="-O2 -g -pipe -I/tmp/work/.build/x86_64-linux-musl/buildtools/include" \
+    LDFLAGS="-L/tmp/work/.build/x86_64-linux-musl/buildtools/lib   -static" \
+    CFLAGS_FOR_TARGET="-g -O2" \
+    CXXFLAGS_FOR_TARGET="-g -O2" \
+    LDFLAGS_FOR_TARGET="" \
+    /tmp/work/.build/x86_64-linux-musl/src/gcc/configure \
+        --build=x86_64-linux-gnu \
+        --host=x86_64-linux-gnu \
+        --target=x86_64-linux-musl \
+        --prefix=/tmp/output \
+        --exec_prefix=/tmp/output \
+        --with-sysroot=/tmp/output/x86_64-linux-musl/sysroot \
+        --enable-languages=c,c++ \
+        --enable-__cxa_atexit \
+        --disable-libmudflap \
+        --disable-libgomp \
+        --disable-libssp \
+        --disable-libquadmath \
+        --disable-libquadmath-support \
+        --disable-libsanitizer \
+        --disable-libmpx \
+        --with-gmp=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --with-mpfr=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --with-mpc=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --with-isl=/tmp/work/.build/x86_64-linux-musl/buildtools \
+        --enable-lto --enable-threads=posix \
+        --enable-target-optspace \
+        --with-linker-hash-style=both \
+        --disable-plugin \
+        --disable-nls \
+        --disable-multilib \
+        --with-local-prefix=/tmp/output/x86_64-linux-musl/sysroot \
+        --enable-long-long
+
+make -j33 -l all
+make install
