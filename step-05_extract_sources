@@ -1,18 +1,8 @@
 #/bin/bash -e
 export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
 
-'rm' '-f' '/tmp/work/.build/src/.linux-4.20.17.*'
-'touch' '/tmp/work/.build/src/.linux-4.20.17.extracting'
-'mkdir' '-p' '/tmp/work/.build/src'
-'tar' 'xvf' '/tmp/work/.build/tarballs/linux-4.20.17.tar.xz' '-C' '/tmp/work/.build/src'
-'touch' '/tmp/work/.build/src/.linux-4.20.17.extracted'
-'rm' '-f' '/tmp/work/.build/src/.linux-4.20.17.extracting'
-'touch' '/tmp/work/.build/src/.linux-4.20.17.patching'
-mkdir -p '/tmp/work/.build/src/linux-4.20.17'
-cd '/tmp/work/.build/src/linux-4.20.17'
-'touch' '/tmp/work/.build/src/.linux-4.20.17.patched'
-'rm' '-f' '/tmp/work/.build/src/.linux-4.20.17.patching'
-'ln' '-s' '/tmp/work/.build/src/linux-4.20.17' '/tmp/work/.build/x86_64-linux-musl/src/linux'
+'mkdir' '-p' '/tmp/work/.build/x86_64-linux-musl/src/linux/'
+'tar' 'xvf' '/tmp/work/.build/tarballs/linux-6.18.tar.xz' '-C' '/tmp/work/.build/x86_64-linux-musl/src/linux/'
 
 'mkdir' '-p' '/tmp/work/.build/x86_64-linux-musl/src/zlib/'
 'tar' 'xvf' '/tmp/work/.build/tarballs/zlib-1.3.1.tar.xz' '-C' '/tmp/work/.build/x86_64-linux-musl/src/zlib/'
