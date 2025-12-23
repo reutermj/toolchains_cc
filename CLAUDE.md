@@ -45,10 +45,10 @@ Use the `./bazel` wrapper script instead of `bazel`
 ## Linting
 ```bash
 # Check Bazel file formatting
-./bazel run :buildifier.check
+./bazel run //private:buildifier.check
 
 # Auto-fix Bazel file formatting
-./bazel run :buildifier.fix
+./bazel run //private:buildifier.fix
 ```
 
 
