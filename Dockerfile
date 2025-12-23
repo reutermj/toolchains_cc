@@ -51,9 +51,6 @@ RUN $SCRIPTS_DIR/step-01_initial-lines
 COPY step-02_working-directory $SCRIPTS_DIR/step-02_working-directory
 RUN $SCRIPTS_DIR/step-02_working-directory
 
-COPY step-03_build-system-tools $SCRIPTS_DIR/step-03_build-system-tools
-RUN $SCRIPTS_DIR/step-03_build-system-tools
-
 COPY step-04_download_sources $SCRIPTS_DIR/step-04_download_sources
 RUN $SCRIPTS_DIR/step-04_download_sources
 
@@ -101,16 +98,3 @@ RUN $SCRIPTS_DIR/step-06.12_build
 
 COPY step-06.13_build $SCRIPTS_DIR/step-06.13_build
 RUN $SCRIPTS_DIR/step-06.13_build
-
-COPY step-06.14_build $SCRIPTS_DIR/step-06.14_build
-RUN $SCRIPTS_DIR/step-06.14_build
-
-COPY step-06.15_build $SCRIPTS_DIR/step-06.15_build
-RUN $SCRIPTS_DIR/step-06.15_build
-
-# COPY step-06.16_build $SCRIPTS_DIR/step-06.16_build
-# RUN $SCRIPTS_DIR/step-06.16_build
-
-# COPY step-07_finalize-directory $SCRIPTS_DIR/step-07_finalize-directory
-# RUN $SCRIPTS_DIR/step-07_finalize-directory
-

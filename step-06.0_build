@@ -6,4 +6,4 @@ mkdir -p '/tmp/work/.build/x86_64-linux-musl/build/build-ncurses-build-x86_64-bu
 cd '/tmp/work/.build/x86_64-linux-musl/build/build-ncurses-build-x86_64-build_pc-linux-gnu'
 CFLAGS='-O2 -g -I/tmp/work/.build/x86_64-linux-musl/buildtools/include   -std=gnu17' LDFLAGS='-L/tmp/work/.build/x86_64-linux-musl/buildtools/lib  ' '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-musl/src/ncurses/configure' '--build=x86_64-build_pc-linux-gnu' '--host=x86_64-build_pc-linux-gnu' '--prefix=' '--with-install-prefix=/tmp/work/.build/x86_64-linux-musl/buildtools' '--without-debug' '--enable-termcap' '--enable-symlinks' '--without-manpages' '--without-tests' '--without-cxx' '--without-cxx-binding' '--without-ada' '--without-fallbacks' '--disable-widec'
 'make' '-j33' '-l'
-STRIPPROG='x86_64-build_pc-linux-gnu-strip' 'make' 'install.progs'
+STRIPPROG='strip' 'make' 'install.progs'

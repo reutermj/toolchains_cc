@@ -2,5 +2,5 @@
 export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
 
 # [INFO ]  Installing kernel headers
-'make' '-C' '/tmp/work/.build/x86_64-linux-musl/src/linux' 'BASH=/tmp/work/.build/tools/bin/bash' 'HOSTCC=x86_64-build_pc-linux-gnu-gcc' 'CROSS_COMPILE=x86_64-linux-musl-' 'O=/tmp/work/.build/x86_64-linux-musl/build/build-kernel-headers' 'ARCH=x86' 'INSTALL_HDR_PATH=/tmp/output/x86_64-linux-musl/sysroot/usr' 'V=0' 'headers_install'
-'make' '-C' '/tmp/work/.build/x86_64-linux-musl/src/linux' 'BASH=/tmp/work/.build/tools/bin/bash' 'HOSTCC=x86_64-build_pc-linux-gnu-gcc' 'CROSS_COMPILE=x86_64-linux-musl-' 'O=/tmp/work/.build/x86_64-linux-musl/build/build-kernel-headers' 'ARCH=x86' 'INSTALL_HDR_PATH=/tmp/output/x86_64-linux-musl/sysroot/usr' 'V=0' 'headers_check'
+'make' '-C' '/tmp/work/.build/x86_64-linux-musl/src/linux' 'BASH=/tmp/work/.build/tools/bin/bash' 'HOSTCC=gcc' 'CROSS_COMPILE=x86_64-linux-musl-' 'O=/tmp/work/.build/x86_64-linux-musl/build/build-kernel-headers' 'ARCH=x86' 'INSTALL_HDR_PATH=/tmp/output/x86_64-linux-musl/sysroot/usr' 'V=0' 'headers_install'
+'make' '-C' '/tmp/work/.build/x86_64-linux-musl/src/linux' 'BASH=/tmp/work/.build/tools/bin/bash' 'HOSTCC=gcc' 'CROSS_COMPILE=x86_64-linux-musl-' 'O=/tmp/work/.build/x86_64-linux-musl/build/build-kernel-headers' 'ARCH=x86' 'INSTALL_HDR_PATH=/tmp/output/x86_64-linux-musl/sysroot/usr' 'V=0' 'headers_check'
