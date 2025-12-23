@@ -57,9 +57,6 @@ RUN $SCRIPTS_DIR/step-05_extract_sources
 COPY step-06.1_build $SCRIPTS_DIR/step-06.1_build
 RUN $SCRIPTS_DIR/step-06.1_build
 
-COPY step-06.2_build $SCRIPTS_DIR/step-06.2_build
-RUN $SCRIPTS_DIR/step-06.2_build
-
 COPY step-06.3_build $SCRIPTS_DIR/step-06.3_build
 RUN $SCRIPTS_DIR/step-06.3_build
 
