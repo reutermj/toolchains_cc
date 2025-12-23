@@ -45,14 +45,11 @@ RUN $SCRIPTS_DIR/step-3_configure_toolchain
 # =============================
 # || Extracted Build Scripts ||
 # =============================
-COPY step-01_initial-lines $SCRIPTS_DIR/step-01_initial-lines
-RUN $SCRIPTS_DIR/step-01_initial-lines
+COPY step-04_download_sources $SCRIPTS_DIR/step-04_download_sources
+RUN $SCRIPTS_DIR/step-04_download_sources
 
 COPY step-02_working-directory $SCRIPTS_DIR/step-02_working-directory
 RUN $SCRIPTS_DIR/step-02_working-directory
-
-COPY step-04_download_sources $SCRIPTS_DIR/step-04_download_sources
-RUN $SCRIPTS_DIR/step-04_download_sources
 
 COPY step-05_extract_sources $SCRIPTS_DIR/step-05_extract_sources
 RUN $SCRIPTS_DIR/step-05_extract_sources

@@ -1,6 +1,7 @@
 #/bin/bash -e
 export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
 
+mkdir -p /tmp/work/.build/tarballs/
 'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/linux-4.20.17.tar.xz' 'https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.20.17.tar.xz'
 'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/zlib-1.3.1.tar.xz' 'https://github.com/reutermj/toolchains_cc/releases/download/binaries/zlib-1.3.1.tar.xz'
 'wget' '--tries=3'  '--progress=dot:binary' '-T' '10' '-O' '/tmp/work/.build/tarballs/zstd-1.5.7.tar.gz' 'https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-1.5.7.tar.gz'
