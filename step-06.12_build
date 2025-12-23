@@ -1,33 +1,20 @@
 #/bin/bash -e
-export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
+export PATH=/tmp/output/bin:/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
 
 # [INFO ]  Installing C library
 mkdir -p '/tmp/work/.build/x86_64-linux-musl/build/build-libc'
 cd '/tmp/work/.build/x86_64-linux-musl/build/build-libc'
-'rm' '-rf' 'sysroot-check'
-'mkdir' '-p' 'sysroot-check'
-'touch' 'sysroot-check/seen' 'sysroot-check/unique'
-'mkdir' '-p' '/tmp/output/x86_64-linux-musl/sysroot/usr/lib'
-mkdir -p '/tmp/work/.build/x86_64-linux-musl/buildtools/bin'
-cd '/tmp/work/.build/x86_64-linux-musl/buildtools/bin'
-mkdir -p '/tmp/output/bin'
-cd '/tmp/output/bin'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-addr2line' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-addr2line'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-ar' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-ar'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-as' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-as'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-c++filt' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-c++filt'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-elfedit' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-elfedit'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-gprof' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-gprof'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-ld' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-ld'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-ld.bfd' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-ld.bfd'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-nm' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-nm'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-objcopy' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-objcopy'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-objdump' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-objdump'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-ranlib' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-ranlib'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-readelf' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-readelf'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-size' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-size'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-strings' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-strings'
-'ln' '-sfv' '/tmp/output/bin/x86_64-linux-musl-strip' '/tmp/work/.build/x86_64-linux-musl/buildtools/bin/x86_64-linux-musl-strip'
-CFLAGS='           ' LDFLAGS='' CROSS_COMPILE='x86_64-linux-musl-' '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-musl/src/musl/configure' '--host=x86_64-linux-musl' '--target=x86_64-linux-musl' '--prefix=/usr' '--libdir=/usr/lib' '--disable-gcc-wrapper' '--enable-shared' '--enable-optimize=auto'
+
+CFLAGS='           ' \
+LDFLAGS='' \
+CROSS_COMPILE='x86_64-linux-musl-' \
+    '/usr/bin/bash' '/tmp/work/.build/x86_64-linux-musl/src/musl/configure' \
+    '--host=x86_64-linux-musl' \
+    '--target=x86_64-linux-musl' \
+    '--prefix=/usr' \
+    '--libdir=/usr/lib' \
+    '--disable-gcc-wrapper' \
+    '--enable-shared' \
+    '--enable-optimize=auto'
 'make' '-j33' '-l'
 'make' 'DESTDIR=/tmp/output/x86_64-linux-musl/sysroot' 'install'
