@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+export PATH=${BUILD_TOOLS}/bin:$PATH
+
+GMP_BUILD="/tmp/gmp-build"
+mkdir -p ${GMP_BUILD}
+cd ${GMP_BUILD}
+
+env CC_FOR_BUILD=gcc \
+    CPP_FOR_BUILD=cpp \
+    CC=gcc \
+    CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include   -std=gnu17 -fexceptions" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    ${GMP_SOURCE}/configure \
+        --build=x86_64-linux-gnu \
+        --host=x86_64-linux-gnu \
+        --prefix=${BUILD_TOOLS} \
+        --enable-fft \
+        --enable-cxx \
+        --disable-shared \
+        --enable-static
+
+make -j$(nproc) -l
+make install

@@ -1,0 +1,74 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+export PATH=${BUILD_TOOLS}/bin:$PATH
+
+mkdir -p /tmp/work/.build/tarballs
+mkdir -p /tmp/work/.build/src
+mkdir -p /tmp/work/.build/x86_64-linux-musl/src
+mkdir -p /tmp/work/.build/x86_64-linux-musl/build
+mkdir -p ${BUILD_TOOLS}/bin
+mkdir -p /tmp/output
+mkdir -p ${BUILD_TOOLS}
+mkdir -p /tmp/output/x86_64-linux-musl/sysroot
+mkdir -p /tmp/output/x86_64-linux-musl/debug-root
+mkdir -p /tmp/output/x86_64-linux-musl/sysroot/usr/include
+mkdir -p /tmp/output/lib
+mkdir -p /tmp/output/x86_64-linux-musl/sysroot/lib
+mkdir -p /tmp/output/x86_64-linux-musl/sysroot/usr/lib
+
+BINUTILS_BUILD=/tmp/binutils-build
+mkdir -p ${BINUTILS_BUILD}
+cd ${BINUTILS_BUILD}
+
+CC_FOR_BUILD=gcc \
+CFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include  " \
+CXXFLAGS_FOR_BUILD="-O2 -g -I${BUILD_TOOLS}/include   " \
+LDFLAGS_FOR_BUILD="-L${BUILD_TOOLS}/lib  " \
+CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include  " \
+CXXFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include   " \
+LDFLAGS="-L${BUILD_TOOLS}/lib  " \
+/usr/bin/bash "${BINUTILS_SOURCE}/configure" \
+    --build=x86_64-build_pc-linux-gnu \
+    --host=x86_64-build_pc-linux-gnu \
+    --target=x86_64-linux-musl \
+    --prefix=/tmp/output \
+    --disable-werror \
+    --enable-ld=yes \
+    --enable-gold=no \
+    --enable-deterministic-archives \
+    --disable-multilib \
+    --disable-gprofng \
+    --disable-sim \
+    --disable-gdb \
+    --without-debuginfod \
+    --disable-nls \
+    --without-zstd \
+    --with-sysroot=/tmp/output/x86_64-linux-musl/sysroot
+
+make -j$(nproc) -l configure-host
+make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc)
+make install
+
+mkdir -p /tmp/output/bin
+cd /tmp/output/bin
+ln -sfv /tmp/output/bin/x86_64-linux-musl-addr2line ${BUILD_TOOLS}/bin/x86_64-linux-musl-addr2line
+ln -sfv /tmp/output/bin/x86_64-linux-musl-ar ${BUILD_TOOLS}/bin/x86_64-linux-musl-ar
+ln -sfv /tmp/output/bin/x86_64-linux-musl-as ${BUILD_TOOLS}/bin/x86_64-linux-musl-as
+ln -sfv /tmp/output/bin/x86_64-linux-musl-c++filt ${BUILD_TOOLS}/bin/x86_64-linux-musl-c++filt
+ln -sfv /tmp/output/bin/x86_64-linux-musl-elfedit ${BUILD_TOOLS}/bin/x86_64-linux-musl-elfedit
+ln -sfv /tmp/output/bin/x86_64-linux-musl-gprof ${BUILD_TOOLS}/bin/x86_64-linux-musl-gprof
+ln -sfv /tmp/output/bin/x86_64-linux-musl-ld ${BUILD_TOOLS}/bin/x86_64-linux-musl-ld
+ln -sfv /tmp/output/bin/x86_64-linux-musl-ld.bfd ${BUILD_TOOLS}/bin/x86_64-linux-musl-ld.bfd
+ln -sfv /tmp/output/bin/x86_64-linux-musl-nm ${BUILD_TOOLS}/bin/x86_64-linux-musl-nm
+ln -sfv /tmp/output/bin/x86_64-linux-musl-objcopy ${BUILD_TOOLS}/bin/x86_64-linux-musl-objcopy
+ln -sfv /tmp/output/bin/x86_64-linux-musl-objdump ${BUILD_TOOLS}/bin/x86_64-linux-musl-objdump
+ln -sfv /tmp/output/bin/x86_64-linux-musl-ranlib ${BUILD_TOOLS}/bin/x86_64-linux-musl-ranlib
+ln -sfv /tmp/output/bin/x86_64-linux-musl-readelf ${BUILD_TOOLS}/bin/x86_64-linux-musl-readelf
+ln -sfv /tmp/output/bin/x86_64-linux-musl-size ${BUILD_TOOLS}/bin/x86_64-linux-musl-size
+ln -sfv /tmp/output/bin/x86_64-linux-musl-strings ${BUILD_TOOLS}/bin/x86_64-linux-musl-strings
+ln -sfv /tmp/output/bin/x86_64-linux-musl-strip ${BUILD_TOOLS}/bin/x86_64-linux-musl-strip
+mkdir -p ${BUILD_TOOLS}/x86_64-linux-musl
+ln -sv /tmp/output/x86_64-linux-musl/bin ${BUILD_TOOLS}/x86_64-linux-musl/bin
+

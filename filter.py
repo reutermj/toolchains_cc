@@ -1,7 +1,7 @@
 import re
 
 header = """
-#/bin/bash -e
+#!/bin/bash -e
 export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
 
 """.lstrip()

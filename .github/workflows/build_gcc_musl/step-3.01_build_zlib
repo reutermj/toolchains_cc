@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+export PATH=${BUILD_TOOLS}/bin:$PATH
+
+ZLIB_BUILD="/tmp/zlib-build"
+mkdir -p ${ZLIB_BUILD}
+cd ${ZLIB_BUILD}
+
+env CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    CHOST=x86_64-linux-gnu \
+    ${ZLIB_SOURCE}/configure \
+        --prefix=${BUILD_TOOLS} \
+        --static
+        
+make -j$(nproc) -l
+make install
