@@ -50,13 +50,13 @@ jobs:
       - name: Set up environment
         run: $SCRIPTS_DIR/environment
 
-      - name: Download binutils source
-        run: $SCRIPTS_DIR/step-2.1_download_binutils_source
+      - name: Download zlib source
+        run: $SCRIPTS_DIR/step-2.1_download_zlib_source
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Download zlib source
-        run: $SCRIPTS_DIR/step-2.2_download_zlib_source
+      - name: Download binutils source
+        run: $SCRIPTS_DIR/step-2.2_download_binutils_source
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
