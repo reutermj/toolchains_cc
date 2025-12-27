@@ -2,47 +2,74 @@
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
-pushd "${BINUTILS_SOURCE}"
+BINUTILS_BUILD=/tmp/binutils-build
+mkdir -p ${BINUTILS_BUILD}
+cd ${BINUTILS_BUILD}
 
-# --with-sysroot=/: enables runtime --sysroot flag in ld without hardcoding
-# a specific path. Without this, ld rejects --sysroot with error "this linker
-# was not configured to use sysroots"
-# https://sourceware.org/binutils/docs-2.40/ld/Options.html
+CONFIGURE_FLAGS=()
 
-# --disable-inprocess-agent: prevents building libinproctrace.so for gdbserver.
-# libinproctrace.so is a shared library for fast tracepoints that conflicts with
-# static linking because gdbserver uses g++ directly (not libtool) which doesn't
-# recognize the libtool-specific -all-static flag.
-# https://sourceware.org/pipermail/gdb-patches/2022-February/185721.html
-env CC_FOR_BUILD=gcc \
-    CFLAGS_FOR_BUILD="-O3 -I${BUILD_TOOLS}/include" \
+# System triples: build/host use GNU (static linking makes host portable), target musl
+CONFIGURE_FLAGS+=(--build=x86_64-linux-gnu)
+CONFIGURE_FLAGS+=(--host=x86_64-linux-gnu)
+CONFIGURE_FLAGS+=(--target=${TARGET})
+
+# The --with-sysroot flag enables sysroot support in the linker. When binutils is built with this
+# flag, users can pass --sysroot=<path> to ld at runtime to redirect all library and header searches
+# to a different root directory. This is essential for cross-compilation workflows where the target
+# system's libraries live in a separate directory tree (e.g., a Bazel sandbox or a mounted rootfs).
+# The value "/" here is a placeholder - the actual sysroot path is provided at link time.
+CONFIGURE_FLAGS+=(--with-sysroot=/)
+
+# The --enable-deterministic-archives flag tells ar (the archive tool) to use zero/constant values
+# for UIDs, GIDs, and timestamps when creating .a static library files. Without this flag, archives 
+# embed the current timestamp and the user/group IDs of whoever ran ar. This means building the 
+# same code twice (or on different machines) produces different .a files, even though the actual 
+# object code is identical. This breaks:
+# 1. Build caching: tools like Bazel  use file hashes to detect changes; non-deterministic
+#    archives cause unnecessary cache misses,
+# 2. Reproducible builds: you can't verify that a binary was built from specific source if 
+#    intermediate artifacts differ, and
+# 3. Binary diffing - makes it harder to audit what actually changed between builds.
+CONFIGURE_FLAGS+=(--enable-deterministic-archives)
+
+# Installation prefix for packaging
+CONFIGURE_FLAGS+=(--prefix=${BINUTILS_ARTIFACTS})
+
+# Build the standard BFD linker (ld)
+CONFIGURE_FLAGS+=(--enable-ld=yes)
+
+# Don't treat warnings as errors during build
+CONFIGURE_FLAGS+=(--disable-werror)
+
+# Don't build multilib support (we target a single ABI)
+CONFIGURE_FLAGS+=(--disable-multilib)
+
+# TODO: should we be building with zstd?
+CONFIGURE_FLAGS+=(--without-zstd)
+
+# Unnecessary dependencies. TODO: Should we build any of these?
+CONFIGURE_FLAGS+=(--enable-gold=no)
+CONFIGURE_FLAGS+=(--disable-gprofng)
+CONFIGURE_FLAGS+=(--disable-sim)
+CONFIGURE_FLAGS+=(--disable-gdb)
+CONFIGURE_FLAGS+=(--without-debuginfod)
+CONFIGURE_FLAGS+=(--disable-nls)
+
+env CFLAGS_FOR_BUILD="-O3 -I${BUILD_TOOLS}/include" \
     CXXFLAGS_FOR_BUILD="-O3 -I${BUILD_TOOLS}/include" \
+    LDFLAGS_FOR_BUILD="-L${BUILD_TOOLS}/lib" \
     CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     CXXFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     LDFLAGS="-L${BUILD_TOOLS}/lib" \
-    ./configure \
-        --target=${TARGET} \
-        --prefix="${BINUTILS_ARTIFACTS}" \
-        --with-sysroot=/ \
-        --disable-werror \
-        --enable-ld=yes \
-        --enable-gold=no \
-        --enable-deterministic-archives \
-        --disable-multilib \
-        --disable-gprofng \
-        --disable-sim \
-        --disable-gdb \
-        --disable-inprocess-agent \
-        --without-debuginfod \
-        --disable-nls \
-        --without-zstd
+    ${BINUTILS_SOURCE}/configure ${CONFIGURE_FLAGS[@]}
 
 make -j$(nproc) -l configure-host
 
-# Build everything except gdbserver with -all-static (libtool flag)
-# gdbserver must be built separately because it uses g++ directly (not libtool),
-# which doesn't recognize -all-static and requires -static instead
-make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc) -l \
+# Need to specify make targets because gdbserver fails to build when targeting gnu
+# x86_64-linux-gnu-g++: error: unrecognized command-line option '-all-static'; did you mean '--static'?
+# make[2]: *** [Makefile:377: gdbreplay] Error 1
+# make[2]: *** Waiting for unfinished jobs....
+make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc)  \
     all-binutils \
     all-gas \
     all-ld \
@@ -51,13 +78,6 @@ make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc) -l \
     all-bfd \
     all-opcodes \
     all-libiberty \
-    all-libsframe \
-    all-gdbsupport
-
-# Build gdbserver with -static (gcc/g++ flag)
-# Does not work with musl-libc. TODO: fix
-# make -C gdbserver LDFLAGS="-L${BUILD_TOOLS}/lib -static" -j$(nproc) -l
+    all-libsframe
 
 make install
-
-popd
