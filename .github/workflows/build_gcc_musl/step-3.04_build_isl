@@ -1,0 +1,28 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+export PATH=${BUILD_TOOLS}/bin:$PATH
+
+cd ${ISL_SOURCE}
+./autogen.sh
+
+ISL_BUILD=/tmp/isl-build
+mkdir -p ${ISL_BUILD}
+cd ${ISL_BUILD}
+
+env CFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS="-O2 -g -pipe -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    ${ISL_SOURCE}/configure \
+        --build=x86_64-linux-gnu \
+        --host=x86_64-linux-gnu \
+        --prefix=${BUILD_TOOLS} \
+        --disable-shared \
+        --enable-static \
+        --with-gmp=system \
+        --with-gmp-prefix=${BUILD_TOOLS} \
+        --with-clang=no
+
+make -j$(nproc) -l
+make install

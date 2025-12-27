@@ -1,0 +1,68 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+BINUTILS_BUILD=/tmp/binutils-build
+mkdir -p ${BINUTILS_BUILD}
+cd ${BINUTILS_BUILD}
+
+CONFIGURE_FLAGS=()
+
+# System triples: build/host use GNU (static linking makes host portable), target musl
+CONFIGURE_FLAGS+=(--build=x86_64-linux-gnu)
+CONFIGURE_FLAGS+=(--host=x86_64-linux-gnu)
+CONFIGURE_FLAGS+=(--target=x86_64-linux-musl)
+
+# The --with-sysroot flag enables sysroot support in the linker. When binutils is built with this
+# flag, users can pass --sysroot=<path> to ld at runtime to redirect all library and header searches
+# to a different root directory. This is essential for cross-compilation workflows where the target
+# system's libraries live in a separate directory tree (e.g., a Bazel sandbox or a mounted rootfs).
+# The value "/" here is a placeholder - the actual sysroot path is provided at link time.
+CONFIGURE_FLAGS+=(--with-sysroot=/)
+
+# The --enable-deterministic-archives flag tells ar (the archive tool) to use zero/constant values
+# for UIDs, GIDs, and timestamps when creating .a static library files. Without this flag, archives 
+# embed the current timestamp and the user/group IDs of whoever ran ar. This means building the 
+# same code twice (or on different machines) produces different .a files, even though the actual 
+# object code is identical. This breaks:
+# 1. Build caching: tools like Bazel  use file hashes to detect changes; non-deterministic
+#    archives cause unnecessary cache misses,
+# 2. Reproducible builds: you can't verify that a binary was built from specific source if 
+#    intermediate artifacts differ, and
+# 3. Binary diffing - makes it harder to audit what actually changed between builds.
+CONFIGURE_FLAGS+=(--enable-deterministic-archives)
+
+# Installation prefix for the built tools
+CONFIGURE_FLAGS+=(--prefix=${BUILD_TOOLS})
+
+# Build the standard BFD linker (ld)
+CONFIGURE_FLAGS+=(--enable-ld=yes)
+
+# Don't treat warnings as errors during build
+CONFIGURE_FLAGS+=(--disable-werror)
+
+# Don't build multilib support (we target a single ABI)
+CONFIGURE_FLAGS+=(--disable-multilib)
+
+# TODO: should we be building with zstd?
+CONFIGURE_FLAGS+=(--without-zstd)
+
+# Unnecessary dependencies. TODO: Should we build any of these?
+CONFIGURE_FLAGS+=(--enable-gold=no)
+CONFIGURE_FLAGS+=(--disable-gprofng)
+CONFIGURE_FLAGS+=(--disable-sim)
+CONFIGURE_FLAGS+=(--disable-gdb)
+CONFIGURE_FLAGS+=(--without-debuginfod)
+CONFIGURE_FLAGS+=(--disable-nls)
+
+env CFLAGS_FOR_BUILD="-O3 -I${BUILD_TOOLS}/include" \
+    CXXFLAGS_FOR_BUILD="-O3 -I${BUILD_TOOLS}/include" \
+    LDFLAGS_FOR_BUILD="-L${BUILD_TOOLS}/lib" \
+    CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
+    CXXFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
+    LDFLAGS="-L${BUILD_TOOLS}/lib" \
+    "${BINUTILS_SOURCE}/configure" "${CONFIGURE_FLAGS[@]}"
+
+make -j$(nproc) -l configure-host
+make LDFLAGS="-L${BUILD_TOOLS}/lib -all-static" -j$(nproc)
+make install
