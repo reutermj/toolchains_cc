@@ -19,4 +19,4 @@ env CROSS_COMPILE=x86_64-linux-musl- \
         --enable-optimize=auto
 
 make -j$(nproc) -l
-make DESTDIR=/tmp/output/x86_64-linux-musl/sysroot install
+make DESTDIR=${BUILD_TOOLS} install

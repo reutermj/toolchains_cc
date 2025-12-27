@@ -2,8 +2,6 @@
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
-export PATH=/tmp/work/.build/x86_64-linux-musl/buildtools/bin:$PATH
-
 LINUX_BUILD="/tmp/linux-build"
 mkdir -p ${LINUX_BUILD}
 
@@ -12,6 +10,6 @@ make -C ${LINUX_SOURCE} \
     CROSS_COMPILE=x86_64-linux-musl- \
     O=${LINUX_BUILD} \
     ARCH=x86 \
-    INSTALL_HDR_PATH=/tmp/output/x86_64-linux-musl/sysroot/usr \
+    INSTALL_HDR_PATH=${BUILD_TOOLS}/usr \
     V=0 \
     headers_install

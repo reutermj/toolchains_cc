@@ -23,8 +23,8 @@ env CC_FOR_BUILD=gcc \
         --target=x86_64-linux-musl \
         --prefix=${BUILD_TOOLS} \
         --exec_prefix=${BUILD_TOOLS} \
-        --with-local-prefix=/tmp/output/x86_64-linux-musl/sysroot \
-        --with-sysroot=/tmp/output/x86_64-linux-musl/sysroot \
+        --with-local-prefix=${BUILD_TOOLS} \
+        --with-sysroot=${BUILD_TOOLS} \
         --with-newlib \
         --enable-threads=no \
         --disable-shared \
@@ -57,12 +57,3 @@ make -j$(nproc) -l -C libbacktrace
 make -j$(nproc) -l -C gcc libgcc.mvars
 make -j$(nproc) -l all-gcc all-target-libgcc
 make install-gcc install-target-libgcc
-
-mkdir -p ${BUILD_TOOLS}
-cd ${BUILD_TOOLS}
-ln -sfv x86_64-linux-musl-gcc ${BUILD_TOOLS}/bin/x86_64-linux-musl-cc
-rm -rf sysroot-check
-mkdir -p sysroot-check
-touch sysroot-check/seen sysroot-check/unique
-ln -sfv lib /tmp/output/x86_64-linux-musl/sysroot/lib64
-ln -sfv lib /tmp/output/x86_64-linux-musl/sysroot/usr/lib64

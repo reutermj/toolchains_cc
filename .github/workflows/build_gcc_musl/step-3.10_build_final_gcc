@@ -23,7 +23,7 @@ env CC_FOR_BUILD=gcc \
         --target=x86_64-linux-musl \
         --prefix=/tmp/output \
         --exec_prefix=/tmp/output \
-        --with-sysroot=/tmp/output/x86_64-linux-musl/sysroot \
+        --with-sysroot=${BUILD_TOOLS} \
         --enable-languages=c,c++ \
         --enable-__cxa_atexit \
         --disable-libmudflap \
@@ -37,13 +37,14 @@ env CC_FOR_BUILD=gcc \
         --with-mpfr=${BUILD_TOOLS} \
         --with-mpc=${BUILD_TOOLS} \
         --with-isl=${BUILD_TOOLS} \
-        --enable-lto --enable-threads=posix \
+        --enable-lto \
+        --enable-threads=posix \
         --enable-target-optspace \
         --with-linker-hash-style=both \
         --disable-plugin \
         --disable-nls \
         --disable-multilib \
-        --with-local-prefix=/tmp/output/x86_64-linux-musl/sysroot \
+        --with-local-prefix=${BUILD_TOOLS} \
         --enable-long-long
 
 make -j$(nproc) -l all
