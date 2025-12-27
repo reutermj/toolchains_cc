@@ -7,7 +7,8 @@ set -euox pipefail
 docker build \
     -f .github/workflows/build_gcc/Dockerfile \
     --build-arg GCC_VERSION="${1}" \
-    --build-arg GH_TOKEN="${2}" \
+    --build-arg TARGET="${2}" \
+    --build-arg GH_TOKEN="${3}" \
     -t gcc \
     .
 
