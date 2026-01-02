@@ -1,0 +1,32 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+# Create symlinks for the host toolchain with the x86_64-unknown-linux-gnu prefix.
+# The binutils configure script uses --host=x86_64-unknown-linux-gnu to force
+# cross-compilation behavior (ensuring prefixed tools are created), but the system
+# only has x86_64-linux-gnu-* tools. This script bridges that gap by creating
+# symlinks with the expected names.
+
+HOST_TRIPLE="x86_64-unknown-linux-gnu"
+
+mkdir -p "${BUILD_TOOLS}/bin"
+
+TOOLS=(
+    ar
+    as
+    ld
+    nm
+    objcopy
+    objdump
+    ranlib
+    readelf
+    strip
+)
+
+for tool in "${TOOLS[@]}"; do
+    ln -sf "$(command -v ${tool})" "${BUILD_TOOLS}/bin/${HOST_TRIPLE}-${tool}"
+done
+
+# Verify the symlinks were created
+ls -la "${BUILD_TOOLS}/bin/"

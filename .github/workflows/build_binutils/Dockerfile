@@ -32,6 +32,9 @@ ARG BINUTILS_VERSION=2.43
 COPY .github/workflows/build_binutils/step-2.2_download_binutils_source $SCRIPTS_DIR/step-2.2_download_binutils_source
 RUN $SCRIPTS_DIR/step-2.2_download_binutils_source
 
+COPY .github/workflows/build_binutils/step-3.0_setup_host_toolchain $SCRIPTS_DIR/step-3.0_setup_host_toolchain
+RUN $SCRIPTS_DIR/step-3.0_setup_host_toolchain
+
 COPY .github/workflows/build_binutils/step-3.1_build_zlib $SCRIPTS_DIR/step-3.1_build_zlib
 RUN $SCRIPTS_DIR/step-3.1_build_zlib
 

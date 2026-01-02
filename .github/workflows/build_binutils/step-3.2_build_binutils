@@ -8,9 +8,11 @@ cd ${BINUTILS_BUILD}
 
 CONFIGURE_FLAGS=()
 
-# System triples: build/host use GNU (static linking makes host portable), target musl
+# System triples: build uses GNU, host uses unknown vendor to force cross-compilation behavior
+# This ensures prefixed tools (e.g., x86_64-linux-gnu-ar) are always created, even when
+# build == target. The different vendor field (unknown vs none) triggers cross-compile mode.
 CONFIGURE_FLAGS+=(--build=x86_64-linux-gnu)
-CONFIGURE_FLAGS+=(--host=x86_64-linux-gnu)
+CONFIGURE_FLAGS+=(--host=x86_64-unknown-linux-gnu)
 CONFIGURE_FLAGS+=(--target=${TARGET})
 
 # The --with-sysroot flag enables sysroot support in the linker. When binutils is built with this
