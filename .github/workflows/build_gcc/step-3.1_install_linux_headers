@@ -2,68 +2,15 @@
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
-##################################################################################
-# Download Linux Kernel Source and Install Headers                              #
-##################################################################################
-#                                                                                #
-# This step downloads the Linux kernel source and installs kernel headers into  #
-# the sysroot. These headers are essential for building glibc-aware toolchains. #
-#                                                                                #
-# WHY LINUX HEADERS ARE NEEDED                                                   #
-# ============================================================================== #
-# Linux kernel headers provide the system call interface between user-space     #
-# programs and the Linux kernel. They are required for:                         #
-#                                                                                #
-# 1. Building GCC's target runtime libraries (libgcc, libstdc++)                #
-#    - These libraries may use low-level system calls                           #
-#    - They need kernel type definitions and constants                          #
-#                                                                                #
-# 2. Ensuring glibc compatibility                                                #
-#    - glibc 2.28 was built with specific kernel headers                        #
-#    - GCC needs matching headers to ensure ABI compatibility                   #
-#                                                                                #
-# 3. Providing standard system types                                             #
-#    - <linux/types.h>: Kernel types like __u32, __s64, etc.                    #
-#    - <asm/types.h>: Architecture-specific types                               #
-#    - <sys/types.h>: Standard POSIX types (uses kernel headers)                #
-#                                                                                #
-# KERNEL VERSION SELECTION                                                       #
-# ============================================================================== #
-# We use Linux 6.12 which is a recent stable kernel. The kernel headers are     #
-# generally backward compatible, so using newer headers is safe even when       #
-# targeting older kernel versions at runtime.                                   #
-#                                                                                #
-# The kernel's system call interface is stable - new syscalls are added but     #
-# old ones are never removed. This means:                                       #
-# - Programs built with newer headers work on older kernels                     #
-# - They just won't use syscalls that don't exist on older kernels              #
-#                                                                                #
-# INSTALLATION LOCATION                                                          #
-# ============================================================================== #
-# Headers are installed to: ${SYSROOT_DIR}/usr/include/                         #
-# This includes:                                                                 #
-# - linux/*.h: Linux kernel headers                                             #
-# - asm/*.h: Architecture-specific headers (x86_64)                             #
-# - asm-generic/*.h: Generic architecture headers                               #
-#                                                                                #
-# These are used by:                                                             #
-# - glibc headers (already in the sysroot from step-06.5)                       #
-# - GCC when building libgcc (configured with --with-sysroot)                   #
-# - User programs compiled with the toolchain                                   #
-#                                                                                #
-##################################################################################
+LINUX_BUILD="/tmp/linux-build"
+mkdir -p ${LINUX_BUILD}
+cd ${LINUX_BUILD}
 
-LINUX_BUILD_DIR="/tmp/build-kernel-headers"
-mkdir -p ${LINUX_BUILD_DIR}
-
-pushd "${LINUX_SOURCE}"
-
-make \
-    "HOSTCC=gcc" \
-    "O=${LINUX_BUILD_DIR}" \
-    "ARCH=x86" \
-    "INSTALL_HDR_PATH=${SYSROOT_DIR}/usr" \
-    "V=0" \
+make -C ${LINUX_SOURCE} \
+    HOSTCC=gcc \
+    CROSS_COMPILE=${TARGET}- \
+    O=${LINUX_BUILD} \
+    ARCH=x86 \
+    INSTALL_HDR_PATH=${BUILD_TOOLS}/usr \
+    V=0 \
     headers_install
-
-popd
