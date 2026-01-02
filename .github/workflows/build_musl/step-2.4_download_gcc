@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+tar -xf /tmp/x86_64-linux-x86_64-linux-musl-gcc-bootstrap-15.2.0-20251229.tar.xz -C "${BUILD_TOOLS}"

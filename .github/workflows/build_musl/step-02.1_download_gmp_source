@@ -1,4 +1,0 @@
-#!/bin/bash
-set -euox pipefail
-source ${SCRIPTS_DIR}/environment
-${UTILS_DIR}/download_tarball "gmp-6.3.0.tar.xz" "${GMP_SOURCE}"

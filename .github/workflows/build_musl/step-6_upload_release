@@ -2,7 +2,6 @@
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
-# Upload to the binaries release (same as all other build workflows)
 gh release upload binaries \
     ${ARTIFACTS_DIR}/*.tar.xz \
     --clobber

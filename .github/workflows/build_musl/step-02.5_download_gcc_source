@@ -1,4 +1,0 @@
-#!/bin/bash
-set -euox pipefail
-source ${SCRIPTS_DIR}/environment
-${UTILS_DIR}/download_tarball "gcc-15.2.0.tar.xz" "${GCC_SOURCE}"
