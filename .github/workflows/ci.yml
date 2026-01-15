@@ -112,6 +112,11 @@ jobs:
           cd examples/zstd
           ../../bazel build //:zstd_example
 
+      - name: Build libarchive example
+        run: |
+          cd examples/libarchive
+          ../../bazel build //:libarchive_example
+
   buildifier:
     runs-on: ubuntu-latest
     name: Run buildifier

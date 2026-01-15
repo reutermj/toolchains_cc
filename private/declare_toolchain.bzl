@@ -58,6 +58,24 @@ def declare_toolchain(name, visibility, sysroot, all_tools, compiler):
         visibility = ["//visibility:private"],
     )
 
+    # glibc uses feature test macros to control which functions are visible in headers.
+    # Linux code commonly uses GNU extensions that glibc hides behind these macros.
+    # Without `_GNU_SOURCE`, glibc headers hide functions like futimesat(), pipe2(),
+    # and accept4(), causing "implicit declaration of function" errors.
+    # This defines `_GNU_SOURCE` to expose the full glibc API (POSIX, X/Open, GNU).
+    # https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html
+    gnu_source_arg = "{}_gnu_source".format(name)
+    args.append(gnu_source_arg)
+    cc_args(
+        name = gnu_source_arg,
+        actions = [
+            "@rules_cc//cc/toolchains/actions:c_compile",
+            "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
+        ],
+        args = ["-D_GNU_SOURCE"],
+        visibility = ["//visibility:private"],
+    )
+
     # =====================================
     # || Declare Toolchain Specific Args ||
     # =====================================
