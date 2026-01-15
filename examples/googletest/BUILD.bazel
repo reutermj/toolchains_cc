@@ -1,0 +1,16 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+cc_library(
+    name = "factorial",
+    srcs = ["factorial.cc"],
+    hdrs = ["factorial.h"],
+)
+
+cc_test(
+    name = "factorial_test",
+    srcs = ["factorial_test.cc"],
+    deps = [
+        ":factorial",
+        "@googletest//:gtest_main",
+    ],
+)
