@@ -1,0 +1,23 @@
+"Minimal example: using zstd with toolchains_cc"
+
+module(name = "zstd_example")
+
+# ==================
+# || Dependencies ||
+# ==================
+bazel_dep(name = "rules_cc", version = "0.2.16")
+bazel_dep(name = "zstd", version = "1.5.7")
+
+# ======================
+# || C/C++ Toolchains ||
+# ======================
+bazel_dep(name = "toolchains_cc", version = "2025.9.18")
+
+# For local development/testing, override with the local toolchains_cc.
+# Comment out or remove this line when using toolchains_cc from BCR.
+local_path_override(
+    module_name = "toolchains_cc",
+    path = "../..",
+)
+
+register_toolchains("@toolchains_cc")

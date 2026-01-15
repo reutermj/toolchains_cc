@@ -32,6 +32,7 @@ def declare_toolchain(name, visibility, sysroot, all_tools, compiler):
         actions = [
             "@rules_cc//cc/toolchains/actions:c_compile",
             "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
+            "@rules_cc//cc/toolchains/actions:assembly_actions",
             "@rules_cc//cc/toolchains/actions:link_actions",
         ],
         args = [
@@ -47,6 +48,7 @@ def declare_toolchain(name, visibility, sysroot, all_tools, compiler):
         actions = [
             "@rules_cc//cc/toolchains/actions:c_compile",
             "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
+            "@rules_cc//cc/toolchains/actions:assembly_actions",
             "@rules_cc//cc/toolchains/actions:link_actions",
         ],
         args = ["--sysroot={sysroot}"],
@@ -67,6 +69,7 @@ def declare_toolchain(name, visibility, sysroot, all_tools, compiler):
             actions = [
                 "@rules_cc//cc/toolchains/actions:c_compile",
                 "@rules_cc//cc/toolchains/actions:cpp_compile_actions",
+                "@rules_cc//cc/toolchains/actions:assembly_actions",
                 "@rules_cc//cc/toolchains/actions:link_actions",
             ],
             args = [
