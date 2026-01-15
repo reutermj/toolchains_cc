@@ -162,6 +162,11 @@ jobs:
           cd examples/boost
           ../../bazel build //:filesystem_example
 
+      - name: Build libuv example
+        run: |
+          cd examples/libuv
+          ../../bazel build //:libuv_example
+
   buildifier:
     runs-on: ubuntu-latest
     name: Run buildifier
