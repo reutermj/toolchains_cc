@@ -122,6 +122,11 @@ jobs:
           cd examples/googletest
           ../../bazel test //:factorial_test
 
+      - name: Build curl example
+        run: |
+          cd examples/curl
+          ../../bazel build //:curl_example
+
   buildifier:
     runs-on: ubuntu-latest
     name: Run buildifier
