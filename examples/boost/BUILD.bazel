@@ -1,6 +1,12 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
 
 cc_binary(
+    name = "asio_example",
+    srcs = ["asio_example.cc"],
+    deps = ["@boost.asio"],
+)
+
+cc_binary(
     name = "filesystem_example",
     srcs = ["filesystem_example.cc"],
     deps = ["@boost.filesystem"],
