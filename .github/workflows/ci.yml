@@ -94,6 +94,19 @@ jobs:
             exit 1
           fi
 
+  examples:
+    runs-on: ubuntu-latest
+    name: Build examples
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Build zlib example
+        run: |
+          cd examples/zlib
+          ../../bazel build //:zlib_example
+
   buildifier:
     runs-on: ubuntu-latest
     name: Run buildifier
