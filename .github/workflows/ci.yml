@@ -127,6 +127,11 @@ jobs:
           cd examples/curl
           ../../bazel build //:curl_example
 
+      - name: Build protobuf example
+        run: |
+          cd examples/protobuf
+          ../../bazel build //:protobuf_example
+
   buildifier:
     runs-on: ubuntu-latest
     name: Run buildifier
