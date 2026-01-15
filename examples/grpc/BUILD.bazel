@@ -1,0 +1,41 @@
+load("@grpc//bazel:cc_grpc_library.bzl", "cc_grpc_library")
+load("@protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+proto_library(
+    name = "greeter_proto",
+    srcs = ["greeter.proto"],
+)
+
+cc_proto_library(
+    name = "greeter_cc_proto",
+    deps = [":greeter_proto"],
+)
+
+cc_grpc_library(
+    name = "greeter_cc_grpc",
+    srcs = [":greeter_proto"],
+    grpc_only = True,
+    deps = [":greeter_cc_proto"],
+)
+
+cc_binary(
+    name = "server",
+    srcs = ["server.cc"],
+    deps = [
+        ":greeter_cc_grpc",
+        ":greeter_cc_proto",
+        "@grpc//:grpc++",
+    ],
+)
+
+cc_binary(
+    name = "client",
+    srcs = ["client.cc"],
+    deps = [
+        ":greeter_cc_grpc",
+        ":greeter_cc_proto",
+        "@grpc//:grpc++",
+    ],
+)
