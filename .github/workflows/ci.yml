@@ -132,6 +132,11 @@ jobs:
           cd examples/protobuf
           ../../bazel build //:protobuf_example
 
+      - name: Build sqlite example
+        run: |
+          cd examples/sqlite
+          ../../bazel build //:sqlite_example
+
   buildifier:
     runs-on: ubuntu-latest
     name: Run buildifier
