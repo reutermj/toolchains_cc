@@ -1,0 +1,4 @@
+# Use forked BCR with GMP fix until upstream merges
+# https://github.com/bazelbuild/bazel-central-registry/pull/XXXX
+common --registry=https://raw.githubusercontent.com/reutermj/bazel-central-registry/43f533a72/
+common --registry=https://bcr.bazel.build/
