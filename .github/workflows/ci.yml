@@ -142,6 +142,11 @@ jobs:
           cd examples/grpc
           ../../bazel build //:server //:client
 
+      - name: Build nlohmann_json example
+        run: |
+          cd examples/nlohmann_json
+          ../../bazel build //:nlohmann_json_example
+
   buildifier:
     runs-on: ubuntu-latest
     name: Run buildifier
