@@ -152,6 +152,11 @@ jobs:
           cd examples/nlohmann_json
           ../../bazel build //:nlohmann_json_example
 
+      - name: Build boost asio example
+        run: |
+          cd examples/boost
+          ../../bazel build //:asio_example
+
       - name: Build boost filesystem example
         run: |
           cd examples/boost
