@@ -25,7 +25,9 @@ fi
 
 echo "Changes detected - proceeding with commit and PR creation"
 
-NEW_VERSION=$(./tools/bazelisk-linux-amd64 version | head -n1 | sed 's/Bazelisk version: //')
+# Capture full output first, then extract version to avoid SIGPIPE with `set -o pipefail`
+BAZELISK_OUTPUT=$(./tools/bazelisk-linux-amd64 version)
+NEW_VERSION=$(echo "$BAZELISK_OUTPUT" | awk '/^Bazelisk version:/ {print $3; exit}')
 echo "New Bazelisk version: $NEW_VERSION"
 
 git config user.name "github-actions[bot]"
