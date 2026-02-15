@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+# Bootstrap builds are for creating a minimal gcc for compiling the initial gcc
+# We have to use the host gcc to bootrap the first complete gcc
+if [[ "${BOOTSTRAP}" == "true" ]]; then
+    exit 0
+fi
+
+if [[ "${TARGET}" == *-gnu ]]; then
+    "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-bootstrap-linux-gnu-gcc-bootstrap-${GCC_VERSION}-" "${BUILD_TOOLS}"
+elif [[ "${TARGET}" == *-musl ]]; then
+    "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-linux-musl-gcc-bootstrap-${GCC_VERSION}-" "${BUILD_TOOLS}"
+fi
+

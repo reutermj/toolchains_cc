@@ -15,7 +15,9 @@ on:
         type: choice
         options:
           - x86_64-linux-gnu
+          - x86_64-bootstrap-linux-gnu
           - x86_64-linux-musl
+          - x86_64-bootstrap-linux-musl
 
 permissions:
   # Required for uploading GitHub releases

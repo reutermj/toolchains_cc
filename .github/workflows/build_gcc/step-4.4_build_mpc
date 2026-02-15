@@ -1,73 +1,25 @@
 #!/bin/bash
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
+export PATH=${BUILD_TOOLS}/bin:$PATH
 
-pushd "${MPC_SOURCE}"
-
-##################################################################################
-# MPC Build Configuration                                                        #
-##################################################################################
-#                                                                                #
-# MPC (Multiple Precision Complex Library) provides arbitrary precision complex  #
-# number arithmetic used by GCC for compile-time constant folding and            #
-# optimization. This library will be statically linked into GCC binaries.        #
-#                                                                                #
-# COMPILER FLAGS                                                                 #
-# ============================================================================== #
-# * `-O3`: Aggressive optimization for GCC's compile-time performance            #
-# * `-pipe`: Use pipes instead of temp files (faster compilation)                #
-# * `-I${BUILD_TOOLS}/include`: Find GMP and MPFR headers                        #
-#                                                                                #
-# LINKER FLAGS                                                                   #
-# ============================================================================== #
-# * `-L${BUILD_TOOLS}/lib`: Find GMP and MPFR static libraries                   #
-#                                                                                #
-# CONFIGURE FLAGS                                                                #
-# ============================================================================== #
-# * `--build=x86_64-pc-linux-gnu`: Build system triplet (where MPC is built)     #
-# * `--host=x86_64-pc-linux-gnu`: Host system triplet (where MPC will run)       #
-#   - See "Portability Requirements" section in README.md for why these are      #
-#     required to ensure the toolchain runs on any x86_64 Linux system           #
-#                                                                                #
-# * `--prefix="${BUILD_TOOLS}"`: Install location                                #
-#   - Headers: ${BUILD_TOOLS}/include/                                           #
-#   - Libraries: ${BUILD_TOOLS}/lib/                                             #
-#   - Makes MPC available for GCC build                                          #
-#                                                                                #
-# * `--with-gmp="${BUILD_TOOLS}"`: Location of GMP installation                  #
-#   - Tells MPC where to find GMP headers and libraries                          #
-#   - MPC depends on GMP for arbitrary precision integer arithmetic              #
-#                                                                                #
-# * `--with-mpfr="${BUILD_TOOLS}"`: Location of MPFR installation                #
-#   - Tells MPC where to find MPFR headers and libraries                         #
-#   - MPC depends on MPFR for arbitrary precision floating-point arithmetic      #
-#                                                                                #
-# * `--disable-shared`: Don't build shared libraries                             #
-#   - MPC will be statically linked into GCC binaries                            #
-#                                                                                #
-# * `--enable-static`: Build static libraries for static linking into GCC        #
-#   - Combined with --disable-shared ensures static-only build                   #
-#                                                                                #
-##################################################################################
-
-# Generate the configure script and other build files using autotools
-# MPC's Git repository doesn't include the configure script - it must be
-# generated from configure.ac using autotools (aclocal, autoconf, automake, etc.)
+cd ${MPC_SOURCE}
 autoreconf -i
 
+MPC_BUILD=/tmp/mpc-build
+mkdir -p ${MPC_BUILD}
+cd ${MPC_BUILD}
+
 env CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
-    CXXFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     LDFLAGS="-L${BUILD_TOOLS}/lib" \
-    ./configure \
-        --build=x86_64-pc-linux-gnu \
-        --host=x86_64-pc-linux-gnu \
-        --prefix="${BUILD_TOOLS}" \
-        --with-gmp="${BUILD_TOOLS}" \
-        --with-mpfr="${BUILD_TOOLS}" \
+    ${MPC_SOURCE}/configure \
+        --build=x86_64-linux-gnu \
+        --host=x86_64-linux-gnu \
+        --prefix=${BUILD_TOOLS} \
+        --with-gmp=${BUILD_TOOLS} \
+        --with-mpfr=${BUILD_TOOLS} \
         --disable-shared \
         --enable-static
 
 make -j$(nproc) -l
 make install
-
-popd

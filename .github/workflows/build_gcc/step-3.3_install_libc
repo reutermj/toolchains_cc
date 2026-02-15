@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+# Bootstrap builds are for creating a minimal gcc for compiling libc
+# We dont need a libc for bootstrap builds
+if [[ "${BOOTSTRAP}" == "true" ]]; then
+    exit 0
+fi
+
+if [[ "${TARGET}" == *-gnu ]]; then
+    "${UTILS_DIR}/download_tarball" "x86_64-linux-gnu-glibc-2.28-" "${BUILD_TOOLS}"
+elif [[ "${TARGET}" == *-musl ]]; then
+    "${UTILS_DIR}/download_tarball" "x86_64-linux-musl-musl-1.2.5-" "${BUILD_TOOLS}"
+fi

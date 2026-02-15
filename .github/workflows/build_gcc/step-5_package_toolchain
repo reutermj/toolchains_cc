@@ -2,50 +2,61 @@
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
-pushd "${GCC_BUILD}"
-GCC_FULL_VERSION=$("bin/x86_64-linux-gnu-gcc" --version | head -n1 | awk '{print $NF}')
+pushd "${GCC_ARTIFACTS}"
+GCC_FULL_VERSION=$("bin/${TARGET}-gcc" --version | head -n1 | awk '{print $NF}')
 DATE=$(date +%Y%m%d)
 
-# =======================
-# || Package libstdc++ ||
-# =======================
-cp -r share share-libstdcxx
+# Maximum compression for reducing artifacts size. 
+# Downside: very slow when compressing, but it's ok because this is a fire and forget workload.
+export XZ_OPT=-e9
 
-LIBSTDCXX_FILES=()
-LIBSTDCXX_FILES+=(share-libstdcxx)
-LIBSTDCXX_FILES+=(include/c++/)
-LIBSTDCXX_FILES+=(lib64/libitm*)
-LIBSTDCXX_FILES+=(lib64/libstdc++*)
-LIBSTDCXX_FILES+=(lib64/libsupc++*)
+if [[ "${BOOTSTRAP}" == "true" ]]; then
+    # ===========================
+    # || Package bootstrap gcc ||
+    # ===========================
+    tar cJf "${ARTIFACTS_DIR}/x86_64-linux-${TARGET}-gcc-bootstrap-${GCC_FULL_VERSION}-${DATE}.tar.xz" .
+else
+    # =======================
+    # || Package libstdc++ ||
+    # =======================
+    cp -r share share-libstdcxx
 
-XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/x86_64-linux-gnu-libstdcxx-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
-    "${LIBSTDCXX_FILES[@]}"
+    LIBSTDCXX_FILES=()
+    LIBSTDCXX_FILES+=(share-libstdcxx)
+    LIBSTDCXX_FILES+=(${TARGET}/include/c++/)
+    LIBSTDCXX_FILES+=(${TARGET}/lib64/libitm*)
+    LIBSTDCXX_FILES+=(${TARGET}/lib64/libstdc++*)
+    LIBSTDCXX_FILES+=(${TARGET}/lib64/libsupc++*)
 
-rm -rf "${LIBSTDCXX_FILES[@]}"
+    tar cJf "${ARTIFACTS_DIR}/${TARGET}-libstdcxx-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
+        "${LIBSTDCXX_FILES[@]}"
 
-# =======================================
-# || Package gcc compiler runtime libs ||
-# =======================================
-cp -r share share-libgcc
+    rm -rf "${LIBSTDCXX_FILES[@]}"
 
-LIBGCC_FILES=()
-LIBGCC_FILES+=(share-libgcc)
-LIBGCC_FILES+=(lib/gcc)
-LIBGCC_FILES+=(lib64/libgcc*)
-LIBGCC_FILES+=(lib64/libatomic*)
+    # =======================================
+    # || Package gcc compiler runtime libs ||
+    # =======================================
+    cp -r share share-libgcc
 
-XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/x86_64-linux-gnu-libgcc-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
-    "${LIBGCC_FILES[@]}"
+    LIBGCC_FILES=()
+    LIBGCC_FILES+=(share-libgcc)
+    LIBGCC_FILES+=(lib/gcc)
+    LIBGCC_FILES+=(${TARGET}/lib64/libgcc*)
+    LIBGCC_FILES+=(${TARGET}/lib64/libatomic*)
 
-rm -rf "${LIBGCC_FILES[@]}"
+    tar cJf "${ARTIFACTS_DIR}/${TARGET}-libgcc-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
+        "${LIBGCC_FILES[@]}"
 
-# =================
-# || Package gcc ||
-# =================
-XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/x86_64-linux-x86_64-linux-gnu-gcc-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
-    bin/ \
-    lib/ \
-    libexec/ \
-    share/
+    rm -rf "${LIBGCC_FILES[@]}"
+
+    # =================
+    # || Package gcc ||
+    # =================
+    tar cJf "${ARTIFACTS_DIR}/x86_64-linux-${TARGET}-gcc-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
+        bin/ \
+        lib/ \
+        libexec/ \
+        share/
+fi
 
 popd
