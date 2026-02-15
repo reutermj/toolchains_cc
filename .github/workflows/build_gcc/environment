@@ -1,6 +1,15 @@
 #!/bin/bash
 set -euox pipefail
 
+# Derive BOOTSTRAP from the target triple's vendor field.
+# Targets with "bootstrap" in the vendor (e.g., x86_64-bootstrap-linux-gnu)
+# produce a minimal C-only compiler for building libc.
+if [[ "${TARGET}" == *-bootstrap-* ]]; then
+    export BOOTSTRAP="true"
+else
+    export BOOTSTRAP="false"
+fi
+
 # ==============================
 # || Setup Source Directories ||
 # ==============================

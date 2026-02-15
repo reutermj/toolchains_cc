@@ -45,7 +45,6 @@ COPY .github/workflows/build_gcc/step-2.5_download_gcc_source $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-2.5_download_gcc_source
 
 ARG TARGET=x86_64-linux-musl
-ARG BOOTSTRAP=true
 COPY .github/workflows/build_gcc/step-3.1_install_linux_headers $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-3.1_install_linux_headers
 
