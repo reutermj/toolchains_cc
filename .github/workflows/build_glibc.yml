@@ -51,7 +51,12 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Install Linux kernel headers
-        run: ${{ env.SCRIPTS_DIR }}/step-3_install_linux_headers
+        run: ${{ env.SCRIPTS_DIR }}/step-3.1_install_linux_headers
+
+      - name: Install bootstrap gcc and binutils
+        run: ${{ env.SCRIPTS_DIR }}/step-3.2_install_gcc
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Build glibc
         run: ${{ env.SCRIPTS_DIR }}/step-4_build_glibc
