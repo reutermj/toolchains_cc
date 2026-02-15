@@ -84,8 +84,18 @@ jobs:
       - name: Install Linux kernel headers
         run: $SCRIPTS_DIR/step-3.1_install_linux_headers
 
-      - name: Install glibc
-        run: $SCRIPTS_DIR/step-3.2_install_glibc
+      - name: Install binutils
+        run: $SCRIPTS_DIR/step-3.2_install_binutils
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install toolchain libc
+        run: $SCRIPTS_DIR/step-3.3_install_libc
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install bootstrapping gcc
+        run: $SCRIPTS_DIR/step-3.4_install_gcc
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
