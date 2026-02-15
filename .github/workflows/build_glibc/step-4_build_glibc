@@ -2,6 +2,8 @@
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
+export PATH=${SYSROOT_DIR}/bin:${PATH}
+
 GLIBC_BUILD_DIR="/tmp/glibc-build"
 mkdir -p "${GLIBC_BUILD_DIR}"
 
@@ -11,10 +13,10 @@ pushd "${GLIBC_BUILD_DIR}"
 # || Configure ||
 # ===============
 env BUILD_CC=gcc \
-    CC="gcc -O3 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int -fcf-protection=none" \
+    CC="x86_64-bootstrap-linux-gnu-gcc -O3 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int -fcf-protection=none" \
     CFLAGS="-fcf-protection=none" \
-    AR=ar \
-    RANLIB=ranlib \
+    AR=x86_64-bootstrap-linux-gnu-ar \
+    RANLIB=x86_64-bootstrap-linux-gnu-ranlib \
     ${GLIBC_SOURCE}/configure \
         --prefix=/usr \
         --host=x86_64-linux-gnu \

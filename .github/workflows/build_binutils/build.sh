@@ -3,6 +3,7 @@ set -euox pipefail
 
 # Usage: Run from repo root with binutils version, target, and GitHub token
 #   .github/workflows/build_binutils/build.sh <BINUTILS_VERSION> <TARGET> <GH_TOKEN>
+#   .github/workflows/build_binutils/build.sh <BINUTILS_VERSION> <TARGET> 
 #
 # Examples:
 #   .github/workflows/build_binutils/build.sh 2.45 x86_64-linux-gnu <token>

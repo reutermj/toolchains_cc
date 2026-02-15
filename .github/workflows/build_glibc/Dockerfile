@@ -3,51 +3,48 @@ FROM ubuntu:latest
 ARG GLIBC_VERSION=2.28
 ARG LINUX_VERSION=6.18
 
-# =================
-# || Create User ||
-# =================
-RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y sudo
+# ===========
+# || Setup ||
+# ===========
+ENV SCRIPTS_DIR="/tmp/scripts"
+ENV UTILS_DIR="/tmp/scripts"
 
-RUN useradd -m -s /bin/bash builder && \
-    usermod -aG sudo builder
-RUN echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+COPY .github/workflows/utils/initialize_user $UTILS_DIR/
+RUN $UTILS_DIR/initialize_user
+
 USER builder
 WORKDIR /home/builder
 
-# =================
-# || Environment ||
-# =================
-ENV SCRIPTS_DIR="/tmp/scripts"
-ENV UTILS_DIR="/tmp/scripts"
-COPY .github/workflows/build_glibc/environment $SCRIPTS_DIR/environment
-COPY .github/workflows/utils/download_tarball $UTILS_DIR/download_tarball
+COPY .github/workflows/build_glibc/environment $SCRIPTS_DIR/
+COPY .github/workflows/utils/download_tarball $UTILS_DIR/
 
-# =====================
-# || Build glibc     ||
-# =====================
-COPY .github/workflows/build_glibc/step-1_install_dependencies $SCRIPTS_DIR/step-1_install_dependencies
+# =================
+# || Build glibc ||
+# =================
+COPY .github/workflows/build_glibc/step-1_install_dependencies $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-1_install_dependencies
 
-# Install newer GitHub CLI for attestation support (requires v2.47.0+)
-# Ubuntu package version is too old, so install from GitHub releases
-# We can assume the actions runner has a good enough version of gh so we only need it in the dockerfile
-ARG GH_VERSION="2.63.2"
-RUN wget "https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz" && \
-    tar -xzf "gh_${GH_VERSION}_linux_amd64.tar.gz" && \
-    sudo install "gh_${GH_VERSION}_linux_amd64/bin/gh" /usr/local/bin/gh
+COPY .github/workflows/utils/install_gh_cli $UTILS_DIR/
+RUN $UTILS_DIR/install_gh_cli
 
 ARG GH_TOKEN
-COPY .github/workflows/build_glibc/step-2.1_download_glibc_source $SCRIPTS_DIR/step-2.1_download_glibc_source
+COPY .github/workflows/build_glibc/step-2.1_download_glibc_source $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-2.1_download_glibc_source
 
-COPY .github/workflows/build_glibc/step-2.2_download_linux_source $SCRIPTS_DIR/step-2.2_download_linux_source
+COPY .github/workflows/build_glibc/step-2.2_download_linux_source $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-2.2_download_linux_source
 
-COPY .github/workflows/build_glibc/step-3_install_linux_headers $SCRIPTS_DIR/step-3_install_linux_headers
-RUN $SCRIPTS_DIR/step-3_install_linux_headers
+COPY .github/workflows/build_glibc/step-3.1_install_linux_headers $SCRIPTS_DIR/
+RUN $SCRIPTS_DIR/step-3.1_install_linux_headers
 
-COPY .github/workflows/build_glibc/step-4_build_glibc $SCRIPTS_DIR/step-4_build_glibc
+COPY x86_64-linux-x86_64-bootstrap-linux-gnu-binutils-2.45-20260213.tar.xz /tmp/
+COPY x86_64-linux-x86_64-bootstrap-linux-gnu-gcc-bootstrap-15.2.0-20260213.tar.xz /tmp/
+
+COPY .github/workflows/build_glibc/step-3.2_install_gcc $SCRIPTS_DIR/
+RUN $SCRIPTS_DIR/step-3.2_install_gcc
+
+COPY .github/workflows/build_glibc/step-4_build_glibc $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-4_build_glibc
 
-COPY .github/workflows/build_glibc/step-5_package_glibc $SCRIPTS_DIR/step-5_package_glibc
+COPY .github/workflows/build_glibc/step-5_package_glibc $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-5_package_glibc

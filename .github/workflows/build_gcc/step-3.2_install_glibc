@@ -1,4 +1,0 @@
-#!/bin/bash
-set -euox pipefail
-source ${SCRIPTS_DIR}/environment
-${UTILS_DIR}/download_tarball "x86_64-linux-gnu-glibc-2.28-20251219.tar.xz" "${SYSROOT_DIR}"

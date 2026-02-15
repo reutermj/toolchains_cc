@@ -3,6 +3,7 @@ set -euox pipefail
 
 # Usage: Run from repo root with GitHub token
 #   .github/workflows/build_glibc/build.sh <GLIBC_VERSION> <LINUX_VERSION> <GH_TOKEN>
+#   .github/workflows/build_glibc/build.sh 2.28 6.18 <GH_TOKEN>
 
 docker build \
     -f .github/workflows/build_glibc/Dockerfile \

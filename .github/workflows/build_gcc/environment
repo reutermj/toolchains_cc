@@ -22,14 +22,12 @@ mkdir -p ${LINUX_SOURCE}
 # || Setup Output Directories ||
 # ==============================
 export BUILD_TOOLS="/tmp/buildtools"
-export GCC_BUILD="/tmp/gcc-build-output"
+export GCC_ARTIFACTS="/tmp/gcc-artifacts"
 export ARTIFACTS_DIR="/tmp/artifacts"
-export SYSROOT_DIR="/tmp/sysroot"
 
 mkdir -p ${BUILD_TOOLS}
-mkdir -p ${GCC_BUILD}
+mkdir -p ${GCC_ARTIFACTS}
 mkdir -p ${ARTIFACTS_DIR}
-mkdir -p ${SYSROOT_DIR}
 
 # Ensures that ARTIFACTS_DIR is available to provinance attestation in
 # the github actions workflow.

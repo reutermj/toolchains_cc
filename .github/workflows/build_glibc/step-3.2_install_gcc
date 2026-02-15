@@ -1,0 +1,6 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+tar -xf /tmp/x86_64-linux-x86_64-bootstrap-linux-gnu-binutils-2.45-20260213.tar.xz -C "${SYSROOT_DIR}"
+tar -xf /tmp/x86_64-linux-x86_64-bootstrap-linux-gnu-gcc-bootstrap-15.2.0-20260213.tar.xz -C "${SYSROOT_DIR}"
