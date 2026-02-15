@@ -37,9 +37,6 @@ RUN $SCRIPTS_DIR/step-2.2_download_linux_source
 COPY .github/workflows/build_glibc/step-3.1_install_linux_headers $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-3.1_install_linux_headers
 
-COPY x86_64-linux-x86_64-bootstrap-linux-gnu-binutils-2.45-20260213.tar.xz /tmp/
-COPY x86_64-linux-x86_64-bootstrap-linux-gnu-gcc-bootstrap-15.2.0-20260213.tar.xz /tmp/
-
 COPY .github/workflows/build_glibc/step-3.2_install_gcc $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-3.2_install_gcc
 
