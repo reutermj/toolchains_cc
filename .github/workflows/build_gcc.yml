@@ -8,7 +8,16 @@ on:
         required: true
         default: '["15.2.0"]'
         type: string
-
+      target:
+        description: 'Target triplet'
+        required: true
+        default: 'x86_64-linux-gnu'
+        type: choice
+        options:
+          - x86_64-linux-gnu
+          - x86_64-bootstrap-linux-gnu
+          - x86_64-linux-musl
+          - x86_64-bootstrap-linux-musl
 permissions:
   # Required for uploading GitHub releases
   contents: write
@@ -19,6 +28,7 @@ permissions:
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_gcc
   UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  TARGET: ${{ github.event.inputs.target }}
 
 jobs:
   build:
