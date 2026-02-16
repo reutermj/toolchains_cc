@@ -18,6 +18,7 @@ COPY .github/workflows/utils/download_tarball $UTILS_DIR/
 # ===============
 # || Build GCC ||
 # ===============
+ARG TARGET=x86_64-linux-musl
 COPY .github/workflows/build_gcc/step-01_install_dependencies $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-01_install_dependencies
 
@@ -44,7 +45,6 @@ ARG GCC_VERSION=15.2.0
 COPY .github/workflows/build_gcc/step-2.5_download_gcc_source $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-2.5_download_gcc_source
 
-ARG TARGET=x86_64-linux-musl
 COPY .github/workflows/build_gcc/step-3.1_install_linux_headers $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-3.1_install_linux_headers
 
