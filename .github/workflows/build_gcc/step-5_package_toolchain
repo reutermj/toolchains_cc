@@ -14,47 +14,24 @@ if [[ "${BOOTSTRAP}" == "true" ]]; then
     # ===========================
     # || Package bootstrap gcc ||
     # ===========================
-    tar cJf "${ARTIFACTS_DIR}/x86_64-linux-${TARGET}-gcc-bootstrap-${GCC_FULL_VERSION}-${DATE}.tar.xz" .
+    tar cJf "${ARTIFACTS_DIR}/x86_64-linux-${TARGET}-gcc-${GCC_FULL_VERSION}-${DATE}.tar.xz" .
 else
     # =======================
-    # || Package libstdc++ ||
+    # || Package gcc libs  ||
     # =======================
-    cp -r share share-libstdcxx
+    cp -r share share-lib
 
-    LIBSTDCXX_FILES=()
-    LIBSTDCXX_FILES+=(share-libstdcxx)
-    LIBSTDCXX_FILES+=(${TARGET}/include/c++/)
-    LIBSTDCXX_FILES+=(${TARGET}/lib64/libitm*)
-    LIBSTDCXX_FILES+=(${TARGET}/lib64/libstdc++*)
-    LIBSTDCXX_FILES+=(${TARGET}/lib64/libsupc++*)
-
-    tar cJf "${ARTIFACTS_DIR}/${TARGET}-libstdcxx-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
-        "${LIBSTDCXX_FILES[@]}"
-
-    rm -rf "${LIBSTDCXX_FILES[@]}"
-
-    # =======================================
-    # || Package gcc compiler runtime libs ||
-    # =======================================
-    cp -r share share-libgcc
-
-    LIBGCC_FILES=()
-    LIBGCC_FILES+=(share-libgcc)
-    LIBGCC_FILES+=(lib/gcc)
-    LIBGCC_FILES+=(${TARGET}/lib64/libgcc*)
-    LIBGCC_FILES+=(${TARGET}/lib64/libatomic*)
-
-    tar cJf "${ARTIFACTS_DIR}/${TARGET}-libgcc-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
-        "${LIBGCC_FILES[@]}"
-
-    rm -rf "${LIBGCC_FILES[@]}"
+    tar cJf "${ARTIFACTS_DIR}/${TARGET}-gcc-lib-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
+        ${TARGET}/include/c++/ \
+        ${TARGET}/lib64/ \
+        lib/ \
+        share-lib/
 
     # =================
     # || Package gcc ||
     # =================
     tar cJf "${ARTIFACTS_DIR}/x86_64-linux-${TARGET}-gcc-${GCC_FULL_VERSION}-${DATE}.tar.xz" \
         bin/ \
-        lib/ \
         libexec/ \
         share/
 fi
