@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd "${SYSROOT_DIR}"
+
+DATE=$(date +%Y%m%d)
+PACKAGE_NAME="x86_64-linux-headers-${LINUX_VERSION}-${DATE}.tar.xz"
+
+XZ_OPT=-e9 tar cJf "${ARTIFACTS_DIR}/${PACKAGE_NAME}" *
+
+popd
