@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+${UTILS_DIR}/download_tarball "x86_64-linux-x86_64-bootstrap-linux-musl-binutils-2.45-" "${BUILD_TOOLS}"

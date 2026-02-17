@@ -3,4 +3,4 @@ set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
 "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-bootstrap-linux-gnu-binutils-2.45-" "${SYSROOT_DIR}"
-"${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-bootstrap-linux-gnu-gcc-bootstrap-15.2.0-" "${SYSROOT_DIR}"
+"${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-bootstrap-linux-gnu-gcc-15.2.0-" "${SYSROOT_DIR}"
