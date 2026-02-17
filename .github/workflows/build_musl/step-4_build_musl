@@ -1,0 +1,22 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+export PATH=${BUILD_TOOLS}/bin:$PATH
+
+MUSL_BUILD="/tmp/musl-build"
+mkdir -p ${MUSL_BUILD}
+cd ${MUSL_BUILD}
+
+env CROSS_COMPILE=x86_64-bootstrap-linux-musl- \
+    ${MUSL_SOURCE}/configure \
+        --host=x86_64-bootstrap-linux-musl \
+        --target=x86_64-linux-musl \
+        --prefix=/usr \
+        --libdir=/usr/lib \
+        --disable-gcc-wrapper \
+        --enable-shared \
+        --enable-optimize=auto
+
+make -j$(nproc) -l
+make DESTDIR=${MUSL_ARTIFACTS} install

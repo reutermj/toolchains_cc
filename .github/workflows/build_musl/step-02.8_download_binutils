@@ -1,4 +1,0 @@
-#!/bin/bash
-set -euox pipefail
-source ${SCRIPTS_DIR}/environment
-${UTILS_DIR}/download_tarball "x86_64-linux-x86_64-linux-musl-binutils-2.45-20251220.tar.xz" "${BUILD_TOOLS}"
