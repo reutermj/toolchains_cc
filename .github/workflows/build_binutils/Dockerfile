@@ -33,7 +33,7 @@ ARG BINUTILS_VERSION=2.43
 COPY .github/workflows/build_binutils/step-2.2_download_binutils_source $SCRIPTS_DIR/step-2.2_download_binutils_source
 RUN $SCRIPTS_DIR/step-2.2_download_binutils_source
 
-COPY .github/workflows/build_binutils/patches $PATCHES_DIR/build_binutils/patches
+COPY .github/workflows/build_binutils/patches $PATCHES_DIR
 COPY .github/workflows/build_binutils/step-2.3_patch_binutils_source $SCRIPTS_DIR/step-2.3_patch_binutils_source
 RUN $SCRIPTS_DIR/step-2.3_patch_binutils_source
 

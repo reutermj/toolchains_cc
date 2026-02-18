@@ -29,6 +29,7 @@ permissions:
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_binutils
   UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  PATCHES_DIR: ${{ github.workspace }}/.github/workflows/build_binutils/patches
   TARGET: ${{ github.event.inputs.target }}
 
 jobs:
@@ -61,6 +62,9 @@ jobs:
         run: $SCRIPTS_DIR/step-2.2_download_binutils_source
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Patch binutils source
+        run: $SCRIPTS_DIR/step-2.3_patch_binutils_source
 
       - name: Build zlib
         run: $SCRIPTS_DIR/step-3.1_build_zlib
