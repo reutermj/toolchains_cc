@@ -39,8 +39,10 @@ def get_config_from_env_vars(rctx):
     config = {
         "target": _get_config(rctx, "target", "x86_64-linux-gnu"),
         "libc_version": _get_config(rctx, "libc_version", "2.28"),
+        "binutils_version": _get_config(rctx, "libc_version", "2.45"),
         "compiler": _get_config(rctx, "compiler", "gcc"),
         "compiler_version": _get_config(rctx, "compiler_version", "15.2.0"),
+        "linux_headers_version": _get_config(rctx, "linux_headers_version", "6.18"),
     }
 
     _validate_config(config)
