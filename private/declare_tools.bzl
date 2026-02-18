@@ -18,15 +18,8 @@ def _declare_tools(name, visibility, all_files, target_platform, compiler):
     )
 
     directory(
-        name = "{}_root".format(name),
-        srcs = [all_files_target],
-        visibility = ["//visibility:private"],
-    )
-
-    subdirectory(
         name = "{}_sysroot".format(name),
-        parent = ":{}_root".format(name),
-        path = "{}/sysroot".format(target_platform),
+        srcs = [all_files_target],
         visibility = visibility,
     )
 
