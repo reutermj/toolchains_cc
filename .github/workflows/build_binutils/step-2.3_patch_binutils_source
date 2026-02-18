@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+cd ${BINUTILS_SOURCE}
+
+# Bazel's sandbox uses symlinks that break ld's realpath()-based sysroot
+# detection, causing it to ignore --sysroot when resolving absolute paths
+# inside glibc linker scripts (e.g. libm.so's GROUP directive).
+# See more: docs/lore/binutils/ld_sysroot_absolute_paths_in_linker_scripts.md
+patch -p1 < "${PATCHES_DIR}/build_binutils/patches/0001-ld-always-try-sysroot-prefix-for-absolute-paths.patch"
