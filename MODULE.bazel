@@ -19,16 +19,15 @@ bazel_dep(name = "platforms", version = "1.0.0")
 # ======================
 bazel_dep(name = "buildifier_prebuilt", version = "8.2.1.2", dev_dependency = True)
 
-# ===========================
-# || Convenience Toolchain ||
-# ===========================
-# For most use cases, this convenience toolchain is expected to be the only needed declaration.
-# While the convenience toolchain is declared by default, it's left up to the user to register it.
-cc_toolchains = use_extension("@toolchains_cc//:extensions.bzl", "cc_toolchains")
-cc_toolchains.declare(name = "toolchains_cc_default_toolchain")
-use_repo(cc_toolchains, "toolchains_cc_default_toolchain")
+# =====================
+# || Dev Toolchains ||
+# =====================
+# Toolchain for testing toolchains_cc itself. Not visible to downstream modules.
+cc_toolchains = use_extension("@toolchains_cc//:extensions.bzl", "cc_toolchains", dev_dependency = True)
+cc_toolchains.declare(name = "toolchains_cc_dev")
+use_repo(cc_toolchains, "toolchains_cc_dev")
 
 register_toolchains(
-    "@toolchains_cc",
+    "@toolchains_cc_dev",
     dev_dependency = True,
 )

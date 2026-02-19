@@ -1,6 +1,0 @@
-# this allows for the convenience toolchain to be registered by users with fun naming. Ex:
-# register_toolchains("@toolchains_cc")
-alias(
-    name = "toolchains_cc",
-    actual = "@toolchains_cc_default_toolchain",
-)
