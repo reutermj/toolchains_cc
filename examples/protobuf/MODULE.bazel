@@ -21,4 +21,8 @@ local_path_override(
     path = "../..",
 )
 
-register_toolchains("@toolchains_cc")
+cc_toolchains = use_extension("@toolchains_cc//:extensions.bzl", "cc_toolchains")
+cc_toolchains.declare(name = "my_toolchain")
+use_repo(cc_toolchains, "my_toolchain")
+
+register_toolchains("@my_toolchain")

@@ -23,9 +23,9 @@ Use the `./bazel` wrapper script instead of `bazel`
 
 # Build with specific toolchain configuration
 ./bazel build \
-  --repo_env=toolchains_cc_target=x86_64-linux-gnu \
-  --repo_env=toolchains_cc_libc_version=2.39 \
-  --repo_env=toolchains_cc_compiler_version=15.2.0 \
+  --repo_env=toolchains_cc_dev_target=x86_64-linux-gnu \
+  --repo_env=toolchains_cc_dev_libc_version=2.39 \
+  --repo_env=toolchains_cc_dev_compiler_version=15.2.0 \
   //...
 
 # Build tests

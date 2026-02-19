@@ -15,11 +15,7 @@ load("//private:lazy_download_bins.bzl", "lazy_download_bins")
 def _cc_toolchains(module_ctx):
     for mod in module_ctx.modules:
         for declared_toolchain in mod.tags.declare:
-            # this special case is needed to make the default toolchain env vars start with
-            # `toolchains_cc_` rather than `toolchains_cc_default_toolchain_`.
             toolchain_name = declared_toolchain.name
-            if declared_toolchain.name == "toolchains_cc_default_toolchain":
-                toolchain_name = "toolchains_cc"
 
             eager_declare_toolchain(
                 name = declared_toolchain.name,

@@ -193,20 +193,20 @@
   "moduleExtensions": {
     "//:extensions.bzl%cc_toolchains": {
       "general": {
-        "bzlTransitiveDigest": "m0gH7kn6djCU2j5tTMI4PQEh0UqJUv1H/wK35qSOU0o=",
-        "usagesDigest": "7+3J5gmi+d+KlB1uusu0Wp3basxcsSRjG6ifUdhBICo=",
+        "bzlTransitiveDigest": "WRyqqZ6Ic/SaWVSVZTVRv5OAXkqzftJt1grQIGKoLGg=",
+        "usagesDigest": "F6SX7iKS1faQQN696xRADv8Sz7EQwIN/QCkd3xTcCBo=",
         "recordedInputs": [],
         "generatedRepoSpecs": {
-          "toolchains_cc_default_toolchain": {
+          "toolchains_cc_dev": {
             "repoRuleId": "@@//private:eager_declare_toolchain.bzl%eager_declare_toolchain",
             "attributes": {
-              "toolchain_name": "toolchains_cc"
+              "toolchain_name": "toolchains_cc_dev"
             }
           },
-          "toolchains_cc_default_toolchain_bins": {
+          "toolchains_cc_dev_bins": {
             "repoRuleId": "@@//private:lazy_download_bins.bzl%lazy_download_bins",
             "attributes": {
-              "toolchain_name": "toolchains_cc"
+              "toolchain_name": "toolchains_cc_dev"
             }
           }
         }
