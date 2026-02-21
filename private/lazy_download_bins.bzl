@@ -1,12 +1,12 @@
 """Repo rule for lazily downloading the C/C++ toolchain binaries when first used."""
 
+load("//private/downloads:all.bzl", "download_all")
 load(":config.bzl", "get_config_from_env_vars", "repro_dump")
-load(":download_bins.bzl", "download_bins")
 
 def _lazy_download_bins(rctx):
     config = get_config_from_env_vars(rctx)
     repro_dump(rctx, config)
-    download_bins(rctx, config)
+    download_all(rctx, config)
 
     rctx.file(
         "BUILD",

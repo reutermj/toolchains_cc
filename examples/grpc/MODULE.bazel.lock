@@ -491,22 +491,22 @@
     },
     "@@toolchains_cc+//:extensions.bzl%cc_toolchains": {
       "general": {
-        "bzlTransitiveDigest": "nZ9IUFFdP2NoZ/hQWueClFYhDNNm8vyO2CdSONFkPX4=",
-        "usagesDigest": "55mj1VuUc7kxQiHKOi/oYQPddgACryFN8nW63msrMGQ=",
+        "bzlTransitiveDigest": "8vahj4k5t3qLcGFrljirdHiWktYGo4IN/AmA33vWyso=",
+        "usagesDigest": "WxcHEIZnvJ2r2cz5siu2ypOOeLBsfmwcOut2YTNjdRs=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
-          "toolchains_cc_default_toolchain": {
+          "my_toolchain": {
             "repoRuleId": "@@toolchains_cc+//private:eager_declare_toolchain.bzl%eager_declare_toolchain",
             "attributes": {
-              "toolchain_name": "toolchains_cc"
+              "toolchain_name": "my_toolchain"
             }
           },
-          "toolchains_cc_default_toolchain_bins": {
+          "my_toolchain_bins": {
             "repoRuleId": "@@toolchains_cc+//private:lazy_download_bins.bzl%lazy_download_bins",
             "attributes": {
-              "toolchain_name": "toolchains_cc"
+              "toolchain_name": "my_toolchain"
             }
           }
         },
