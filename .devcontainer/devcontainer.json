@@ -27,6 +27,8 @@
       ]
     }
   },
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteEnv": {
+    "PATH": "${containerWorkspaceFolder}:${containerEnv:PATH}"
+  },
   "remoteUser": "vscode"
 }

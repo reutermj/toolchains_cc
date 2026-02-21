@@ -13,42 +13,43 @@ Runbooks are detaild procedures for use in a specific context.
 - **BEFORE adding new toolchain configurations, YOU MUST read**: [docs/runbooks/add-toolchain-configuration.md](docs/runbooks/add-toolchain-configuration.md)
 - **BEFORE creating or modifying GitHub Actions workflows, YOU MUST read**: [docs/runbooks/github-actions-workflows.md](docs/runbooks/github-actions-workflows.md)
 
-## Building
+## Bazel
 
-Use the `./bazel` wrapper script instead of `bazel`
+The repo uses a wrapper script (`bazel` at repo root) that delegates to `tools/bazel`, which selects the correct platform-specific bazelisk binary. In the devcontainer, the workspace root is on `PATH`, so `bazel` works directly. Outside the devcontainer, use `./bazel` from the repo root.
 
+### Building
 ```bash
 # Build everything with default toolchain (gcc 15.2.0, glibc 2.28, x86_64-linux-gnu)
-./bazel build //...
+bazel build //...
 
 # Build with specific toolchain configuration
-./bazel build \
+bazel build \
   --repo_env=toolchains_cc_dev_target=x86_64-linux-gnu \
   --repo_env=toolchains_cc_dev_libc_version=2.39 \
   --repo_env=toolchains_cc_dev_compiler_version=15.2.0 \
   //...
 
 # Build tests
-./bazel build //tests/...
+bazel build //tests/...
 ```
 
-## Testing
+### Testing
 ```bash
 # Run all tests
-./bazel test //...
+bazel test //...
 
 # Run specific test
-./bazel test //tests/hello_world:hello
-./bazel test //tests/hello_world:hello++
+bazel test //tests/hello_world:hello
+bazel test //tests/hello_world:hello++
 ```
 
-## Linting
+### Linting
 ```bash
 # Check Bazel file formatting
-./bazel run //private:buildifier.check
+bazel run //private:buildifier.check
 
 # Auto-fix Bazel file formatting
-./bazel run //private:buildifier.fix
+bazel run //private:buildifier.fix
 ```
 
 
