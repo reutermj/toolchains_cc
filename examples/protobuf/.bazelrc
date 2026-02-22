@@ -1,2 +1,13 @@
+# Musl libc produces dynamically-linked binaries by default, but the musl
+# dynamic linker (/lib/ld-musl-x86_64.so.1) is absent on glibc-based hosts.
+# Static linking produces self-contained binaries that run on any Linux host.
+#
+# Usage: bazel build --config=musl \
+#          --repo_env=my_toolchain_target=x86_64-linux-musl \
+#          --repo_env=my_toolchain_libc_version=1.2.5 \
+#          //...
 build:musl --linkopt="-static"
+# --host_linkopt is needed separately because --linkopt only affects
+# target-configuration binaries, not exec tools (e.g. protoc) that must
+# run on the build host.
 build:musl --host_linkopt="-static"
