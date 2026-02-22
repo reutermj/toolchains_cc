@@ -1,0 +1,2 @@
+build:musl --linkopt="-static"
+build:musl --host_linkopt="-static"
