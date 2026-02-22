@@ -1,9 +1,9 @@
 """Repo rule for eagerly declaring the C/C++ toolchain for use with register_toolchain(...)."""
 
-load(":config.bzl", "get_config_from_env_vars")
+load(":config.bzl", "get_config")
 
 def _eager_declare_toolchain(rctx):
-    config = get_config_from_env_vars(rctx)
+    config = get_config(rctx)
 
     rctx.file(
         "BUILD",
@@ -30,6 +30,9 @@ eager_declare_toolchain = repository_rule(
         "toolchain_name": attr.string(
             mandatory = True,
             doc = "The name of the toolchain, used for registration.",
+        ),
+        "config_overrides": attr.string_dict(
+            default = {},
         ),
     },
 )
