@@ -4,6 +4,7 @@ load(":binutils.bzl", "download_binutils")
 load(":gcc.bzl", "download_gcc")
 load(":glibc.bzl", "download_glibc")
 load(":linux_headers.bzl", "download_linux_headers")
+load(":musl.bzl", "download_musl")
 
 visibility("//private/...")
 
@@ -16,5 +17,10 @@ def download_all(rctx, config):
     """
     download_gcc(rctx, config)
     download_binutils(rctx, config)
-    download_glibc(rctx, config)
+
+    if config["target"].endswith("-musl"):
+        download_musl(rctx, config)
+    else:
+        download_glibc(rctx, config)
+
     download_linux_headers(rctx, config)

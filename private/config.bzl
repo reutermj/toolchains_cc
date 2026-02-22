@@ -87,8 +87,10 @@ common --repo_env={name}_libc_version={libc_version}
 SUPPORTED_VERSIONS = {
     "target": {
         "x86_64-linux-gnu": True,
+        "x86_64-linux-musl": True,
     },
     "libc_version": {
+        "1.2.5": True,
         "2.28": True,
     },
     "compiler": {

@@ -35,8 +35,10 @@ def download_binutils(rctx, config):
 
 RELEASE_TO_DATE = {
     "x86_64-linux-x86_64-linux-gnu-binutils-2.45": "20260218",
+    "x86_64-linux-x86_64-linux-musl-binutils-2.45": "20260219",
 }
 
 TARBALL_TO_SHA256 = {
     "x86_64-linux-x86_64-linux-gnu-binutils-2.45-20260218.tar.xz": "c1f56ffbadc36fc5b74f969e27e6eeca770d62286135f5a1b9ce044cf09135c3",
+    "x86_64-linux-x86_64-linux-musl-binutils-2.45-20260219.tar.xz": "b68e2adae65d6eb22fbeb161acca652cae6eb5413581bcfa953072e1bbf9d79b",
 }
