@@ -50,10 +50,10 @@ def download_gcc(rctx, config):
     )
 
 RELEASE_TO_DATE = {
-    "x86_64-linux-x86_64-linux-gnu-gcc-15.2.0": "20260218",
+    "x86_64-linux-x86_64-linux-gnu-gcc-15.2.0": "20260222",
 }
 
 TARBALL_TO_SHA256 = {
-    "x86_64-linux-x86_64-linux-gnu-gcc-15.2.0-20260218.tar.xz": "c8b6430de4346fea5acd09689bda4df49783896944655a2ffdad19699498aa8b",
-    "x86_64-linux-gnu-gcc-lib-15.2.0-20260218.tar.xz": "12e61d6d4166498a776b01c73866c19cce0506a86b05add8b119c7a45376cd19",
+    "x86_64-linux-x86_64-linux-gnu-gcc-15.2.0-20260222.tar.xz": "4a9f7d799aa96efe06ae362f85d87586fabbae619a82c565294d9971717cf0e4",
+    "x86_64-linux-gnu-gcc-lib-15.2.0-20260222.tar.xz": "372c953c9cd8455b2fc541b33ad790622665efc17b4bf128f52f4844c9c6ed1e",
 }
