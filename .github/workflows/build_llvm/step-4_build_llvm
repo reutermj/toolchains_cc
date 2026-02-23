@@ -4,8 +4,7 @@ source ${SCRIPTS_DIR}/environment
 
 pushd ${LLVM_DIR}
 
-wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.src.tar.xz
-tar --strip-components=1 -xvf llvm-project-${LLVM_VERSION}.src.tar.xz
+cp -r ${LLVM_SOURCE}/* .
 
 export PATH=${GCC_BINS}:$PATH
 
@@ -35,13 +34,13 @@ popd
 # Why CMAKE_SKIP_RPATH=TRUE? At install time I was getting this error.
 # CMake Error at utils/TableGen/cmake_install.cmake:65 (file):
 #   file RPATH_CHANGE could not write new RPATH:
-
+#
 #     $ORIGIN/../lib
-
+#
 #   to the file:
-
+#
 #     /tmp/artifacts/bin/llvm-tblgen
-
+#
 #   No valid ELF RPATH or RUNPATH entry exists in the file;
 # Call Stack (most recent call first):
 #   cmake_install.cmake:62 (include)

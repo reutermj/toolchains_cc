@@ -4,8 +4,7 @@ source ${SCRIPTS_DIR}/environment
 
 pushd ${ZLIB_DIR}
 
-wget https://github.com/madler/zlib/releases/download/v${ZLIB_VERSION}/zlib-${ZLIB_VERSION}.tar.gz
-tar -xzf zlib-${ZLIB_VERSION}.tar.gz --strip-components=1
+cp -r ${ZLIB_SOURCE}/* .
 
 export PATH=${GCC_BINS}:$PATH
 export CC="${GCC_BINS}/x86_64-linux-musl-gcc"
