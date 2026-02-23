@@ -1,0 +1,70 @@
+load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
+load("@rules_cc//cc:defs.bzl", "cc_import", "cc_library")
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_test")
+load("@rules_rust_bindgen//:defs.bzl", "rust_bindgen_library", "rust_bindgen_toolchain")
+
+# =============================================================================
+# C library to bind to
+# =============================================================================
+cc_library(
+    name = "simple",
+    srcs = ["simple.cc"],
+    hdrs = ["simple.h"],
+)
+
+# =============================================================================
+# Rust bindgen and usage
+# =============================================================================
+rust_bindgen_library(
+    name = "simple_bindgen",
+    bindgen_flags = [
+        "--allowlist-function=simple_.*",
+        "--allowlist-var=SIMPLE_.*",
+        # Tell bindgen which Rust version we target, so it knows edition 2024
+        # is available. Without this, bindgen auto-detects a sandboxed rustc
+        # version which may be older than the project's Rust toolchain.
+        "--rust-target=1.86",
+    ],
+    cc_lib = ":simple",
+    edition = "2024",
+    header = "simple.h",
+    wrap_static_fns = True,
+)
+
+rust_binary(
+    name = "simple_example",
+    srcs = ["main.rs"],
+    edition = "2024",
+    deps = [":simple_bindgen"],
+)
+
+rust_test(
+    name = "simple_test",
+    crate = ":simple_example",
+)
+
+# =============================================================================
+# Rust bindgen toolchain declaration
+# =============================================================================
+native_binary(
+    name = "clang",
+    src = "@my_llvm_toolchain_bins//:bin/clang",
+)
+
+cc_import(
+    name = "libclang",
+    shared_library = "@my_llvm_toolchain_bins//:lib/libclang.so",
+)
+
+rust_bindgen_toolchain(
+    name = "rust_bindgen_toolchain",
+    bindgen = "@bindgen_crates//:bindgen-cli__bindgen",
+    clang = ":clang",
+    libclang = ":libclang",
+)
+
+toolchain(
+    name = "my_bindgen_toolchain",
+    toolchain = ":rust_bindgen_toolchain",
+    toolchain_type = "@rules_rust_bindgen//:toolchain_type",
+)
