@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+sudo apt update
+DEBIAN_FRONTEND=noninteractive sudo apt install -y \
+    build-essential \
+    git \
+    ninja-build \
+    python3 \
+    wget \
+    cmake

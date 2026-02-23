@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd ${ZLIB_DIR}
+
+cp -r ${ZLIB_SOURCE}/* .
+
+export PATH=${GCC_BINS}:$PATH
+export CC="${GCC_BINS}/x86_64-linux-gnu-gcc"
+export CXX="${GCC_BINS}/x86_64-linux-gnu-g++"
+export CFLAGS="-fPIC --sysroot=${GCC_SYSROOT}"
+export CXXFLAGS="--sysroot=${GCC_SYSROOT}"
+
+./configure --static --prefix=${GCC_SYSROOT}/usr
+make
+make install
+
+popd
