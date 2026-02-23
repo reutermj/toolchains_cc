@@ -13,6 +13,14 @@ def _lazy_download_bins(rctx):
         """
 load("@toolchains_cc//private:declare_tools.bzl", "declare_tools")
 
+# Bazel's symbolic macro naming rules require all targets to be prefixed with
+# the macro name, which doesn't work for file path targets like
+# "lib/libclang.so". So exports_files must live here, not in the macro.
+exports_files(
+    glob(["**"]),
+    visibility = ["//visibility:public"],
+)
+
 declare_tools(
     name = "{original_name}",
     all_files = glob(["**"]),

@@ -95,9 +95,11 @@ SUPPORTED_VERSIONS = {
     },
     "compiler": {
         "gcc": True,
+        "llvm": True,
     },
     "compiler_version": {
         "15.2.0": True,
+        "21.1.1": True,
     },
     "binutils_version": {
         "2.45": True,

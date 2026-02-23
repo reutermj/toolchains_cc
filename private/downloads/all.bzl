@@ -4,6 +4,7 @@ load(":binutils.bzl", "download_binutils")
 load(":gcc.bzl", "download_gcc")
 load(":glibc.bzl", "download_glibc")
 load(":linux_headers.bzl", "download_linux_headers")
+load(":llvm.bzl", "download_llvm")
 load(":musl.bzl", "download_musl")
 
 visibility("//private/...")
@@ -15,8 +16,11 @@ def download_all(rctx, config):
       rctx: The repository context.
       config: The configuration dictionary.
     """
-    download_gcc(rctx, config)
-    download_binutils(rctx, config)
+    if config["compiler"] == "llvm":
+        download_llvm(rctx, config)
+    else:
+        download_gcc(rctx, config)
+        download_binutils(rctx, config)
 
     if config["target"].endswith("-musl"):
         download_musl(rctx, config)

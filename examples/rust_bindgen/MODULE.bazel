@@ -1,0 +1,79 @@
+"Minimal example: using rules_rust_bindgen with toolchains_cc"
+
+module(name = "rust_bindgen_example")
+
+# ==================
+# || Dependencies ||
+# ==================
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
+bazel_dep(name = "rules_cc", version = "0.2.17")
+bazel_dep(name = "rules_rust", version = "0.68.1")
+bazel_dep(name = "rules_rust_bindgen", version = "0.68.1")
+
+# ======================
+# || C/C++ Toolchains ||
+# ======================
+bazel_dep(name = "toolchains_cc", version = "2025.9.18")
+
+# For local development/testing, override with the local toolchains_cc.
+# Comment out or remove this line when using toolchains_cc from BCR.
+local_path_override(
+    module_name = "toolchains_cc",
+    path = "../..",
+)
+
+cc_toolchains = use_extension("@toolchains_cc//:extensions.bzl", "cc_toolchains")
+
+# GCC toolchain for C/C++ compilation
+cc_toolchains.declare(name = "my_toolchain")
+use_repo(cc_toolchains, "my_toolchain")
+
+register_toolchains("@my_toolchain")
+
+# LLVM toolchain for clang/libclang (used by rust_bindgen)
+cc_toolchains.declare(
+    name = "my_llvm_toolchain",
+    compiler = "llvm",
+    compiler_version = "21.1.1",
+)
+use_repo(cc_toolchains, "my_llvm_toolchain_bins")
+
+# ========================
+# || Rust Toolchain     ||
+# ========================
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+rust.toolchain(edition = "2024")
+
+# ==============================
+# || Bindgen (from source)   ||
+# ==============================
+# Nightly cargo is required for artifact = "bin" (cargo's -Z bindeps feature),
+# which is how crate_universe resolves binary-only crates like bindgen-cli.
+rust_host_tools = use_extension("@rules_rust//rust:extensions.bzl", "rust_host_tools")
+rust_host_tools.host_tools(
+    name = "rust_host_tools_nightly",
+    version = "nightly",
+)
+use_repo(rust_host_tools, "rust_host_tools_nightly")
+
+crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
+crate.spec(
+    artifact = "bin",
+    package = "bindgen-cli",
+    version = "=0.72.1",
+)
+crate.annotation(
+    crate = "bindgen-cli",
+    gen_all_binaries = True,
+)
+crate.from_specs(
+    name = "bindgen_crates",
+    generate_binaries = True,
+    host_tools = "@rust_host_tools_nightly",
+)
+use_repo(crate, "bindgen_crates")
+
+# ==============================
+# || Bindgen Toolchain        ||
+# ==============================
+register_toolchains("//:my_bindgen_toolchain")
