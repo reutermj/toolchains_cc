@@ -87,9 +87,18 @@ case "${COMPONENT}" in
         rm "${TARBALL}"
         ;;
 
+    llvm-project)
+        # LLVM uses llvmorg-<version> tag format
+        retry_with_backoff "${SOURCE_DIR}" \
+            git clone --depth 1 \
+                --branch "llvmorg-${VERSION}" \
+                https://github.com/llvm/llvm-project.git "${SOURCE_DIR}"
+        rm -rf "${SOURCE_DIR}/.git"
+        ;;
+
     *)
         echo "ERROR: Unknown component '${COMPONENT}'"
-        echo "Valid components: binutils, zlib, glibc, linux, gmp, mpfr, isl, mpc, gcc, musl"
+        echo "Valid components: binutils, zlib, glibc, linux, gmp, mpfr, isl, mpc, gcc, musl, llvm-project"
         exit 1
         ;;
 esac

@@ -13,6 +13,11 @@ on:
         required: true
         default: '1.3.1'
         type: string
+      gcc_version:
+        description: 'GCC version to use for compilation'
+        required: true
+        default: '15.2.0'
+        type: string
 
 permissions:
   # Required for uploading GitHub releases
@@ -23,8 +28,11 @@ permissions:
 
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_llvm
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
   ZLIB_VERSION: ${{ github.event.inputs.zlib_version }}
   LLVM_VERSION: ${{ github.event.inputs.llvm_version }}
+  GCC_VERSION: ${{ github.event.inputs.gcc_version }}
+  LINUX_VERSION: '6.18'
 
 jobs:
   build:
@@ -33,26 +41,49 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6.0.2
-      
-      - name: Install Dependencies
+
+      - name: Install dependencies
         run: $SCRIPTS_DIR/step-1_install_dependencies
 
+      - name: Set up environment
+        run: $SCRIPTS_DIR/environment
+
+      - name: Download zlib source
+        run: $SCRIPTS_DIR/step-2.1_download_zlib_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download LLVM source
+        run: $SCRIPTS_DIR/step-2.2_download_llvm_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install GCC toolchain
+        run: $SCRIPTS_DIR/step-2.3_install_gcc
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install Linux headers
+        run: $SCRIPTS_DIR/step-2.4_install_linux_headers
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Build zlib
-        run: $SCRIPTS_DIR/step-2_build_zlib
-      
+        run: $SCRIPTS_DIR/step-3_build_zlib
+
       - name: Build LLVM
-        run: $SCRIPTS_DIR/step-3_build_llvm
-      
-      - name: Package Toolchain
-        run: $SCRIPTS_DIR/step-4_package_toolchain
-      
+        run: $SCRIPTS_DIR/step-4_build_llvm
+
+      - name: Package toolchain
+        run: $SCRIPTS_DIR/step-5_package_toolchain
+
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v3.2.0
         with:
-          # This is ok: ARTIFACTS_DIR gets set by the environment script
-          subject-path: ${{ env.ARTIFACTS_DIR }}/*.tar.xz
-      
-      - name: Upload Release
-        run: $SCRIPTS_DIR/step-5_upload_release
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        run: $SCRIPTS_DIR/step-6_upload_release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}

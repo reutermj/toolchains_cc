@@ -8,13 +8,5 @@ DEBIAN_FRONTEND=noninteractive sudo apt install -y \
     git \
     ninja-build \
     python3 \
-    cmake \
     wget \
-    curl
-
-pushd $GCC_DIR
-# needs to be musl based to statically link llvm
-# when attempting glibc, it failed to link because clang uses some symbols that are only available when dynamic linking glibc
-wget https://github.com/reutermj/toolchains_cc/releases/download/x86_64-linux-musl-1.2.5-gcc-15.2.0-20250919/x86_64-linux-musl-1.2.5-gcc-15.2.0-20250919.tar.xz
-tar xvf x86_64-linux-musl-1.2.5-gcc-15.2.0-20250919.tar.xz
-popd
+    cmake

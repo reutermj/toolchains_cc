@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+# Needs to be musl based to statically link LLVM.
+# When attempting glibc, it failed to link because clang uses some symbols
+# that are only available when dynamic linking glibc.
+"${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-linux-musl-gcc-${GCC_VERSION}-" "${GCC_DIR}"
+"${UTILS_DIR}/download_tarball" "x86_64-linux-musl-gcc-lib-${GCC_VERSION}-" "${GCC_DIR}"
+"${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-linux-musl-binutils-2.45-" "${GCC_DIR}"
+"${UTILS_DIR}/download_tarball" "x86_64-linux-musl-musl-1.2.5-" "${GCC_DIR}"

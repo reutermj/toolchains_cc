@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+"${UTILS_DIR}/download_tarball" "x86_64-linux-headers-${LINUX_VERSION}-" "${GCC_DIR}"
