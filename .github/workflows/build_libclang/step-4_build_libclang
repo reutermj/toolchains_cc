@@ -1,0 +1,31 @@
+#!/bin/bash
+set -euox pipefail
+source ${SCRIPTS_DIR}/environment
+
+pushd ${LLVM_DIR}
+
+cp -r ${LLVM_SOURCE}/* .
+
+export PATH=${GCC_BINS}:$PATH
+
+cmake -G Ninja -S llvm -B build \
+    -DLLVM_ENABLE_PROJECTS="clang" \
+    -DLIBCLANG_BUILD_STATIC=ON \
+    -DLLVM_ENABLE_PIC=ON \
+    -DLLVM_BUILD_LLVM_DYLIB=OFF \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DLLVM_ENABLE_ZLIB=ON \
+    -DCMAKE_C_COMPILER="${GCC_BINS}/x86_64-linux-gnu-gcc" \
+    -DCMAKE_CXX_COMPILER="${GCC_BINS}/x86_64-linux-gnu-g++" \
+    -DCMAKE_SYSROOT="${GCC_SYSROOT}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX="${ARTIFACTS_DIR}" \
+    -DLLVM_ENABLE_WARNINGS=OFF \
+    -DCMAKE_SKIP_RPATH=TRUE \
+    -DLLVM_PARALLEL_LINK_JOBS=2
+
+ninja -C build -j$(( $(nproc) / 2 > 0 ? $(nproc) / 2 : 1 ))
+
+ninja -C build install
+
+popd
