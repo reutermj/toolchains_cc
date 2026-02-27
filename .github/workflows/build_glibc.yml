@@ -65,7 +65,7 @@ jobs:
         run: ${{ env.SCRIPTS_DIR }}/step-5_package_glibc
 
       - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v3.2.0
+        uses: actions/attest-build-provenance@v4.1.0
         with:
           subject-path: |
             ${{ env.ARTIFACTS_DIR }}/*.tar.xz
