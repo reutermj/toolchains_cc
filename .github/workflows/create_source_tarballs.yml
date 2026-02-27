@@ -57,7 +57,7 @@ jobs:
         run: $SCRIPTS_DIR/step-3_create_tarball
 
       - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v3.2.0
+        uses: actions/attest-build-provenance@v4.1.0
         with:
           subject-path: |
             ${{ env.ARTIFACTS_DIR }}/*.tar.xz
