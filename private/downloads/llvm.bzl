@@ -1,6 +1,6 @@
 """Functions for downloading LLVM and libclang binaries."""
 
-load(":constants.bzl", "DOWNLOAD_BASE_URL")
+load(":constants.bzl", "DOWNLOAD_BASE_URL", "get_host")
 
 visibility("//private/...")
 
@@ -12,20 +12,22 @@ def download_llvm(rctx, config):
       config: The configuration dictionary.
     """
 
-    # TODO: update to use {host}
-    llvm_bins_name = "x86_64-linux-llvm-{compiler_version}".format(
+    host = get_host(config)
+
+    llvm_bins_name = "{host}-llvm-{compiler_version}".format(
+        host = host,
         compiler_version = config["compiler_version"],
     )
     llvm_date = RELEASE_TO_DATE[llvm_bins_name]
 
-    # TODO: update to use {host}
-    llvm_bins_tarball_name = "x86_64-linux-llvm-{compiler_version}-{llvm_date}.tar.xz".format(
+    llvm_bins_tarball_name = "{host}-llvm-{compiler_version}-{llvm_date}.tar.xz".format(
+        host = host,
         compiler_version = config["compiler_version"],
         llvm_date = llvm_date,
     )
 
-    # TODO: update to use {host}
-    libclang_tarball_name = "x86_64-linux-libclang-{compiler_version}-{llvm_date}.tar.xz".format(
+    libclang_tarball_name = "{host}-libclang-{compiler_version}-{llvm_date}.tar.xz".format(
+        host = host,
         compiler_version = config["compiler_version"],
         llvm_date = llvm_date,
     )

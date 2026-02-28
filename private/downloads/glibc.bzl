@@ -18,7 +18,6 @@ def download_glibc(rctx, config):
     )
     glibc_date = RELEASE_TO_DATE[glibc_bins_name]
 
-    # TODO: update to use {host}
     glibc_tarball_name = "{target}-glibc-{glibc_version}-{glibc_date}.tar.xz".format(
         glibc_version = config["libc_version"],
         target = config["target"],
@@ -35,8 +34,10 @@ def download_glibc(rctx, config):
 
 RELEASE_TO_DATE = {
     "x86_64-linux-gnu-glibc-2.28": "20260218",
+    "aarch64-linux-gnu-glibc-2.28": "20260228",
 }
 
 TARBALL_TO_SHA256 = {
     "x86_64-linux-gnu-glibc-2.28-20260218.tar.xz": "c808d0145434c9fbb273662712c212b99489489396a09b50faa84212f070a9e7",
+    "aarch64-linux-gnu-glibc-2.28-20260228.tar.xz": "28a46420f38d2f975544f24ee70cedd45c698abed32e567eaa60db0eeb4364b0",
 }

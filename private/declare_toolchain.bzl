@@ -3,7 +3,12 @@
 load("@rules_cc//cc/toolchains:args.bzl", "cc_args")
 load("@rules_cc//cc/toolchains:toolchain.bzl", "cc_toolchain")
 
-def declare_toolchain(name, visibility, sysroot, all_tools, compiler):
+_TARGET_TO_CPU_CONSTRAINT = {
+    "x86_64": "@platforms//cpu:x86_64",
+    "aarch64": "@platforms//cpu:aarch64",
+}
+
+def declare_toolchain(name, visibility, sysroot, all_tools, compiler, target):
     """Declares a cc_toolchain with the given parameters.
 
     Args:
@@ -12,6 +17,7 @@ def declare_toolchain(name, visibility, sysroot, all_tools, compiler):
         sysroot: Label for the sysroot subdirectory target
         all_tools: Tool map for the toolchain
         compiler: Compiler type
+        target: Target triple (e.g., x86_64-linux-gnu, aarch64-linux-gnu)
     """
     args = []
     # ==================================
@@ -103,15 +109,18 @@ def declare_toolchain(name, visibility, sysroot, all_tools, compiler):
     # =======================
     # || Declare Toolchain ||
     # =======================
+    arch = target.split("-")[0]
+    cpu_constraint = _TARGET_TO_CPU_CONSTRAINT[arch]
+
     native.toolchain(
         name = name,
         exec_compatible_with = [
             "@platforms//os:linux",
-            "@platforms//cpu:x86_64",
+            cpu_constraint,
         ],
         target_compatible_with = [
             "@platforms//os:linux",
-            "@platforms//cpu:x86_64",
+            cpu_constraint,
         ],
         toolchain = ":{}_cc_toolchain".format(name),
         toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",

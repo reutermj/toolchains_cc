@@ -15,12 +15,14 @@ declare_toolchain(
     sysroot = "@@{bins_repo_name}//:{original_name}_bins_sysroot",
     all_tools = "@@{bins_repo_name}//:{original_name}_bins_all_tools",
     compiler = "{compiler}",
+    target = "{target}",
     visibility = ["//visibility:public"],
 )
 """.lstrip().format(
             original_name = rctx.original_name,
             bins_repo_name = rctx.name + "_bins",
             compiler = config["compiler"],
+            target = config["target"],
         ),
     )
 
