@@ -1,4 +1,4 @@
-name: Build Linux headers
+name: Build Linux headers (aarch64)
 
 on:
   workflow_dispatch:
@@ -12,10 +12,11 @@ on:
 env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_linux_headers
   UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  TARGET: aarch64-linux
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     strategy:
       matrix:
         linux_version: ${{ fromJson(github.event.inputs.linux_versions) }}

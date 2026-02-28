@@ -10,7 +10,7 @@ pushd "${LINUX_SOURCE}"
 make \
     "HOSTCC=gcc" \
     "O=${LINUX_BUILD_DIR}" \
-    "ARCH=x86" \
+    "ARCH=${LINUX_ARCH}" \
     "INSTALL_HDR_PATH=${SYSROOT_DIR}/usr" \
     "V=0" \
     headers_install

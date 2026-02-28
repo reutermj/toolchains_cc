@@ -20,6 +20,8 @@ COPY .github/workflows/utils/download_tarball $UTILS_DIR/
 # =========================
 # || Build Linux headers ||
 # =========================
+ARG TARGET=x86_64-linux
+
 COPY .github/workflows/build_linux_headers/step-1_install_dependencies $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-1_install_dependencies
 
