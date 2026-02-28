@@ -1,4 +1,4 @@
-name: Build musl libc
+name: Build musl libc (x86_64)
 
 on:
   workflow_dispatch:
@@ -20,6 +20,7 @@ env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_musl
   UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
   MUSL_VERSION: ${{ github.event.inputs.musl_version }}
+  TARGET: x86_64-linux-musl
 
 jobs:
   build:

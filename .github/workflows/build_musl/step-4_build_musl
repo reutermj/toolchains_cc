@@ -8,10 +8,10 @@ MUSL_BUILD="/tmp/musl-build"
 mkdir -p ${MUSL_BUILD}
 cd ${MUSL_BUILD}
 
-env CROSS_COMPILE=x86_64-bootstrap-linux-musl- \
+env CROSS_COMPILE=${BUILD_ARCH}-bootstrap-linux-musl- \
     ${MUSL_SOURCE}/configure \
-        --host=x86_64-bootstrap-linux-musl \
-        --target=x86_64-linux-musl \
+        --host=${BUILD_ARCH}-bootstrap-linux-musl \
+        --target=${BUILD_ARCH}-linux-musl \
         --prefix=/usr \
         --libdir=/usr/lib \
         --disable-gcc-wrapper \

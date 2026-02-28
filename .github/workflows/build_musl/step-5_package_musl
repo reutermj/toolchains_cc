@@ -5,4 +5,4 @@ source ${SCRIPTS_DIR}/environment
 DATE=$(date +%Y%m%d)
 
 cd "${MUSL_ARTIFACTS}"
-XZ_OPT=-e9 tar -cJf "${ARTIFACTS_DIR}/x86_64-linux-musl-musl-${MUSL_VERSION}-${DATE}.tar.xz" *
+XZ_OPT=-e9 tar -cJf "${ARTIFACTS_DIR}/${BUILD_ARCH}-linux-musl-musl-${MUSL_VERSION}-${DATE}.tar.xz" *

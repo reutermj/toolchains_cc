@@ -1,6 +1,14 @@
 #!/bin/bash
 set -euox pipefail
 
+export BUILD_ARCH=${TARGET%%-*}
+
+# Linux kernel ARCH values differ from GNU triplet arch names
+case ${BUILD_ARCH} in
+    x86_64)  export LINUX_ARCH="x86" ;;
+    aarch64) export LINUX_ARCH="arm64" ;;
+esac
+
 # ==============================
 # || Setup Source Directories ||
 # ==============================

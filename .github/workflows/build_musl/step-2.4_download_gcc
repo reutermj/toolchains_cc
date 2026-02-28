@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euox pipefail
 source ${SCRIPTS_DIR}/environment
-${UTILS_DIR}/download_tarball "x86_64-linux-x86_64-bootstrap-linux-musl-gcc-15.2.0-" "${BUILD_TOOLS}"
+${UTILS_DIR}/download_tarball "${BUILD_ARCH}-linux-${BUILD_ARCH}-bootstrap-linux-musl-gcc-15.2.0-" "${BUILD_TOOLS}"

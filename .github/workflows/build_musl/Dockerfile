@@ -18,6 +18,8 @@ COPY .github/workflows/utils/download_tarball ${UTILS_DIR}/download_tarball
 # ================
 # || Build musl ||
 # ================
+ARG TARGET=x86_64-linux-musl
+
 COPY .github/workflows/build_musl/step-1_install_dependencies ${SCRIPTS_DIR}/
 RUN ${SCRIPTS_DIR}/step-1_install_dependencies
 
