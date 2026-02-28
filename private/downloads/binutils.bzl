@@ -40,10 +40,12 @@ RELEASE_TO_DATE = {
     "x86_64-linux-x86_64-linux-gnu-binutils-2.45": "20260218",
     "x86_64-linux-x86_64-linux-musl-binutils-2.45": "20260219",
     "aarch64-linux-aarch64-linux-gnu-binutils-2.45": "20260228",
+    "aarch64-linux-aarch64-linux-musl-binutils-2.45": "20260228",
 }
 
 TARBALL_TO_SHA256 = {
     "x86_64-linux-x86_64-linux-gnu-binutils-2.45-20260218.tar.xz": "c1f56ffbadc36fc5b74f969e27e6eeca770d62286135f5a1b9ce044cf09135c3",
     "x86_64-linux-x86_64-linux-musl-binutils-2.45-20260219.tar.xz": "b68e2adae65d6eb22fbeb161acca652cae6eb5413581bcfa953072e1bbf9d79b",
     "aarch64-linux-aarch64-linux-gnu-binutils-2.45-20260228.tar.xz": "a0ec2a34a8f084911c747543b0dd54c62759990b46ea022e67a9c2c8c5a48e61",
+    "aarch64-linux-aarch64-linux-musl-binutils-2.45-20260228.tar.xz": "7f08c92cded3470555cdd2cdc1a315b008589c9c4a33ebf905876e2729df97bb",
 }

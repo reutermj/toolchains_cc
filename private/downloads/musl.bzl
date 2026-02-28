@@ -34,8 +34,10 @@ def download_musl(rctx, config):
 
 RELEASE_TO_DATE = {
     "x86_64-linux-musl-musl-1.2.5": "20260220",
+    "aarch64-linux-musl-musl-1.2.5": "20260228",
 }
 
 TARBALL_TO_SHA256 = {
     "x86_64-linux-musl-musl-1.2.5-20260220.tar.xz": "bfaf13affe289e9ba795c268dd34ecefe6b06817b3681adfc7429e4ad7d07334",
+    "aarch64-linux-musl-musl-1.2.5-20260228.tar.xz": "db2fd8a16b19e7dd3a0d701ec7f400ad7f024750ad2809d3fbfce985d27b153c",
 }
