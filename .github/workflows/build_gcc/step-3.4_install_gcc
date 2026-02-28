@@ -9,8 +9,8 @@ if [[ "${BOOTSTRAP}" == "true" ]]; then
 fi
 
 if [[ "${TARGET}" == *-gnu ]]; then
-    "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-bootstrap-linux-gnu-gcc-${GCC_VERSION}-" "${BUILD_TOOLS}"
+    "${UTILS_DIR}/download_tarball" "${BUILD_ARCH}-linux-${BUILD_ARCH}-bootstrap-linux-gnu-gcc-${GCC_VERSION}-" "${BUILD_TOOLS}"
 elif [[ "${TARGET}" == *-musl ]]; then
-    "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-bootstrap-linux-musl-gcc-${GCC_VERSION}-" "${BUILD_TOOLS}"
+    "${UTILS_DIR}/download_tarball" "${BUILD_ARCH}-linux-${BUILD_ARCH}-bootstrap-linux-musl-gcc-${GCC_VERSION}-" "${BUILD_TOOLS}"
 fi
 

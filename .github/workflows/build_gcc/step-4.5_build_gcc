@@ -13,12 +13,12 @@ CONFIGURE_FLAGS=()
 # The bootstrap vendor in --build forces GCC's cross-compilation install layout for all targets.
 # See: docs/lore/gcc/native_vs_cross_install_layout.md
 if [[ "${BOOTSTRAP}" == "true" ]]; then
-    CONFIGURE_FLAGS+=(--build=x86_64-linux-gnu)
-    CONFIGURE_FLAGS+=(--host=x86_64-linux-gnu)
+    CONFIGURE_FLAGS+=(--build=${BUILD_ARCH}-linux-gnu)
+    CONFIGURE_FLAGS+=(--host=${BUILD_ARCH}-linux-gnu)
     CONFIGURE_FLAGS+=(--target=${TARGET})
 else
-    CONFIGURE_FLAGS+=(--build=x86_64-bootstrap-linux-gnu)
-    CONFIGURE_FLAGS+=(--host=x86_64-bootstrap-linux-gnu)
+    CONFIGURE_FLAGS+=(--build=${BUILD_ARCH}-bootstrap-linux-gnu)
+    CONFIGURE_FLAGS+=(--host=${BUILD_ARCH}-bootstrap-linux-gnu)
     CONFIGURE_FLAGS+=(--target=${TARGET})
 fi
 

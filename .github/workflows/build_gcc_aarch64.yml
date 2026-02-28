@@ -1,0 +1,129 @@
+name: Build GCC (aarch64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      gcc_versions:
+        description: 'JSON array of GCC versions (e.g., ["14.2.0", "15.2.0"])'
+        required: true
+        default: '["15.2.0"]'
+        type: string
+      target:
+        description: 'Target triplet'
+        required: true
+        default: 'aarch64-linux-gnu'
+        type: choice
+        options:
+          - aarch64-linux-gnu
+          - aarch64-bootstrap-linux-gnu
+          - aarch64-linux-musl
+          - aarch64-bootstrap-linux-musl
+permissions:
+  # Required for uploading GitHub releases
+  contents: write
+  # Required for build provenance attestation
+  id-token: write
+  attestations: write
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_gcc
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  TARGET: ${{ github.event.inputs.target }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        gcc_version: ${{ fromJson(github.event.inputs.gcc_versions) }}
+      fail-fast: false
+
+    env:
+      GCC_VERSION: ${{ matrix.gcc_version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install dependencies
+        run: $SCRIPTS_DIR/step-01_install_dependencies
+
+      - name: Set up environment
+        run: $SCRIPTS_DIR/environment
+
+      - name: Download GMP source
+        run: $SCRIPTS_DIR/step-2.1_download_gmp_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download MPFR source
+        run: $SCRIPTS_DIR/step-2.2_download_mpfr_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download ISL source
+        run: $SCRIPTS_DIR/step-2.3_download_isl_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download MPC source
+        run: $SCRIPTS_DIR/step-2.4_download_mpc_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download GCC source
+        run: $SCRIPTS_DIR/step-2.5_download_gcc_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download Linux kernel headers source
+        run: $SCRIPTS_DIR/step-2.6_download_linux_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install Linux kernel headers
+        run: $SCRIPTS_DIR/step-3.1_install_linux_headers
+
+      - name: Install binutils
+        run: $SCRIPTS_DIR/step-3.2_install_binutils
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install toolchain libc
+        run: $SCRIPTS_DIR/step-3.3_install_libc
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install bootstrapping gcc
+        run: $SCRIPTS_DIR/step-3.4_install_gcc
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Build GMP
+        run: $SCRIPTS_DIR/step-4.1_build_gmp
+
+      - name: Build ISL
+        run: $SCRIPTS_DIR/step-4.2_build_isl
+
+      - name: Build MPFR
+        run: $SCRIPTS_DIR/step-4.3_build_mpfr
+
+      - name: Build MPC
+        run: $SCRIPTS_DIR/step-4.4_build_mpc
+
+      - name: Build GCC
+        run: $SCRIPTS_DIR/step-4.5_build_gcc
+
+      - name: Package toolchain
+        run: $SCRIPTS_DIR/step-5_package_toolchain
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v4.1.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        run: $SCRIPTS_DIR/step-6_upload_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

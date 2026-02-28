@@ -13,8 +13,8 @@ env CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     CXXFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     LDFLAGS="-L${BUILD_TOOLS}/lib" \
     ${ISL_SOURCE}/configure \
-        --build=x86_64-linux-gnu \
-        --host=x86_64-linux-gnu \
+        --build=${BUILD_ARCH}-linux-gnu \
+        --host=${BUILD_ARCH}-linux-gnu \
         --prefix=${BUILD_TOOLS} \
         --disable-shared \
         --enable-static \

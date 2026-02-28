@@ -10,7 +10,7 @@ make -C ${LINUX_SOURCE} \
     HOSTCC=gcc \
     CROSS_COMPILE=${TARGET}- \
     O=${LINUX_BUILD} \
-    ARCH=x86 \
+    ARCH=${LINUX_ARCH} \
     INSTALL_HDR_PATH=${BUILD_TOOLS}/usr \
     V=0 \
     headers_install

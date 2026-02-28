@@ -12,8 +12,8 @@ env CC_FOR_BUILD=gcc \
     CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include -std=gnu17 -fexceptions" \
     LDFLAGS="-L${BUILD_TOOLS}/lib" \
     ${GMP_SOURCE}/configure \
-        --build=x86_64-linux-gnu \
-        --host=x86_64-linux-gnu \
+        --build=${BUILD_ARCH}-linux-gnu \
+        --host=${BUILD_ARCH}-linux-gnu \
         --prefix=${BUILD_TOOLS} \
         --enable-fft \
         --enable-cxx \
