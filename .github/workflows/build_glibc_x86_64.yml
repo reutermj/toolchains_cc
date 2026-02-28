@@ -1,4 +1,4 @@
-name: Build glibc
+name: Build glibc (x86_64)
 
 on:
   workflow_dispatch:
@@ -13,6 +13,7 @@ env:
   SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_glibc
   UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
   LINUX_VERSION: 6.18
+  TARGET: x86_64-linux-gnu
 
 jobs:
   build:
