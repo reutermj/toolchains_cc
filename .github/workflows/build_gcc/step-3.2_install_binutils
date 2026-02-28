@@ -3,18 +3,18 @@ set -euox pipefail
 source ${SCRIPTS_DIR}/environment
 
 if [[ "${TARGET}" == *-gnu ]]; then
-    "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-bootstrap-linux-gnu-binutils-2.45-" "${BUILD_TOOLS}"
+    "${UTILS_DIR}/download_tarball" "${BUILD_ARCH}-linux-${BUILD_ARCH}-bootstrap-linux-gnu-binutils-2.45-" "${BUILD_TOOLS}"
 elif [[ "${TARGET}" == *-musl ]]; then
-    "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-bootstrap-linux-musl-binutils-2.45-" "${BUILD_TOOLS}"
+    "${UTILS_DIR}/download_tarball" "${BUILD_ARCH}-linux-${BUILD_ARCH}-bootstrap-linux-musl-binutils-2.45-" "${BUILD_TOOLS}"
 fi
 
 # Full builds need non-bootstrap binutils so that target-prefixed tools
-# (e.g. x86_64-linux-musl-ld) are available for GCC's configure scripts.
-# Bootstrap binutils only provide x86_64-bootstrap-linux-musl-* prefixed tools.
+# (e.g. ${BUILD_ARCH}-linux-musl-ld) are available for GCC's configure scripts.
+# Bootstrap binutils only provide ${BUILD_ARCH}-bootstrap-linux-musl-* prefixed tools.
 if [[ "${BOOTSTRAP}" == "false" ]]; then
     if [[ "${TARGET}" == *-gnu ]]; then
-        "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-linux-gnu-binutils-2.45-" "${BUILD_TOOLS}"
+        "${UTILS_DIR}/download_tarball" "${BUILD_ARCH}-linux-${BUILD_ARCH}-linux-gnu-binutils-2.45-" "${BUILD_TOOLS}"
     elif [[ "${TARGET}" == *-musl ]]; then
-        "${UTILS_DIR}/download_tarball" "x86_64-linux-x86_64-linux-musl-binutils-2.45-" "${BUILD_TOOLS}"
+        "${UTILS_DIR}/download_tarball" "${BUILD_ARCH}-linux-${BUILD_ARCH}-linux-musl-binutils-2.45-" "${BUILD_TOOLS}"
     fi
 fi
