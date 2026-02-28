@@ -1,6 +1,6 @@
 """Functions for downloading Linux kernel headers."""
 
-load(":constants.bzl", "DOWNLOAD_BASE_URL")
+load(":constants.bzl", "DOWNLOAD_BASE_URL", "get_host")
 
 visibility("//private/...")
 
@@ -12,13 +12,17 @@ def download_linux_headers(rctx, config):
       config: The configuration dictionary.
     """
 
-    linux_headers_name = "x86_64-linux-headers-{linux_headers_version}".format(
+    host = get_host(config)
+    arch = host.split("-")[0]
+
+    linux_headers_name = "{arch}-linux-headers-{linux_headers_version}".format(
+        arch = arch,
         linux_headers_version = config["linux_headers_version"],
     )
     linux_headers_date = RELEASE_TO_DATE[linux_headers_name]
 
-    # TODO: update to use {host}
-    linux_headers_tarball_name = "x86_64-linux-headers-{linux_headers_version}-{linux_headers_date}.tar.xz".format(
+    linux_headers_tarball_name = "{arch}-linux-headers-{linux_headers_version}-{linux_headers_date}.tar.xz".format(
+        arch = arch,
         linux_headers_version = config["linux_headers_version"],
         linux_headers_date = linux_headers_date,
     )
@@ -33,8 +37,10 @@ def download_linux_headers(rctx, config):
 
 RELEASE_TO_DATE = {
     "x86_64-linux-headers-6.18": "20260217",
+    "aarch64-linux-headers-6.18": "20260228",
 }
 
 TARBALL_TO_SHA256 = {
     "x86_64-linux-headers-6.18-20260217.tar.xz": "34396267a578ef4b81b3951b826c236cf385f7f008bb20b348731ca3318b7c6f",
+    "aarch64-linux-headers-6.18-20260228.tar.xz": "dafd326fe1df8fce64805b420666606f984a76087563e36c4ff69cb5e323751a",
 }

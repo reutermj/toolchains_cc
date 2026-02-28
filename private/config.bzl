@@ -88,6 +88,7 @@ SUPPORTED_VERSIONS = {
     "target": {
         "x86_64-linux-gnu": True,
         "x86_64-linux-musl": True,
+        "aarch64-linux-gnu": True,
     },
     "libc_version": {
         "1.2.5": True,
