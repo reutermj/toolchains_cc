@@ -6,6 +6,7 @@ export ARTIFACTS_DIR="/tmp/artifacts"
 export BINUTILS_SOURCE="/tmp/binutils-source"
 export ZLIB_SOURCE="/tmp/zlib-source"
 export BINUTILS_ARTIFACTS="/tmp/binutils-artifacts"
+export BUILD_ARCH=${TARGET%%-*}
 
 mkdir -p "${BUILD_TOOLS}"
 mkdir -p "${ARTIFACTS_DIR}"
