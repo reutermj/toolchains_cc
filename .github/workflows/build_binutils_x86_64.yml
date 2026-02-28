@@ -1,0 +1,87 @@
+name: Build binutils (x86_64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      binutils_versions:
+        description: 'JSON array of binutils versions (e.g., ["2.41", "2.42", "2.43"])'
+        required: true
+        default: '["2.45"]'
+        type: string
+      target:
+        description: 'Target triplet'
+        required: true
+        default: 'x86_64-linux-gnu'
+        type: choice
+        options:
+          - x86_64-linux-gnu
+          - x86_64-bootstrap-linux-gnu
+          - x86_64-linux-musl
+          - x86_64-bootstrap-linux-musl
+
+permissions:
+  # Required for uploading GitHub releases
+  contents: write
+  # Required for build provenance attestation
+  id-token: write
+  attestations: write
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_binutils
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  PATCHES_DIR: ${{ github.workspace }}/.github/workflows/build_binutils/patches
+  TARGET: ${{ github.event.inputs.target }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        binutils_version: ${{ fromJson(github.event.inputs.binutils_versions) }}
+      fail-fast: false
+
+    env:
+      BINUTILS_VERSION: ${{ matrix.binutils_version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install dependencies
+        run: $SCRIPTS_DIR/step-1_install_dependencies
+
+      - name: Set up environment
+        run: $SCRIPTS_DIR/environment
+
+      - name: Download zlib source
+        run: $SCRIPTS_DIR/step-2.1_download_zlib_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download binutils source
+        run: $SCRIPTS_DIR/step-2.2_download_binutils_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Patch binutils source
+        run: $SCRIPTS_DIR/step-2.3_patch_binutils_source
+
+      - name: Build zlib
+        run: $SCRIPTS_DIR/step-3.1_build_zlib
+
+      - name: Build binutils
+        run: $SCRIPTS_DIR/step-3.2_build_binutils
+
+      - name: Package binutils
+        run: $SCRIPTS_DIR/step-4_package_binutils
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v4.1.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        run: $SCRIPTS_DIR/step-5_upload_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

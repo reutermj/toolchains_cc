@@ -8,7 +8,7 @@ cd ${ZLIB_BUILD}
 
 env CFLAGS="-O3 -pipe -I${BUILD_TOOLS}/include" \
     LDFLAGS="-L${BUILD_TOOLS}/lib" \
-    CHOST=x86_64-linux-gnu \
+    CHOST=${TARGET%%-*}-linux-gnu \
     ${ZLIB_SOURCE}/configure \
         --prefix=${BUILD_TOOLS} \
         --static

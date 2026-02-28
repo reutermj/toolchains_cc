@@ -19,6 +19,8 @@ COPY .github/workflows/utils/download_tarball $UTILS_DIR/download_tarball
 # ====================
 # || Build binutils ||
 # ====================
+ARG TARGET=x86_64-linux-gnu
+
 COPY .github/workflows/build_binutils/step-1_install_dependencies $SCRIPTS_DIR/step-1_install_dependencies
 RUN $SCRIPTS_DIR/step-1_install_dependencies
 
@@ -40,7 +42,6 @@ RUN $SCRIPTS_DIR/step-2.3_patch_binutils_source
 COPY .github/workflows/build_binutils/step-3.1_build_zlib $SCRIPTS_DIR/step-3.1_build_zlib
 RUN $SCRIPTS_DIR/step-3.1_build_zlib
 
-ARG TARGET=x86_64-linux-gnu
 COPY .github/workflows/build_binutils/step-3.2_build_binutils $SCRIPTS_DIR/step-3.2_build_binutils
 RUN $SCRIPTS_DIR/step-3.2_build_binutils
 

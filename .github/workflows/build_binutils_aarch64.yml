@@ -1,4 +1,4 @@
-name: Build binutils
+name: Build binutils (aarch64)
 
 on:
   workflow_dispatch:
@@ -11,13 +11,13 @@ on:
       target:
         description: 'Target triplet'
         required: true
-        default: 'x86_64-linux-gnu'
+        default: 'aarch64-linux-gnu'
         type: choice
         options:
-          - x86_64-linux-gnu
-          - x86_64-bootstrap-linux-gnu
-          - x86_64-linux-musl
-          - x86_64-bootstrap-linux-musl
+          - aarch64-linux-gnu
+          - aarch64-bootstrap-linux-gnu
+          - aarch64-linux-musl
+          - aarch64-bootstrap-linux-musl
 
 permissions:
   # Required for uploading GitHub releases
@@ -34,7 +34,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     strategy:
       matrix:
         binutils_version: ${{ fromJson(github.event.inputs.binutils_versions) }}
@@ -76,7 +76,7 @@ jobs:
         run: $SCRIPTS_DIR/step-4_package_binutils
 
       - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v4.1.0
+        uses: actions/attest-build-provenance@v3.2.0
         with:
           subject-path: |
             ${{ env.ARTIFACTS_DIR }}/*.tar.xz
