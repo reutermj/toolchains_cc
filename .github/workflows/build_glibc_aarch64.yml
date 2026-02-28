@@ -1,0 +1,77 @@
+name: Build glibc (aarch64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      glibc_versions:
+        description: 'JSON array of glibc versions (e.g., ["2.28", "2.39", "2.40"])'
+        required: true
+        default: '["2.28", "2.29", "2.30", "2.31", "2.32", "2.33", "2.34", "2.35", "2.36", "2.37", "2.38", "2.39", "2.40", "2.41", "2.42"]'
+        type: string
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_glibc
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  LINUX_VERSION: 6.18
+  TARGET: aarch64-linux-gnu
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        glibc_version: ${{ fromJson(github.event.inputs.glibc_versions) }}
+      fail-fast: false
+
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    env:
+      GLIBC_VERSION: ${{ matrix.glibc_version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install dependencies
+        run: ${{ env.SCRIPTS_DIR }}/step-1_install_dependencies
+
+      - name: Set up environment
+        run: ${{ env.SCRIPTS_DIR }}/environment
+
+      - name: Download glibc source
+        run: ${{ env.SCRIPTS_DIR }}/step-2.1_download_glibc_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download Linux kernel headers source
+        run: ${{ env.SCRIPTS_DIR }}/step-2.2_download_linux_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install Linux kernel headers
+        run: ${{ env.SCRIPTS_DIR }}/step-3.1_install_linux_headers
+
+      - name: Install bootstrap gcc and binutils
+        run: ${{ env.SCRIPTS_DIR }}/step-3.2_install_gcc
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Build glibc
+        run: ${{ env.SCRIPTS_DIR }}/step-4_build_glibc
+
+      - name: Package glibc
+        run: ${{ env.SCRIPTS_DIR }}/step-5_package_glibc
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v4.1.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        run: ${{ env.SCRIPTS_DIR }}/step-6_upload_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

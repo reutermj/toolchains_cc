@@ -9,23 +9,34 @@ mkdir -p "${GLIBC_BUILD_DIR}"
 
 pushd "${GLIBC_BUILD_DIR}"
 
+# -fcf-protection controls CET (Control-flow Enforcement Technology), an x86-specific feature.
+# On aarch64, GCC doesn't recognize this flag.
+ARCH_CC_FLAGS=""
+ARCH_CFLAGS=""
+CONFIGURE_FLAGS=()
+if [[ "${BUILD_ARCH}" == "x86_64" ]]; then
+    ARCH_CC_FLAGS="-fcf-protection=none"
+    ARCH_CFLAGS="-fcf-protection=none"
+    CONFIGURE_FLAGS+=(--disable-cet)
+fi
+
 # ===============
 # || Configure ||
 # ===============
 env BUILD_CC=gcc \
-    CC="x86_64-bootstrap-linux-gnu-gcc -O3 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int -fcf-protection=none" \
-    CFLAGS="-fcf-protection=none" \
-    AR=x86_64-bootstrap-linux-gnu-ar \
-    RANLIB=x86_64-bootstrap-linux-gnu-ranlib \
+    CC="${BUILD_ARCH}-bootstrap-linux-gnu-gcc -O3 -fcommon -U_FORTIFY_SOURCE -Wno-missing-attributes -Wno-array-bounds -Wno-array-parameter -Wno-stringop-overflow -Wno-maybe-uninitialized -Wno-implicit-int ${ARCH_CC_FLAGS}" \
+    CFLAGS="${ARCH_CFLAGS}" \
+    AR=${BUILD_ARCH}-bootstrap-linux-gnu-ar \
+    RANLIB=${BUILD_ARCH}-bootstrap-linux-gnu-ranlib \
     ${GLIBC_SOURCE}/configure \
         --prefix=/usr \
-        --host=x86_64-linux-gnu \
+        --host=${BUILD_ARCH}-linux-gnu \
         --without-cvs \
         --disable-profile \
         --without-gd \
         --with-headers=${SYSROOT_DIR}/usr/include \
         --disable-debug \
-        --disable-cet \
+        ${CONFIGURE_FLAGS[@]:+"${CONFIGURE_FLAGS[@]}"} \
         --disable-sanity-checks \
         --enable-obsolete-rpc \
         --enable-kernel="" \

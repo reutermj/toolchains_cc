@@ -21,6 +21,8 @@ COPY .github/workflows/utils/download_tarball $UTILS_DIR/
 # =================
 # || Build glibc ||
 # =================
+ARG TARGET=x86_64-linux-gnu
+
 COPY .github/workflows/build_glibc/step-1_install_dependencies $SCRIPTS_DIR/
 RUN $SCRIPTS_DIR/step-1_install_dependencies
 
