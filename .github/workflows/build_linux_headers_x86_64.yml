@@ -1,0 +1,63 @@
+name: Build Linux headers (x86_64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      linux_versions:
+        description: 'JSON array of Linux versions (e.g., ["6.18"])'
+        required: true
+        default: '["6.18"]'
+        type: string
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_linux_headers
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  TARGET: x86_64-linux
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        linux_version: ${{ fromJson(github.event.inputs.linux_versions) }}
+      fail-fast: false
+
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    env:
+      LINUX_VERSION: ${{ matrix.linux_version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install dependencies
+        run: ${{ env.SCRIPTS_DIR }}/step-1_install_dependencies
+
+      - name: Set up environment
+        run: ${{ env.SCRIPTS_DIR }}/environment
+
+      - name: Download Linux kernel source
+        run: ${{ env.SCRIPTS_DIR }}/step-2_download_linux_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install Linux kernel headers
+        run: ${{ env.SCRIPTS_DIR }}/step-3_install_linux_headers
+
+      - name: Package Linux kernel headers
+        run: ${{ env.SCRIPTS_DIR }}/step-4_package_linux_headers
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v4.1.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        run: ${{ env.SCRIPTS_DIR }}/step-5_upload_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
