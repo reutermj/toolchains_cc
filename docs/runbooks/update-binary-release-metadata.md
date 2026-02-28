@@ -28,8 +28,10 @@ Each component has its own file in [private/downloads/](../../private/downloads/
 |---------------|-------------------------------------------------------------------|
 | GCC           | [private/downloads/gcc.bzl](../../private/downloads/gcc.bzl)           |
 | glibc         | [private/downloads/glibc.bzl](../../private/downloads/glibc.bzl)       |
+| musl          | [private/downloads/musl.bzl](../../private/downloads/musl.bzl)         |
 | binutils      | [private/downloads/binutils.bzl](../../private/downloads/binutils.bzl) |
 | Linux headers | [private/downloads/linux_headers.bzl](../../private/downloads/linux_headers.bzl) |
+| LLVM          | [private/downloads/llvm.bzl](../../private/downloads/llvm.bzl)         |
 
 ### 2. Find the new artifacts in the GitHub release
 
@@ -147,5 +149,5 @@ Old dated tarballs in the `binaries` release **must be preserved**. Previous ver
 
 ## Related Files
 
-- [private/downloads/constants.bzl](../../private/downloads/constants.bzl): Base URL for the `binaries` release
+- [private/downloads/constants.bzl](../../private/downloads/constants.bzl): Base URL and `get_host` helper
 - [private/downloads/all.bzl](../../private/downloads/all.bzl): Orchestrates all downloads

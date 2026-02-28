@@ -89,6 +89,7 @@ SUPPORTED_VERSIONS = {
         "x86_64-linux-gnu": True,
         "x86_64-linux-musl": True,
         "aarch64-linux-gnu": True,
+        "aarch64-linux-musl": True,
     },
     "libc_version": {
         "1.2.5": True,

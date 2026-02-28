@@ -209,7 +209,7 @@
     },
     "@@toolchains_cc+//:extensions.bzl%cc_toolchains": {
       "general": {
-        "bzlTransitiveDigest": "5cpfcC6FOHEc0/a8gXJSeTZ3Vuo27DZRX2ORz9/kHVU=",
+        "bzlTransitiveDigest": "d5LF4MXZL3W7n2QkjMeoJGFpBXeN7vo3ZE2vdJxhedA=",
         "usagesDigest": "hmLP2+eWOtQrYKPXKM2vUUap6waUis9xTl4GTYjHe5I=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},

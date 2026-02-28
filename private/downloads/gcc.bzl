@@ -54,6 +54,7 @@ RELEASE_TO_DATE = {
     "x86_64-linux-x86_64-linux-gnu-gcc-15.2.0": "20260222",
     "x86_64-linux-x86_64-linux-musl-gcc-15.2.0": "20260222",
     "aarch64-linux-aarch64-linux-gnu-gcc-15.2.0": "20260228",
+    "aarch64-linux-aarch64-linux-musl-gcc-15.2.0": "20260228",
 }
 
 TARBALL_TO_SHA256 = {
@@ -63,4 +64,6 @@ TARBALL_TO_SHA256 = {
     "x86_64-linux-musl-gcc-lib-15.2.0-20260222.tar.xz": "90e1049836ff83ae44e6c7cb0cd14d83913ea5963516e9131ed46dfc1e44d3e9",
     "aarch64-linux-aarch64-linux-gnu-gcc-15.2.0-20260228.tar.xz": "56103e50a905906ea78b0a4e291b4c3fb92b2a182cc3b185b55229d3323b219a",
     "aarch64-linux-gnu-gcc-lib-15.2.0-20260228.tar.xz": "93951d47eb9aa4d31e0167ab015d98b688d919659577573fae636ddb3c806559",
+    "aarch64-linux-aarch64-linux-musl-gcc-15.2.0-20260228.tar.xz": "8954b1a7a08a088fa692cf8b44e2522b33f45011e5712bb0123871a85c6cd4f7",
+    "aarch64-linux-musl-gcc-lib-15.2.0-20260228.tar.xz": "194dfbc9737df0262ab216c65ebb528d0686fe7a0f463a59e3e370f0598d923b",
 }
