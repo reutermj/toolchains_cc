@@ -1,0 +1,77 @@
+name: Build musl libc (aarch64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      musl_version:
+        description: 'musl version to build'
+        required: true
+        default: '1.2.5'
+        type: string
+
+permissions:
+  # Required for uploading GitHub releases
+  contents: write
+  # Required for build provenance attestation
+  id-token: write
+  attestations: write
+
+env:
+  SCRIPTS_DIR: ${{ github.workspace }}/.github/workflows/build_musl
+  UTILS_DIR: ${{ github.workspace }}/.github/workflows/utils
+  MUSL_VERSION: ${{ github.event.inputs.musl_version }}
+  TARGET: aarch64-linux-musl
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install dependencies
+        run: ${{ env.SCRIPTS_DIR }}/step-1_install_dependencies
+
+      - name: Set up environment
+        run: ${{ env.SCRIPTS_DIR }}/environment
+
+      - name: Download Linux kernel source
+        run: ${{ env.SCRIPTS_DIR }}/step-2.1_download_linux_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download musl source
+        run: ${{ env.SCRIPTS_DIR }}/step-2.2_download_musl_source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download pre-built binutils
+        run: ${{ env.SCRIPTS_DIR }}/step-2.3_download_binutils
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download pre-built GCC
+        run: ${{ env.SCRIPTS_DIR }}/step-2.4_download_gcc
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Install Linux kernel headers
+        run: ${{ env.SCRIPTS_DIR }}/step-3_install_linux_headers
+
+      - name: Build musl
+        run: ${{ env.SCRIPTS_DIR }}/step-4_build_musl
+
+      - name: Package musl
+        run: ${{ env.SCRIPTS_DIR }}/step-5_package_musl
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v4.1.0
+        with:
+          subject-path: |
+            ${{ env.ARTIFACTS_DIR }}/*.tar.xz
+
+      - name: Upload to GitHub Releases
+        run: ${{ env.SCRIPTS_DIR }}/step-6_upload_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
