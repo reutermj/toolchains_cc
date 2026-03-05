@@ -159,8 +159,14 @@ Also run the repo-level tests:
 ```bash
 bazel test \
   --repo_env=toolchains_cc_dev_compiler_version=<VERSION> \
+  --repo_env=toolchains_cc_dev_target=<TARGET> \
+  --repo_env=toolchains_cc_dev_libc_version=<LIBC_VERSION> \
   //tests/...
 ```
+
+**Note on musl targets**: musl-linked binaries cannot execute on a glibc host, so `bazel test` will fail with exit code 127 ("required file not found"). For musl targets, use `bazel build //tests/...` instead to verify compilation succeeds. This is expected behavior, not a build failure.
+
+**Known example failures with musl**: The grpc, protobuf, and rust_bindgen examples have pre-existing build failures with musl targets (related to exec-platform tool binaries, not GCC). Verify these also fail with other GCC versions on musl before investigating.
 
 The current examples are: boost, curl, fmt, gmp, googletest, grpc, libarchive, libuv, nlohmann_json, protobuf, rust_bindgen, sqlite, zlib, zstd.
 
@@ -184,8 +190,8 @@ The current examples are: boost, curl, fmt, gmp, googletest, grpc, libarchive, l
 - [ ] `SUPPORTED_VERSIONS` updated in `private/config.bzl`
 - [ ] `RELEASE_TO_DATE` updated in `private/downloads/gcc.bzl`
 - [ ] `TARBALL_TO_SHA256` updated in `private/downloads/gcc.bzl`
-- [ ] `bazel build //...` succeeds in each example directory with the new version
-- [ ] `bazel test //tests/...` passes with the new version
+- [ ] `bazel build //...` succeeds in each example directory with the new version (see known musl failures above)
+- [ ] `bazel test //tests/...` passes with the new version (for musl targets, use `bazel build` instead -- see note above)
 
 ## Troubleshooting
 
