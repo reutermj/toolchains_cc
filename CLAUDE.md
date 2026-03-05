@@ -13,6 +13,7 @@ Runbooks are detaild procedures for use in a specific context.
 - **BEFORE adding new toolchain configurations, YOU MUST read**: [docs/runbooks/add-toolchain-configuration.md](docs/runbooks/add-toolchain-configuration.md)
 - **BEFORE creating or modifying GitHub Actions workflows, YOU MUST read**: [docs/runbooks/github-actions-workflows.md](docs/runbooks/github-actions-workflows.md)
 - **BEFORE updating release dates or SHA256 hashes for rebuilt toolchain binaries, YOU MUST read**: [docs/runbooks/update-binary-release-metadata.md](docs/runbooks/update-binary-release-metadata.md)
+- **BEFORE building a new GCC version, YOU MUST read**: [docs/runbooks/build-new-gcc-version.md](docs/runbooks/build-new-gcc-version.md)
 
 ## Bazel
 

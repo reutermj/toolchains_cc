@@ -100,6 +100,7 @@ SUPPORTED_VERSIONS = {
         "llvm": True,
     },
     "compiler_version": {
+        "14.2.0": True,
         "15.2.0": True,
         "21.1.1": True,
     },
