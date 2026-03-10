@@ -5,7 +5,7 @@ visibility("//private/...")
 # Configuration priority (highest to lowest):
 # 1. --repo_env flags (CLI / .bazelrc) — for CI matrix builds
 # 2. MODULE.bazel tag attributes (via config_overrides) — for project defaults
-# 3. Hard-coded defaults below — fallback
+# 3. Defaults below (target auto-detected from host arch, rest hard-coded) — fallback
 #
 # --repo_env is essential for CI configuration matrices (e.g. testing gcc vs clang, glibc vs musl).
 # Due to Bazel phases, bazel_skylib string_flag(...) is not an option for this.
@@ -34,6 +34,19 @@ def _validate_config(config):
                 supported = ", ".join(sorted(supported.keys())),
             ))
 
+_ARCH_TO_TRIPLE_ARCH = {
+    "amd64": "x86_64",
+    "x86_64": "x86_64",
+    "aarch64": "aarch64",
+    "arm64": "aarch64",
+}
+
+def _default_target(rctx):
+    arch = _ARCH_TO_TRIPLE_ARCH.get(rctx.os.arch, None)
+    if arch == None:
+        fail("Unsupported host architecture: {}".format(rctx.os.arch))
+    return "{}-linux-gnu".format(arch)
+
 def get_config(rctx):
     """Populates the configuration dictionary from MODULE.bazel tag attributes and environment variables.
 
@@ -45,7 +58,7 @@ def get_config(rctx):
     """
     config_overrides = rctx.attr.config_overrides
     config = {
-        "target": _get_config(rctx, "target", "x86_64-linux-gnu", config_overrides),
+        "target": _get_config(rctx, "target", _default_target(rctx), config_overrides),
         "libc_version": _get_config(rctx, "libc_version", "2.28", config_overrides),
         "binutils_version": _get_config(rctx, "binutils_version", "2.45", config_overrides),
         "compiler": _get_config(rctx, "compiler", "gcc", config_overrides),
