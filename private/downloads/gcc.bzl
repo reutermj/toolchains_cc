@@ -51,6 +51,8 @@ def download_gcc(rctx, config):
     )
 
 RELEASE_TO_DATE = {
+    "x86_64-linux-x86_64-linux-gnu-gcc-12.5.0": "20260310",
+    "x86_64-linux-x86_64-linux-musl-gcc-12.5.0": "20260306",
     "x86_64-linux-x86_64-linux-gnu-gcc-13.4.0": "20260306",
     "x86_64-linux-x86_64-linux-musl-gcc-13.4.0": "20260306",
     "x86_64-linux-x86_64-linux-gnu-gcc-14.2.0": "20260305",
@@ -62,6 +64,10 @@ RELEASE_TO_DATE = {
 }
 
 TARBALL_TO_SHA256 = {
+    "x86_64-linux-x86_64-linux-gnu-gcc-12.5.0-20260310.tar.xz": "426c3d28aa5d1701f0a667545c09a8a1dbcef9a76f7294cfd9a42feeea8d6f19",
+    "x86_64-linux-gnu-gcc-lib-12.5.0-20260310.tar.xz": "f5f8a2ba506ad3e8c11501b43e7efe09fd03511a5c47ddc9a34711b56e7f0edb",
+    "x86_64-linux-x86_64-linux-musl-gcc-12.5.0-20260306.tar.xz": "5513705c97351b9ea32bf1fe3057c24717a2e45b055d3dff78600be027de92c9",
+    "x86_64-linux-musl-gcc-lib-12.5.0-20260306.tar.xz": "c56a1fbc196cc3ad7886aeda2afad8c86e14e5c55615bd81cc98d0045615ff20",
     "x86_64-linux-x86_64-linux-gnu-gcc-13.4.0-20260306.tar.xz": "759e83721f05f7d6901f486d76de08750230dafc2eaf5de13d1c551b5d12aa14",
     "x86_64-linux-gnu-gcc-lib-13.4.0-20260306.tar.xz": "54dcd554f6ed59f5a23a6e9f80d68b2e266f947ce0ef8e7c99b631fdc39c890a",
     "x86_64-linux-x86_64-linux-musl-gcc-13.4.0-20260306.tar.xz": "438cb07d8b9f844b5702a904a07db7e6f8681fca1b418200fd45947a7be701e5",
