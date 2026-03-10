@@ -110,10 +110,10 @@ else
 fi
 
 env CC_FOR_BUILD=gcc \
-    CFLAGS="-O2 -I${BUILD_TOOLS}/include" \
-    CFLAGS_FOR_BUILD="-O2 -I${BUILD_TOOLS}/include" \
-    CXXFLAGS="-O2 -I${BUILD_TOOLS}/include" \
-    CXXFLAGS_FOR_BUILD="-O2 -I${BUILD_TOOLS}/include" \
+    CFLAGS="-O2" \
+    CFLAGS_FOR_BUILD="-O2" \
+    CXXFLAGS="-O2" \
+    CXXFLAGS_FOR_BUILD="-O2" \
     LDFLAGS="-L${BUILD_TOOLS}/lib -static" \
     CFLAGS_FOR_TARGET="-O2" \
     CXXFLAGS_FOR_TARGET="-O2" \
