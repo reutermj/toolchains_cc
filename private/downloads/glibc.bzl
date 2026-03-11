@@ -35,9 +35,13 @@ def download_glibc(rctx, config):
 RELEASE_TO_DATE = {
     "x86_64-linux-gnu-glibc-2.28": "20260218",
     "aarch64-linux-gnu-glibc-2.28": "20260228",
+    "x86_64-linux-gnu-glibc-2.29": "20260311",
+    "aarch64-linux-gnu-glibc-2.29": "20260311",
 }
 
 TARBALL_TO_SHA256 = {
     "x86_64-linux-gnu-glibc-2.28-20260218.tar.xz": "c808d0145434c9fbb273662712c212b99489489396a09b50faa84212f070a9e7",
     "aarch64-linux-gnu-glibc-2.28-20260228.tar.xz": "28a46420f38d2f975544f24ee70cedd45c698abed32e567eaa60db0eeb4364b0",
+    "x86_64-linux-gnu-glibc-2.29-20260311.tar.xz": "04b3e173d1f1f9bd7cc18ebe65f37bcda934b4c8f85ee24f7cf8de1f7ef96ab4",
+    "aarch64-linux-gnu-glibc-2.29-20260311.tar.xz": "af89007391be9ad68be00445d2b0de50d0e0ab422435cc27800307b3ce26787d",
 }
