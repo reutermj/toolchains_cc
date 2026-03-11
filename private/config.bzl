@@ -108,6 +108,7 @@ SUPPORTED_VERSIONS = {
         "1.2.5": True,
         "2.28": True,
         "2.29": True,
+        "2.30": True,
     },
     "compiler": {
         "gcc": True,
