@@ -49,6 +49,14 @@ RELEASE_TO_DATE = {
     "aarch64-linux-gnu-glibc-2.34": "20260311",
     "x86_64-linux-gnu-glibc-2.35": "20260311",
     "aarch64-linux-gnu-glibc-2.35": "20260311",
+    "x86_64-linux-gnu-glibc-2.36": "20260311",
+    "aarch64-linux-gnu-glibc-2.36": "20260311",
+    "x86_64-linux-gnu-glibc-2.37": "20260311",
+    "aarch64-linux-gnu-glibc-2.37": "20260311",
+    "x86_64-linux-gnu-glibc-2.38": "20260311",
+    "aarch64-linux-gnu-glibc-2.38": "20260311",
+    "x86_64-linux-gnu-glibc-2.39": "20260311",
+    "aarch64-linux-gnu-glibc-2.39": "20260311",
 }
 
 TARBALL_TO_SHA256 = {
@@ -68,4 +76,12 @@ TARBALL_TO_SHA256 = {
     "aarch64-linux-gnu-glibc-2.34-20260311.tar.xz": "98ba5f83e9ebe94c1dbcecc76ae0d6216189ca27b18fa81ea12c5eb81ba12e3e",
     "x86_64-linux-gnu-glibc-2.35-20260311.tar.xz": "5d2eeabeebe89514ff24cb6c5a5fb03a3952a85574128478f4d4048825e1266d",
     "aarch64-linux-gnu-glibc-2.35-20260311.tar.xz": "470c23e0aacc8c94b26cf9d391423eacc097bd6be6c5ff95472fbc6b02d1218b",
+    "x86_64-linux-gnu-glibc-2.36-20260311.tar.xz": "f9f3844f48a866a26ac507815babd06289a00d3f18b3b89cf3bae7666642ca97",
+    "aarch64-linux-gnu-glibc-2.36-20260311.tar.xz": "1ba95aab4d52f35bd83cd2fbc9c09fed215b8ad9430e2669d6553d2c69865e80",
+    "x86_64-linux-gnu-glibc-2.37-20260311.tar.xz": "51da0696f0d8953d1b1490b8c6a22a6390c0ae7a8513a31c1541724925cd961d",
+    "aarch64-linux-gnu-glibc-2.37-20260311.tar.xz": "437025c3b90f7637aaa82b3879c866e2ac256d4df7d56f69fca53c3cc55270f5",
+    "x86_64-linux-gnu-glibc-2.38-20260311.tar.xz": "4d754d0efce5bc1950b757a536138674c53b482630b53ad4547e492a18d38870",
+    "aarch64-linux-gnu-glibc-2.38-20260311.tar.xz": "9916003f086f70305a827e877bceff31fff7d50d737e8b3297b687c329070e4e",
+    "x86_64-linux-gnu-glibc-2.39-20260311.tar.xz": "6cdd92f15cb293aeb5e4f41cecab567119400daf4e512a8216c0b066c653dfb8",
+    "aarch64-linux-gnu-glibc-2.39-20260311.tar.xz": "bad7a4a22d13fb70076f72642f838b71e6cbfad53f5e5e77dcca74924d52c45b",
 }
