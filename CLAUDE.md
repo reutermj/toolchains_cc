@@ -15,6 +15,7 @@ Runbooks are detaild procedures for use in a specific context.
 - **BEFORE updating release dates or SHA256 hashes for rebuilt toolchain binaries, YOU MUST read**: [docs/runbooks/update-binary-release-metadata.md](docs/runbooks/update-binary-release-metadata.md)
 - **BEFORE building a new GCC version, YOU MUST read**: [docs/runbooks/build-new-gcc-version.md](docs/runbooks/build-new-gcc-version.md)
 - **BEFORE adding a new glibc version, YOU MUST read**: [docs/runbooks/add-new-glibc-version.md](docs/runbooks/add-new-glibc-version.md)
+- **BEFORE adding a new Linux headers version, YOU MUST read**: [docs/runbooks/add-new-linux-headers-version.md](docs/runbooks/add-new-linux-headers-version.md)
 
 ## Bazel
 
