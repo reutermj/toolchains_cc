@@ -135,6 +135,7 @@ SUPPORTED_VERSIONS = {
         "2.45": True,
     },
     "linux_headers_version": {
+        "6.17": True,
         "6.18": True,
     },
 }

@@ -36,11 +36,15 @@ def download_linux_headers(rctx, config):
     )
 
 RELEASE_TO_DATE = {
+    "x86_64-linux-headers-6.17": "20260312",
+    "aarch64-linux-headers-6.17": "20260312",
     "x86_64-linux-headers-6.18": "20260217",
     "aarch64-linux-headers-6.18": "20260228",
 }
 
 TARBALL_TO_SHA256 = {
+    "x86_64-linux-headers-6.17-20260312.tar.xz": "16ef4f46ca00c7fc901c82a3194a5858ced8ff12596125991724d9d971878553",
+    "aarch64-linux-headers-6.17-20260312.tar.xz": "862a20b02812c11cccbb133566ab8ea260614f8ea5f14bb6f7203c5189704ae9",
     "x86_64-linux-headers-6.18-20260217.tar.xz": "34396267a578ef4b81b3951b826c236cf385f7f008bb20b348731ca3318b7c6f",
     "aarch64-linux-headers-6.18-20260228.tar.xz": "dafd326fe1df8fce64805b420666606f984a76087563e36c4ff69cb5e323751a",
 }
