@@ -193,7 +193,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%cc_toolchains": {
       "general": {
-        "bzlTransitiveDigest": "ZssAhEdKvwhS1UmaBGSajuG0XPv2BNlVKISTa7Uzz7A=",
+        "bzlTransitiveDigest": "5Iccf7JGf7sQspIWM65fhj4cb3GPIEVUevNygV8j+zw=",
         "usagesDigest": "F6SX7iKS1faQQN696xRADv8Sz7EQwIN/QCkd3xTcCBo=",
         "recordedInputs": [],
         "generatedRepoSpecs": {
