@@ -156,9 +156,15 @@ Linux kernel headers are backward compatible -- userspace code compiled against 
 
 | Version | Release date | Notable additions |
 |---|---|---|
-| 6.16 | 2025-01 | — |
-| 6.17 | 2025-03 | — |
-| 6.18 | 2025-05 | — |
+| 6.10 | 2024-07 | — |
+| 6.11 | 2024-09 | — |
+| 6.12 | 2024-11 | — |
+| 6.13 | 2025-01 | — |
+| 6.14 | 2025-03 | — |
+| 6.15 | 2025-05 | — |
+| 6.16 | 2025-07 | — |
+| 6.17 | 2025-09 | — |
+| 6.18 | 2025-11 | — |
 
 ## Checklist
 
