@@ -1,4 +1,4 @@
-name: Build LLVM/Clang
+name: Build LLVM/Clang (aarch64)
 
 on:
   workflow_dispatch:
@@ -36,7 +36,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
 
     steps:
       - name: Checkout repository
