@@ -7,8 +7,8 @@ pushd ${ZLIB_DIR}
 cp -r ${ZLIB_SOURCE}/* .
 
 export PATH=${GCC_BINS}:$PATH
-export CC="${GCC_BINS}/x86_64-linux-musl-gcc"
-export CXX="${GCC_BINS}/x86_64-linux-musl-g++"
+export CC="${GCC_BINS}/${BUILD_ARCH}-linux-musl-gcc"
+export CXX="${GCC_BINS}/${BUILD_ARCH}-linux-musl-g++"
 export CFLAGS="-fPIC --sysroot=${GCC_SYSROOT}"
 export CXXFLAGS="--sysroot=${GCC_SYSROOT}"
 
