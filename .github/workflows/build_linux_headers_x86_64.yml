@@ -52,7 +52,7 @@ jobs:
         run: ${{ env.SCRIPTS_DIR }}/step-4_package_linux_headers
 
       - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@v4.1.0
+        uses: actions/attest-build-provenance@v4.2.2
         with:
           subject-path: |
             ${{ env.ARTIFACTS_DIR }}/*.tar.xz
