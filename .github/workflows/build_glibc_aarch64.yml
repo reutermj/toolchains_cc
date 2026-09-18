@@ -17,7 +17,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     strategy:
       matrix:
         glibc_version: ${{ fromJson(github.event.inputs.glibc_versions) }}
